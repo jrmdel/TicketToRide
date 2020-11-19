@@ -151,7 +151,10 @@
                                 <v-btn large icon @click="trainsAndBoats[1]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
+                                <span class="ml-4 text-h6">1x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[2]==0" @click="trainsAndBoats[2]-=1">
@@ -161,8 +164,10 @@
                                 <v-btn large icon @click="trainsAndBoats[2]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">2x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[3]==0" @click="trainsAndBoats[3]-=1">
@@ -172,9 +177,10 @@
                                 <v-btn large icon @click="trainsAndBoats[3]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">3x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[4]==0" @click="trainsAndBoats[4]-=1">
@@ -184,10 +190,10 @@
                                 <v-btn large icon @click="trainsAndBoats[4]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">4x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[5]==0" @click="trainsAndBoats[5]-=1">
@@ -197,11 +203,10 @@
                                 <v-btn large icon @click="trainsAndBoats[5]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">5x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[6]==0" @click="trainsAndBoats[6]-=1">
@@ -211,12 +216,10 @@
                                 <v-btn large icon @click="trainsAndBoats[6]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">6x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[7]==0" @click="trainsAndBoats[7]-=1">
@@ -226,13 +229,10 @@
                                 <v-btn large icon @click="trainsAndBoats[7]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">7x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[8]==0" @click="trainsAndBoats[8]-=1">
@@ -242,14 +242,10 @@
                                 <v-btn large icon @click="trainsAndBoats[8]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">8x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row align="center">
                                 <v-btn large icon :disabled="trainsAndBoats[9]==0" @click="trainsAndBoats[9]-=1">
@@ -259,15 +255,10 @@
                                 <v-btn large icon @click="trainsAndBoats[9]+=1">
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
-                                <v-icon class="ml-4">mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
-                                <v-icon>mdi-train</v-icon>
+                                <span class="ml-4 text-h6">9x</span>
+                                <v-icon >mdi-train</v-icon>
+                                <span class="text-h6">/</span>
+                                <v-icon>mdi-ferry</v-icon>
                             </v-row>
                             <v-row justify="center" justify-sm="space-around">
                                 <v-col cols="12">
@@ -363,11 +354,11 @@ export default {
             {text:"Delete", align:"center", value:"delete", sortable: true},
         ],
         searchRoutes: "",
-        // routes: [],
-        routes: [
+        routes: [],
+        /*routes: [
             {id: 1, cities:["Marseille","Christchurch"], points: 23, status:"Fail"},
             {id: 2, cities:["Jakarta","Sydney"], points: 6, status:"Done"},
-        ],
+        ],*/
         headersTours:[
             {text:"From", align:"start", value:"cities[0]", sortable: true},
             {text:"To", align:"start", value:"to", sortable: true},
@@ -378,10 +369,10 @@ export default {
             {text:"Delete", align:"center", value:"delete", sortable: true},
         ],
         searchTours: "",
-        // tours: [],
-        tours: [
+        tours: [],
+        /*tours: [
             {id: 6, cities:["Anchorage","Vancouver","Winnipeg","Cambridge Bay"], points:15, points_failed:-19, points_unorderded:9, status: "Unordered"}
-        ],
+        ],*/
         selectVersion: "Around The World",
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         defaultTrainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
@@ -409,6 +400,27 @@ export default {
             get(){
                 let a = Object.values(this.trainsAndBoats)
                 return a[0]+2*a[1]+4*a[2]+7*a[3]+10*a[4]+15*a[5]+18*a[6]+21*a[7]+27*a[8]-this.exchanges
+            }
+        },
+        computedTopCities:{
+            get(){
+                let r = this.routes
+                let t = this.tours
+                console.log(r)
+                let counts = {};
+                for(let i=0, l=r.length; i++; i<l){
+                    let c = r[i].cities
+                    for(let j=0; j++; j<c.length){
+                        counts[c[c.length]] = (counts[c[c.length]] || 0) + 1
+                    }
+                }
+                for(let i=0, l=t.length; i++; i<l){
+                    let c = t[i].cities
+                    for(let j=0; j++; j<c.length){
+                        counts[c[c.length]] = (counts[c[c.length]] || 0) + 1
+                    }
+                }
+                return Object.entries(counts).map(x => { return {"city":x[0], "num":x[1]} }).sort((a,b)=>b.num-a.num)
             }
         }
     },
