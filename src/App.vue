@@ -126,6 +126,7 @@ export default {
         closeCreate(){
             this.dialogCreate = false;
             this.names = Object.assign({}, this.defaultNames);
+            this.version = null;
             setTimeout(() => {
                 this.$refs.newGameForm.resetValidation();
             }, 50);

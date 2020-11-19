@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="pa-12 pa-md-16 ma-md-4">
+    <v-container fluid class="pa-6 pa-sm-12 pa-md-16 ma-md-4">
         <v-row>
             <v-col cols="12">
                 <v-card>
@@ -11,15 +11,15 @@
                     <v-card-subtitle>
                         <v-container fluid>
                             <v-row justify="center" justify-sm="space-around">
-                                <v-col cols="auto">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of tickets</span>
                                     <span class="ml-4 text-h3">{{routes.length+tours.length}}</span>
                                 </v-col>
-                                <v-col cols="auto">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb completed</span>
                                     <span class="ml-4 text-h3">{{computedCompletion}}</span>
                                 </v-col>
-                                <v-col cols="auto">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">current score</span>
                                     <span class="ml-4 text-h3">{{computedTicketScore}}</span>
                                 </v-col>
