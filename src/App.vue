@@ -14,7 +14,7 @@
         </v-btn>
 
         <template v-slot:extension>
-            <v-tabs v-model="tab" align-with-title>
+            <v-tabs v-model="tab">
             <v-tabs-slider color="secondary"></v-tabs-slider>
             <v-tab>Current game</v-tab>
             <v-tab>Scoreboard</v-tab>
@@ -37,27 +37,56 @@
             </v-tabs-items>
         </v-main>
 
-        <v-dialog v-model="dialogCreate" max-width="800">
+        <v-dialog v-model="dialogCreate" max-width="800" @click:outside="closeCreate">
             <v-card>
                 <v-toolbar flat color="primary" dark>
                     <v-toolbar-title>New Game</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text>
-                    <v-container fluid>
-                        <v-row align="center">
-                            <v-col cols="12">
-                                <span class="text-h6 tertiary--text">Type of game</span>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <v-select v-model="version" hide-details outlined label="Game Version" :items="['Around The World', 'Great Lakes']"></v-select>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <v-subheader>Number of players</v-subheader>
-                                <v-slider v-model="players" min=2 max=5 color="secondary" :thumb-label="true" track-color="grey-lighten2"></v-slider>
-                            </v-col>
-                        </v-row>
-                    </v-container>
+                    <v-form v-model="newGameForm" ref="newGameForm">
+                        <v-container fluid>
+                            <v-row align="center">
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Type of game</span>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-select v-model="version" :rules="newVersionRules" color="secondary" hide-details outlined label="Game Version" :items="['Around The World', 'Great Lakes']"></v-select>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-subheader>Number of players</v-subheader>
+                                    <v-slider v-model="players" min=2 max=5 color="secondary" ticks="always" tick-size="3" :tick-labels="['2','3','4','5']" track-color="grey-lighten2"></v-slider>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Players name</span>
+                                </v-col>
+                                <v-col cols="12" md="6" v-for="player in players" :key="player">
+                                    <v-text-field required :rules="newPlayerRules" color="secondary" v-model="names[player]" :label="computeLabel(player)" clearable></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Date</span>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
+                                    offset-y min-width="290px">
+                                        <template v-slot:activator="{ on, attrs }">
+                                            <v-text-field v-model="date" label="Choose a date" prepend-icon="mdi-calendar"
+                                            readonly v-bind="attrs" v-on="on"></v-text-field>
+                                        </template>
+                                        <v-date-picker
+                                            v-model="date" header-color="primary" color="secondary"
+                                            @input="menu = false"
+                                        ></v-date-picker>
+                                    </v-menu>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-form>
                 </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn large text color="accent" @click="closeCreate">CLOSE</v-btn>
+                    <v-btn large :disabled="!newGameForm" text color="secondary" @click="createGame">CREATE</v-btn>
+                </v-card-actions>
             </v-card>
         </v-dialog>
     </v-app>
@@ -80,15 +109,33 @@ export default {
     data: () => ({
         players: 3,
         version: null,
+        newVersionRules: [v => !!v || "Version is required"],
+        newPlayerRules: [v => !!v || "Player name is required", v => v.length>1 && !(/\d/.test(v)) || "Player name must be valid"],
+        names: {1: "", 2:"", 3:"", 4:"", 5:""},
+        defaultNames: {1: "", 2:"", 3:"", 4:"", 5:""},
+        date: new Date().toISOString().substr(0,10),
+        menu: false,
         tab: null,
+        newGameForm: false,
         dialogCreate: false,
     }),
     methods:{
         openCreate(){
             this.dialogCreate = true;
         },
+        closeCreate(){
+            this.dialogCreate = false;
+            this.names = Object.assign({}, this.defaultNames);
+            setTimeout(() => {
+                this.$refs.newGameForm.resetValidation();
+            }, 50);
+        },
         createGame(){
-            
+            // Create then close
+            this.closeCreate();
+        },
+        computeLabel(number){
+            return `Player ${number}`
         }
     }
 };

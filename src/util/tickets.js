@@ -129,10 +129,10 @@ let greatlakes = [
     {cities: [GreatLakesCities.SYRACUSE, GreatLakesCities.NEW_YORK], points: 5}
 ]
 
-module.exports.getWorldTickets = function(){
-    return world;
+
+let Tickets = {
+    World: world,
+    GreatLakes: greatlakes
 }
 
-module.exports.getGreatLakesTickets = function(){
-    return greatlakes;
-}
+export { Tickets };
