@@ -99,7 +99,117 @@
                                 </v-col>
                             </v-row>
                         </v-container>
-
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12">
+                <v-card>
+                    <v-toolbar flat color="primary" dark>
+                        <v-toolbar-title>Your harbors</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon large>mdi-anchor</v-icon>
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="space-around">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of cities</span>
+                                    <span class="ml-4 text-h3">{{computedTopCities.length}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of harbors</span>
+                                    <span class="ml-4 text-h3">{{harbors.length}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">current score</span>
+                                    <span class="ml-4 text-h3">{{computedHarborsScore}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="space-between">
+                                <v-col cols="auto">
+                                    <v-btn dark x-large color="primary" @click="openAddHarbor">
+                                        <v-icon>mdi-ship-wheel</v-icon>
+                                        <span class="ml-3 mr-1">ADD A HARBOR</span>
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="auto">
+                                    <v-btn dark x-large color="accent" @click="resetHarbors">
+                                        <v-icon>mdi-restore</v-icon>
+                                        <span class="ml-3 mr-1">RESET</span>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12" md="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Top potential cities</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-card outlined>
+                                                <v-simple-table fixed-header>
+                                                    <template v-slot:default>
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="blue-grey lighten-4 text-left">City</th>
+                                                                <th class="blue-grey lighten-4 text-left">Number</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody v-show="computedTopCities.length > 0">
+                                                            <tr v-for="item in computedTopCities" :key="item.city">
+                                                                <td>{{ item.city }}</td>
+                                                                <td>{{ item.num }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody v-show="computedTopCities.length == 0">
+                                                            <tr>
+                                                                <td>No cities yet</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </template>
+                                                </v-simple-table>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Top successful cities</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-card outlined>
+                                                <v-simple-table fixed-header>
+                                                    <template v-slot:default>
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="blue-grey lighten-4 text-left">City</th>
+                                                                <th class="blue-grey lighten-4 text-left">Number</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody v-show="computedTopSuccessfulCities.length > 0">
+                                                            <tr v-for="item in computedTopSuccessfulCities" :key="item.city">
+                                                                <td>{{ item.city }}</td>
+                                                                <td>{{ item.num }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tbody v-show="computedTopSuccessfulCities.length == 0">
+                                                            <tr>
+                                                                <td>No successful cities yet</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </template>
+                                                </v-simple-table>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -143,122 +253,8 @@
                                     <span class="text-h6 tertiary--text">Claimed routes</span>
                                 </v-col>
                             </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[1]==0" @click="trainsAndBoats[1]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[1]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[1]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">1x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[2]==0" @click="trainsAndBoats[2]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[2]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[2]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">2x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[3]==0" @click="trainsAndBoats[3]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[3]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[3]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">3x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[4]==0" @click="trainsAndBoats[4]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[4]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[4]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">4x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[5]==0" @click="trainsAndBoats[5]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[5]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[5]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">5x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[6]==0" @click="trainsAndBoats[6]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[6]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[6]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">6x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[7]==0" @click="trainsAndBoats[7]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[7]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[7]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">7x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[8]==0" @click="trainsAndBoats[8]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[8]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[8]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">8x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
-                            </v-row>
-                            <v-row align="center">
-                                <v-btn large icon :disabled="trainsAndBoats[9]==0" @click="trainsAndBoats[9]-=1">
-                                    <v-icon color="red">mdi-minus</v-icon>
-                                </v-btn>
-                                <span class="text-h6">{{trainsAndBoats[9]}}</span>
-                                <v-btn large icon @click="trainsAndBoats[9]+=1">
-                                    <v-icon color="green">mdi-plus</v-icon>
-                                </v-btn>
-                                <span class="ml-4 text-h6">9x</span>
-                                <v-icon >mdi-train</v-icon>
-                                <span class="text-h6">/</span>
-                                <v-icon>mdi-ferry</v-icon>
+                            <v-row align="center" v-for="i in 9" :key="i">
+                                <TrainBoat :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" @update-value="updateTrainsAndBoats($event)"/>
                             </v-row>
                             <v-row justify="center" justify-sm="space-around">
                                 <v-col cols="12">
@@ -293,10 +289,10 @@
                                 <span class="text-h6 tertiary--text">Cities</span>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="fromTicket" :rules="simpleRule" placeholder="Type here" clearable color="secondary" hide-details outlined label="From" :items="computedFromCities"></v-select>
+                                <v-select v-model="fromTicket" :rules="simpleRule" solo clearable color="secondary" hide-details label="From" :items="computedFromCities"></v-select>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="toTicket" :disabled="!fromTicket" placeholder="Type here" :rules="simpleRule" clearable color="secondary" hide-details outlined label="To" :items="toCities"></v-select>
+                                <v-select v-model="toTicket" :disabled="!fromTicket" solo :rules="simpleRule" clearable color="secondary" hide-details label="To" :items="toCities"></v-select>
                             </v-col>
                             <v-col cols="12" v-if="foundTickets.length==1">
                                 <v-card flat outlined color="accent">1 match found</v-card>
@@ -322,16 +318,50 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogHarbor" max-width="660" @click:outside="closeAddHarbor">
+            <v-card>
+                <v-toolbar flat color="quaternary" dark>
+                    <v-toolbar-title>New Harbor</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text>
+                    <v-form v-model="harborForm" ref="harborForm">
+                        <v-container fluid>
+                            <v-row align="center">
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Cities</span>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-select v-model="newHarbor" :error-messages="(harbors.includes(newHarbor) ? 'This city already has a harbor' : '')" :items="computedFromCities" :rules="simpleRule" solo label="Choose a city"></v-select>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-form>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn large text color="accent" @click="closeAddHarbor">CLOSE</v-btn>
+                    <v-btn large :disabled="!harborForm || harbors.includes(newHarbor)" text color="secondary" @click="addHarbor">ADD TICKET</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
 <script>
 import { Types } from '../util/types';
 import { Tickets } from '../util/tickets';
+import TrainBoat from './currentgame/TrainBoat'
+
 export default {
+    components:{
+        TrainBoat
+    },
     data: () => ({
         dialogTicket: false,
+        dialogHarbor: false,
         newTicketForm: false,
+        harborForm: false,
         simpleRule: [v => !!v || "A city is required"],
         fromTicket:null,
         toCities: [],
@@ -355,10 +385,6 @@ export default {
         ],
         searchRoutes: "",
         routes: [],
-        /*routes: [
-            {id: 1, cities:["Marseille","Christchurch"], points: 23, status:"Fail"},
-            {id: 2, cities:["Jakarta","Sydney"], points: 6, status:"Done"},
-        ],*/
         headersTours:[
             {text:"From", align:"start", value:"cities[0]", sortable: true},
             {text:"To", align:"start", value:"to", sortable: true},
@@ -370,10 +396,9 @@ export default {
         ],
         searchTours: "",
         tours: [],
-        /*tours: [
-            {id: 6, cities:["Anchorage","Vancouver","Winnipeg","Cambridge Bay"], points:15, points_failed:-19, points_unorderded:9, status: "Unordered"}
-        ],*/
         selectVersion: "Around The World",
+        harbors: [],
+        newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         defaultTrainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         exchanges: 0
@@ -406,21 +431,55 @@ export default {
             get(){
                 let r = this.routes
                 let t = this.tours
-                console.log(r)
                 let counts = {};
-                for(let i=0, l=r.length; i++; i<l){
+                for(let i=0, l=r.length; i<l; i++){
                     let c = r[i].cities
-                    for(let j=0; j++; j<c.length){
-                        counts[c[c.length]] = (counts[c[c.length]] || 0) + 1
+                    for(let j=0; j<c.length; j++){
+                        counts[c[j]] = (counts[c[j]] || 0) + 1
                     }
                 }
-                for(let i=0, l=t.length; i++; i<l){
+                for(let i=0, l=t.length; i<l; i++){
                     let c = t[i].cities
-                    for(let j=0; j++; j<c.length){
-                        counts[c[c.length]] = (counts[c[c.length]] || 0) + 1
+                    for(let j=0; j<c.length; j++){
+                        counts[c[j]] = (counts[c[j]] || 0) + 1
                     }
                 }
                 return Object.entries(counts).map(x => { return {"city":x[0], "num":x[1]} }).sort((a,b)=>b.num-a.num)
+            }
+        },
+        computedTopSuccessfulCities:{
+            get(){
+                let r = this.routes
+                let t = this.tours
+                let counts = {};
+                for(let i=0, l=r.length; i<l; i++){
+                    if(r[i].status != "Fail"){
+                        let c = r[i].cities
+                        for(let j=0; j<c.length; j++){
+                            counts[c[j]] = (counts[c[j]] || 0) + 1
+                        }
+                    }
+                }
+                for(let i=0, l=t.length; i<l; i++){
+                    if(t[i].status != "Fail"){
+                        let c = t[i].cities
+                        for(let j=0; j<c.length; j++){
+                            counts[c[j]] = (counts[c[j]] || 0) + 1
+                        }
+                    }
+                }
+                return Object.entries(counts).map(x => { return {"city":x[0], "num":x[1]} }).sort((a,b)=>b.num-a.num)
+            }
+        },
+        computedHarborsScore:{
+            get(){
+                let res = 0;
+                let bonus = (this.selectVersion == "Around The World") ? 10 : 0;
+                for(let i=0; i<this.harbors.length; i++){
+                    let found = this.computedTopSuccessfulCities.find(x => x.city == this.harbors[i])
+                    if(found) res += Math.min(10*found.num,30)+bonus
+                }
+                return res;
             }
         }
     },
@@ -487,6 +546,24 @@ export default {
             this.toTicket = null;
             this.fromTicket = null;
         },
+        openAddHarbor(){
+            this.dialogHarbor = true;
+        },
+        addHarbor(){
+            this.harbors.push(this.newHarbor);
+            this.newHarbor = null;
+        },
+        closeAddHarbor(){
+            this.dialogHarbor = false;
+            this.newHarbor = null;
+            setTimeout(()=>{
+                this.$refs.harborForm.resetValidation()
+            },50)
+        },
+        harborHasCity(city){
+            console.log(city)
+            return this.harbors.includes(city)
+        },
         resetTickets(){
             this.routes = []
             this.tours = []
@@ -494,6 +571,12 @@ export default {
         resetTrainsAndBoats(){
             this.trainsAndBoats = Object.assign({},this.defaultTrainsAndBoats);
             this.exchanges = 0;
+        },
+        resetHarbors(){
+            this.harbors = [];
+        },
+        updateTrainsAndBoats(event){
+            this.trainsAndBoats[event.units]+=event.update;
         },
         toggleToDone(item){
             let id = this.routes.indexOf(item);
