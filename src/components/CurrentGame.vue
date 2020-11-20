@@ -154,9 +154,9 @@
                                                 <v-card-title>
                                                     <span>Harbor #{{i}}</span>
                                                     <v-spacer></v-spacer>
-                                                    <v-icon>mdi-anchor</v-icon>
+                                                    <v-icon v-if="!(harbors.length<i)" large color="red" @click="deleteHarbor(i)">mdi-close</v-icon>
                                                 </v-card-title>
-                                                <v-card-text class="mb-n6">
+                                                <v-card-text class="my-n3">
                                                     <v-container fluid>
                                                         <v-row class="text-body-1" align="center">
                                                             <v-col cols="12">
@@ -174,10 +174,6 @@
                                                         </v-row>
                                                     </v-container>
                                                 </v-card-text>
-                                                <v-card-actions>
-                                                    <v-spacer></v-spacer>
-                                                    <v-btn v-if="!(harbors.length<i)" text color="secondary" @click="deleteHarbor(i)">DELETE</v-btn>
-                                                </v-card-actions>
                                             </v-card>
                                         </v-col>
                                     </v-row>
@@ -325,13 +321,10 @@
                                 <span class="text-h6 tertiary--text">Cities</span>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="fromTicket" :rules="simpleRule" solo clearable color="secondary" hide-details label="From" :items="computedFromCities"></v-select>
+                                <v-select v-model="fromTicket" solo clearable color="secondary" label="From" :items="computedFromCities"></v-select>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="toTicket" :disabled="!fromTicket" solo :rules="simpleRule" clearable color="secondary" hide-details label="To" :items="toCities"></v-select>
-                            </v-col>
-                            <v-col cols="12" v-if="foundTickets.length==1">
-                                <v-card flat outlined color="accent">1 match found</v-card>
+                                <v-select v-model="toTicket" :disabled="!fromTicket" :messages="(foundTickets.length == 1) ? '1 match found' : (foundTickets.length > 1) ? `${foundTickets.length} matches found` : null " solo clearable color="secondary" label="To" :items="toCities"></v-select>
                             </v-col>
                             <v-col cols="12" v-if="foundTickets.length>1">
                                 <span>Select your ticket</span>
