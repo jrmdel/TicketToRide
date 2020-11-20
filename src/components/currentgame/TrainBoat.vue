@@ -1,5 +1,5 @@
 <template>
-    <v-row align="center" no-gutters>
+    <v-row align="center" justify="center" justify-sm="start" class="ml-sm-4" no-gutters>
         <v-btn large icon :disabled="currentTotal==0" @click="updateValue(-1)">
             <v-icon color="red">mdi-minus</v-icon>
         </v-btn>

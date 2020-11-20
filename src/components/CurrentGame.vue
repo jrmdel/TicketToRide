@@ -30,13 +30,13 @@
                         <v-container fluid>
                             <v-row justify="center" justify-sm="space-between">
                                 <v-col cols="auto">
-                                    <v-btn dark x-large color="primary" @click="openAddTicket">
+                                    <v-btn x-large color="primary" @click="openAddTicket">
                                         <v-icon>mdi-card-plus-outline</v-icon>
                                         <span class="ml-3 mr-1">ADD A TICKET</span>
                                     </v-btn>
                                 </v-col>
                                 <v-col cols="auto">
-                                    <v-btn dark x-large color="accent" @click="resetTickets">
+                                    <v-btn x-large color="accent" @click="openReset('tickets')">
                                         <v-icon>mdi-restore</v-icon>
                                         <span class="ml-3 mr-1">RESET</span>
                                     </v-btn>
@@ -131,19 +131,57 @@
                         <v-container fluid>
                             <v-row justify="center" justify-sm="space-between">
                                 <v-col cols="auto">
-                                    <v-btn dark x-large color="primary" @click="openAddHarbor">
+                                    <v-btn x-large :disabled="harbors.length>2" color="primary" @click="openAddHarbor">
                                         <v-icon>mdi-ship-wheel</v-icon>
                                         <span class="ml-3 mr-1">ADD A HARBOR</span>
                                     </v-btn>
                                 </v-col>
                                 <v-col cols="auto">
-                                    <v-btn dark x-large color="accent" @click="resetHarbors">
+                                    <v-btn x-large color="accent" @click="openReset('harbors')">
                                         <v-icon>mdi-restore</v-icon>
                                         <span class="ml-3 mr-1">RESET</span>
                                     </v-btn>
                                 </v-col>
                             </v-row>
                             <v-row>
+                                <v-col cols="12">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Built harbors</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col v-for="i in 3" :key="i" cols="12" md="4">
+                                            <v-card outlined :disabled="harbors.length<i">
+                                                <v-card-title>
+                                                    <span>Harbor #{{i}}</span>
+                                                    <v-spacer></v-spacer>
+                                                    <v-icon>mdi-anchor</v-icon>
+                                                </v-card-title>
+                                                <v-card-text class="mb-n6">
+                                                    <v-container fluid>
+                                                        <v-row class="text-body-1" align="center">
+                                                            <v-col cols="12">
+                                                                <v-icon :color="(harbors.length<i) ? undefined : 'primary'" class="mx-4">mdi-city-variant</v-icon>
+                                                                <span v-if="harbors.length>i-1">{{harbors[i-1]}}</span>
+                                                                <span v-else>Unknown</span>
+                                                            </v-col>
+                                                        </v-row>
+                                                        <v-row class="text-body-1" align="center">
+                                                            <v-col cols="12">
+                                                                <v-icon :color="(harbors.length<i) ? undefined : 'accent'" class="mx-4">mdi-medal-outline</v-icon>
+                                                                <span v-if="harbors.length>i-1">{{getHarborScore(harbors[i-1])}}</span>
+                                                                <span v-else>- 4</span>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-container>
+                                                </v-card-text>
+                                                <v-card-actions>
+                                                    <v-spacer></v-spacer>
+                                                    <v-btn v-if="!(harbors.length<i)" text color="secondary" @click="deleteHarbor(i)">DELETE</v-btn>
+                                                </v-card-actions>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
                                 <v-col cols="12" md="6">
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Top potential cities</span>
@@ -167,7 +205,7 @@
                                                         </tbody>
                                                         <tbody v-show="computedTopCities.length == 0">
                                                             <tr>
-                                                                <td>No cities yet</td>
+                                                                <td colspan="2">No cities yet</td>
                                                             </tr>
                                                         </tbody>
                                                     </template>
@@ -199,7 +237,7 @@
                                                         </tbody>
                                                         <tbody v-show="computedTopSuccessfulCities.length == 0">
                                                             <tr>
-                                                                <td>No successful cities yet</td>
+                                                                <td colspan="2">No successful cities yet</td>
                                                             </tr>
                                                         </tbody>
                                                     </template>
@@ -225,15 +263,15 @@
                             <v-row justify="center" justify-sm="space-around">
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of units</span>
-                                    <span class="ml-4 text-h3">{{Object.values(trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)}}</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{Object.values(trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of exchanges</span>
-                                    <span class="ml-4 text-h3">{{exchanges}}</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{exchanges}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">current score</span>
-                                    <span class="ml-4 text-h3">{{computedTrainsBoatsScore}}</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{computedTrainsBoatsScore}}</span>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -242,26 +280,24 @@
                         <v-container fluid>
                             <v-row justify="center" justify-sm="end">
                                 <v-col cols="auto">
-                                    <v-btn dark x-large color="accent" @click="resetTrainsAndBoats">
+                                    <v-btn x-large color="accent" @click="openReset('units')">
                                         <v-icon>mdi-restore</v-icon>
                                         <span class="ml-3 mr-1">RESET</span>
                                     </v-btn>
                                 </v-col>
                             </v-row>
-                            <v-row justify="center" justify-sm="space-around">
+                            <v-row>
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Claimed routes</span>
                                 </v-col>
                             </v-row>
-                            <v-row align="center" v-for="i in 9" :key="i">
-                                <TrainBoat :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" @update-value="updateTrainsAndBoats($event)"/>
-                            </v-row>
-                            <v-row justify="center" justify-sm="space-around">
+                            <TrainBoat v-for="i in 9" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" @update-value="updateTrainsAndBoats($event)"/>
+                            <v-row>
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Exchanges</span>
                                 </v-col>
                             </v-row>
-                            <v-row align="center">
+                            <v-row class="ml-sm-4" align="center" justify="center" justify-sm="start">
                                 <v-btn large icon :disabled="exchanges==0" @click="exchanges-=1">
                                     <v-icon color="red">mdi-minus</v-icon>
                                 </v-btn>
@@ -345,6 +381,21 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogReset" max-width="400">
+            <v-card>
+                <v-card-title><span class="text-h5">Reset {{resetType}}</span></v-card-title>
+
+                <v-card-text>
+                    Are you sure you want to reset?
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="accent" text @click="dialogReset = false">Cancel</v-btn>
+                    <v-btn color="secondary" text @click="resetTypeOf()">Proceed</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -360,6 +411,7 @@ export default {
     data: () => ({
         dialogTicket: false,
         dialogHarbor: false,
+        dialogReset: false,
         newTicketForm: false,
         harborForm: false,
         simpleRule: [v => !!v || "A city is required"],
@@ -401,7 +453,8 @@ export default {
         newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         defaultTrainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
-        exchanges: 0
+        exchanges: 0,
+        resetType: ""
     }),
     computed:{
         computedFromCities:{
@@ -479,7 +532,7 @@ export default {
                     let found = this.computedTopSuccessfulCities.find(x => x.city == this.harbors[i])
                     if(found) res += Math.min(10*found.num,30)+bonus
                 }
-                return res;
+                return res-(4*(3-this.harbors.length));
             }
         }
     },
@@ -551,7 +604,14 @@ export default {
         },
         addHarbor(){
             this.harbors.push(this.newHarbor);
-            this.newHarbor = null;
+            if(this.harbors.length==3) this.closeAddHarbor();
+            else {
+                this.newHarbor = null;
+                this.$refs.harborForm.resetValidation();
+            }
+        },
+        deleteHarbor(num){
+            this.harbors.splice(num-1,1)
         },
         closeAddHarbor(){
             this.dialogHarbor = false;
@@ -563,6 +623,23 @@ export default {
         harborHasCity(city){
             console.log(city)
             return this.harbors.includes(city)
+        },
+        getHarborScore(city){
+            let found = this.computedTopSuccessfulCities.find(x => x.city == city)
+            let bonus = (this.selectVersion == "Around The World") ? 10 : 0
+            if(found) return Math.min(10*found.num,30)+bonus
+            else return 0
+        },
+        openReset(type){
+            this.resetType = type;
+            this.dialogReset = true;
+        },
+        resetTypeOf(){
+            if(this.resetType == "tickets") this.resetTickets();
+            else if(this.resetType == "units") this.resetTrainsAndBoats();
+            else if(this.resetType == "harbors") this.resetHarbors();
+            this.dialogReset = false;
+            this.resetType = "";
         },
         resetTickets(){
             this.routes = []
