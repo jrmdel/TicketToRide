@@ -4,6 +4,43 @@
             <v-col cols="12">
                 <v-card>
                     <v-toolbar flat color="primary" dark>
+                        <v-toolbar-title>Your game</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon large>mdi-map-legend</v-icon>
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        <v-container fluid>
+                            <v-row>
+                                <v-col cols="12" md="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Game version</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="auto">
+                                            <v-select solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="['Around The World','Great Lakes']"></v-select>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Total score</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="auto">
+                                            <v-chip x-large color="secondary">
+                                                <span class="text-h3">{{parseInt(computedTicketScore+computedHarborsScore+computedTrainsBoatsScore)}}</span>
+                                            </v-chip>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-subtitle>
+                </v-card>
+            </v-col>
+            <v-col cols="12">
+                <v-card>
+                    <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your tickets</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-ticket-confirmation-outline</v-icon>
@@ -44,7 +81,7 @@
                             </v-row>
                             <v-row>
                                 <v-col cols="12">
-                                    <v-card outlined flat color="secondary">
+                                    <v-card outlined flat color="primaryLight">
                                         <v-card-title class="text-h4 font-weight-light">
                                             Routes
                                             <v-spacer></v-spacer>
@@ -68,9 +105,9 @@
                                     </v-card>
                                 </v-col>
                             </v-row>
-                            <v-row>
+                            <v-row v-if="selectVersion == 'Around The World'">
                                 <v-col cols="12">
-                                    <v-card outlined flat color="secondary">
+                                    <v-card outlined flat class="primaryLight">
                                         <v-card-title class="text-h4 font-weight-light">
                                             Tours
                                             <v-spacer></v-spacer>
@@ -558,9 +595,9 @@ export default {
         },
         selectVersion:{
             handler(value){
-                this.tickets = [];
-                this.routes = [];
-                this.tours = [];
+                this.resetTickets();
+                this.resetHarbors();
+                this.resetTrainsAndBoats();
                 if(value){
                     this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
                 }
@@ -583,8 +620,8 @@ export default {
         },
         addTicket(){
             let ticket = (this.foundTickets.length == 1) ? this.foundTickets[0] : this.selectedTicket[0]
-            if(ticket.type == Types.ROUTE) this.routes.push({...ticket, status:"Fail"});
-            else this.tours.push({...ticket, status:"Fail"});
+            if(ticket.type == Types.TOUR) this.tours.push({...ticket, status:"Fail"});
+            else this.routes.push({...ticket, status:"Fail"});
             this.fromTicket = null;
         },
         closeAddTicket(){

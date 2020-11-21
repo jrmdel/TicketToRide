@@ -50,7 +50,7 @@
                                     <span class="text-h6 tertiary--text">Type of game</span>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-select v-model="version" :rules="newVersionRules" color="secondary" hide-details outlined label="Game Version" :items="['Around The World', 'Great Lakes']"></v-select>
+                                    <v-select v-model="version" solo :rules="newVersionRules" color="secondary" hide-details label="Game Version" :items="['Around The World', 'Great Lakes']"></v-select>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <v-subheader>Number of players</v-subheader>
