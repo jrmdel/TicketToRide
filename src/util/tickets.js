@@ -38,7 +38,6 @@ let world = [
     {id: 33, type: Types.ROUTE, cities: [WorldCities.LOS_ANGELES, WorldCities.RIO_DE_JANEIRO], points: 15},
     {id: 34, type: Types.ROUTE, cities: [WorldCities.LAGOS, WorldCities.HONG_KONG], points: 14},
     {id: 35, type: Types.ROUTE, cities: [WorldCities.BUENOS_AIRES, WorldCities.MARSEILLE], points: 18},
-    {id: 36, type: Types.ROUTE, cities: [WorldCities.MEXICO, WorldCities.BEIJING], points: 13},
     {id: 37, type: Types.ROUTE, cities: [WorldCities.CASABLANCA, WorldCities.HONOLULU], points: 16},
     {id: 38, type: Types.ROUTE, cities: [WorldCities.LIMA, WorldCities.JAKARTA], points: 14},
     {id: 39, type: Types.ROUTE, cities: [WorldCities.MARSEILLE, WorldCities.JAKARTA], points: 18},
