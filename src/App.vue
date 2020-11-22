@@ -26,13 +26,13 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Scoreboard/>
+                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Help/>
+                    <Help class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
                 </v-tab-item>
             </v-tabs-items>
         </v-main>
@@ -85,7 +85,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn large text color="accent" @click="closeCreate">CLOSE</v-btn>
-                    <v-btn large :disabled="!newGameForm" text color="secondary" @click="createGame">CREATE</v-btn>
+                    <v-btn large :disabled="!newGameForm" :loading="loadingCreate" text color="secondary" @click="createGame">CREATE</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -96,6 +96,7 @@
 import CurrentGame from './components/CurrentGame';
 import Scoreboard from './components/Scoreboard';
 import Help from './components/Help';
+import { db } from "./main";
 
 export default {
     name: 'App',
@@ -118,6 +119,10 @@ export default {
         tab: null,
         newGameForm: false,
         dialogCreate: false,
+        currentGameId: "",
+        currentGameVersion: "",
+        currentGamePlayers: [],
+        loadingCreate: false,
     }),
     methods:{
         openCreate(){
@@ -125,13 +130,27 @@ export default {
         },
         closeCreate(){
             this.dialogCreate = false;
+            this.loadingCreate = false;
             this.names = Object.assign({}, this.defaultNames);
             this.version = null;
             setTimeout(() => {
                 this.$refs.newGameForm.resetValidation();
             }, 50);
         },
-        createGame(){
+        async createGame(){
+            this.loadingCreate = true;
+            let doc = {date: this.date, players: this.players, version: this.version}
+            for(let i=0;i<this.players; i++){
+                let n = `player${i+1}`
+                doc[n] = {name: this.names[i+1]}
+            }
+            console.log(doc)
+            let d = await db.collection('Games').add(doc)
+            this.currentGameId = d.id;
+            console.log(this.currentGameId)
+            // Sets the currentGame variables
+            this.currentGameVersion = this.version;
+            this.currentGamePlayers = Object.values(this.names).splice(0,this.players)
             // Create then close
             this.closeCreate();
         },

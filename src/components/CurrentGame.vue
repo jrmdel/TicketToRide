@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="pa-6 pa-sm-12 pa-md-16 ma-md-4">
+    <v-container fluid>
         <v-row>
             <v-col cols="12">
                 <v-card>
@@ -15,7 +15,7 @@
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Game version</span>
                                     </v-row>
-                                    <v-row>
+                                    <v-row justify="center" justify-md="start">
                                         <v-col cols="auto">
                                             <v-select solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="['Around The World','Great Lakes']"></v-select>
                                         </v-col>
@@ -25,11 +25,29 @@
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Total score</span>
                                     </v-row>
-                                    <v-row>
+                                    <v-row justify="center" justify-md="start">
                                         <v-col cols="auto">
-                                            <v-chip x-large color="secondary">
+                                            <v-chip class="ml-sm-8" x-large color="secondary">
                                                 <span class="text-h3">{{parseInt(computedTicketScore+computedHarborsScore+computedTrainsBoatsScore)}}</span>
                                             </v-chip>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Save your game</span>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-row justify="center" justify-md="start">
+                                        <v-col cols="auto">
+                                            <v-text-field solo label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
+                                        </v-col>
+                                        <v-col cols="auto">
+                                            <v-btn :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
+                                                <v-icon>mdi-content-save-outline</v-icon>
+                                                <span class="ml-3 mr-1">SAVE</span>
+                                            </v-btn>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -407,7 +425,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn large text color="accent" @click="closeAddHarbor">CLOSE</v-btn>
-                    <v-btn large :disabled="!harborForm || harbors.includes(newHarbor)" text color="secondary" @click="addHarbor">ADD TICKET</v-btn>
+                    <v-btn large :disabled="!harborForm || harbors.includes(newHarbor)" text color="secondary" @click="addHarbor">ADD HARBOR</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -426,6 +444,29 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="dialogSaveGame" max-width="400">
+            <v-card :loading="loadingOpenSaveGame">
+                <v-toolbar flat color="quaternary" dark>
+                    <v-toolbar-title>Player selection</v-toolbar-title>
+                </v-toolbar>
+                <v-card-subtitle>Choose which player you are</v-card-subtitle>
+                <v-card-text>
+                    <v-container fluid>
+                        <v-row>
+                            <v-col cols="auto">
+                                <v-select solo v-model="selectedPlayer" hide-details color="secondary" label="Select your name" :items="selectPlayer"></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="accent" text @click="closeSaveGame">Cancel</v-btn>
+                    <v-btn color="secondary" :disabled="selectedPlayer==null" text @click="saveGame">Save</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -433,6 +474,7 @@
 import { Types } from '../util/types';
 import { Tickets } from '../util/tickets';
 import TrainBoat from './currentgame/TrainBoat'
+import { db } from '../main';
 
 export default {
     components:{
@@ -442,6 +484,7 @@ export default {
         dialogTicket: false,
         dialogHarbor: false,
         dialogReset: false,
+        dialogSaveGame: false,
         newTicketForm: false,
         harborForm: false,
         simpleRule: [v => !!v || "A city is required"],
@@ -479,13 +522,29 @@ export default {
         searchTours: "",
         tours: [],
         selectVersion: "Around The World",
+        selectPlayer: [],
+        selectedPlayer: null,
         harbors: [],
         newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         defaultTrainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
         exchanges: 0,
-        resetType: ""
+        resetType: "",
+        gameId: "",
+        loadingOpenSaveGame: false,
     }),
+    props:{
+        id: {
+            type: String,
+        },
+        players: {
+            type: Array,
+            default: ()=>[]
+        },
+        version: {
+            type: String
+        }
+    },
     computed:{
         computedFromCities:{
             get(){
@@ -602,7 +661,21 @@ export default {
                     this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
                 }
             }
-        }
+        },
+        version:{
+            handler(value){
+                if(value){
+                    this.selectVersion = value
+                }
+            }
+        },
+        id:{
+            handler(value){
+                if(value){
+                    this.gameId = value
+                }
+            }
+        },
     },
     methods:{
         deleteItem(item){
@@ -614,6 +687,54 @@ export default {
             if(status == "Fail") return "red"
             else if(status == "Done") return "green"
             else return "amber"
+        },
+        async openSaveGame(){
+            this.dialogSaveGame = true;
+            this.loadingOpenSaveGame = true;
+            if(this.players.length > 1){
+                this.selectPlayer = this.players;
+                this.loadingOpenSaveGame = false;
+            } else {
+                try {
+                    let doc = await db.collection('Games').doc(this.gameId).get()
+                    let game = doc.data();
+                    let num = game.players
+                    let names = []
+                    for(let i=0;i<num;i++){
+                        let s = `player${i+1}`
+                        names.push(game[s].name)
+                    }
+                    console.log(names)
+                    this.selectPlayer = names
+                    this.loadingOpenSaveGame = false;
+                } catch (error) {
+                    console.error("Oups, something wrong happened : "+error);
+                }
+            }
+        },
+        closeSaveGame(){
+            this.dialogSaveGame = false;
+            this.selectedPlayer = null;
+        },
+        async saveGame(){
+            let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer)+1}`
+            let routes = this.routes.map(x => {return {id:x.id, status:x.status}})
+            let tours = this.tours.map(x =>{ return{id:x.id, status: x.status}})
+            let update = {
+                name: this.selectedPlayer,
+                score: parseInt(this.computedTicketScore+this.computedHarborsScore+this.computedTrainsBoatsScore),
+                tickets: routes.concat(tours),
+                harbors: this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}}),
+                units: this.trainsAndBoats,
+                exchanges: this.exchanges
+            }
+            try {
+                await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
+            } catch (error) {
+                console.warn("Oups something went terribly wrong : "+error)
+            } finally {
+                this.closeSaveGame();
+            }
         },
         openAddTicket(){
             this.dialogTicket = true;
