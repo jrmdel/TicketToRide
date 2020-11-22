@@ -132,7 +132,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].units">
-                                                        <tr v-for="(i,x) in selectedGame.players[i-1].units" :key="i">
+                                                        <tr v-for="(i,x) in selectedGame.players[i-1].units" :key="x">
                                                             <td>{{ x }}</td>
                                                             <td>{{ i }}</td>
                                                         </tr>
