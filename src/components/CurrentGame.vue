@@ -11,21 +11,21 @@
                     <v-card-subtitle>
                         <v-container fluid>
                             <v-row>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" sm="6">
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Game version</span>
                                     </v-row>
-                                    <v-row justify="center" justify-md="start">
+                                    <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-select solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="['Around The World','Great Lakes']"></v-select>
+                                            <v-select class="mx-2" solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="['Around The World','Great Lakes']"></v-select>
                                         </v-col>
                                     </v-row>
                                 </v-col>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" sm="6">
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Total score</span>
                                     </v-row>
-                                    <v-row justify="center" justify-md="start">
+                                    <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
                                             <v-chip class="ml-sm-8" x-large color="secondary">
                                                 <span class="text-h3">{{parseInt(computedTicketScore+computedHarborsScore+computedTrainsBoatsScore)}}</span>
@@ -35,18 +35,35 @@
                                 </v-col>
                             </v-row>
                             <v-row>
-                                <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Save your game</span>
-                                </v-col>
-                                <v-col cols="12" md="6">
-                                    <v-row justify="center" justify-md="start">
-                                        <v-col cols="auto">
-                                            <v-text-field solo label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
+                                <v-col cols="12" sm="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Save your game</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12">
+                                            <v-row align="center" justify="center" justify-sm="start" no-gutters>
+                                                <v-col cols="auto">
+                                                    <v-text-field class="ma-2" solo hide-details label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
+                                                </v-col>
+                                                <v-col cols="auto">
+                                                    <v-btn class="ma-2" :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
+                                                        <v-icon>mdi-content-save-outline</v-icon>
+                                                        <span class="ml-3 mr-1">SAVE</span>
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
                                         </v-col>
+                                    </v-row>
+                                </v-col>
+                                <v-col cols="12" sm="6">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Reset everything</span>
+                                    </v-row>
+                                    <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-btn :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
-                                                <v-icon>mdi-content-save-outline</v-icon>
-                                                <span class="ml-3 mr-1">SAVE</span>
+                                            <v-btn x-large class="ml-sm-8" color="accent" @click="openReset('all')">
+                                                <v-icon>mdi-restore</v-icon>
+                                                <span class="ml-3 mr-1">RESET</span>
                                             </v-btn>
                                         </v-col>
                                     </v-row>
@@ -450,12 +467,14 @@
                 <v-toolbar flat color="quaternary" dark>
                     <v-toolbar-title>Player selection</v-toolbar-title>
                 </v-toolbar>
-                <v-card-subtitle>Choose which player you are</v-card-subtitle>
                 <v-card-text>
                     <v-container fluid>
                         <v-row>
+                            <v-col cols="12">
+                                <span class="text-h6 tertiary--text">Choose which player you are</span>
+                            </v-col>
                             <v-col cols="auto">
-                                <v-select solo v-model="selectedPlayer" :loading="loadingOpenSaveGame" hide-details color="secondary" label="Select your name" :items="selectPlayer"></v-select>
+                                <v-select solo v-model="selectedPlayer" :loading="loadingOpenSaveGame" :error-messages="saveGameSelectErrorMessage" color="secondary" label="Select your name" :items="selectPlayer"></v-select>
                             </v-col>
                         </v-row>
                     </v-container>
@@ -532,6 +551,7 @@ export default {
         resetType: "",
         gameId: "",
         loadingOpenSaveGame: false,
+        saveGameSelectErrorMessage: null,
     }),
     props:{
         id: {
@@ -676,6 +696,13 @@ export default {
                 }
             }
         },
+        gameId:{
+            handler(value){
+                if(value){
+                    localStorage.setItem("id",value);
+                }
+            }
+        }
     },
     methods:{
         deleteItem(item){
@@ -696,25 +723,34 @@ export default {
                 this.loadingOpenSaveGame = false;
             } else {
                 try {
+                    // Retrieve document to get the names
                     let doc = await db.collection('Games').doc(this.gameId).get()
                     let game = doc.data();
-                    let num = game.players
-                    let names = []
-                    for(let i=0;i<num;i++){
-                        let s = `player${i+1}`
-                        names.push(game[s].name)
+                    if(game){
+                        let num = game.players
+                        let names = []
+                        for(let i=0;i<num;i++){
+                            let s = `player${i+1}`
+                            names.push(game[s].name)
+                        }
+                        console.log(names)
+                        this.selectPlayer = names
+                    } else {
+                        // No game found with this ID
+                        this.saveGameSelectErrorMessage = "The ID you entered is not assigned"
                     }
-                    console.log(names)
-                    this.selectPlayer = names
-                    this.loadingOpenSaveGame = false;
                 } catch (error) {
-                    console.error("Oups, something wrong happened : "+error);
+                    this.saveGameSelectErrorMessage = "Oups, something wrong happened. Contact tha website admin."
+                    console.error("When computing names from firebase document : "+error);
+                } finally {
+                    this.loadingOpenSaveGame = false;
                 }
             }
         },
         closeSaveGame(){
             this.dialogSaveGame = false;
             this.selectedPlayer = null;
+            this.saveGameSelectErrorMessage = null;
         },
         async saveGame(){
             let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer)+1}`
@@ -741,8 +777,13 @@ export default {
         },
         addTicket(){
             let ticket = (this.foundTickets.length == 1) ? this.foundTickets[0] : this.selectedTicket[0]
-            if(ticket.type == Types.TOUR) this.tours.push({...ticket, status:"Fail"});
-            else this.routes.push({...ticket, status:"Fail"});
+            if(ticket.type == Types.TOUR){
+                this.tours.push({...ticket, status:"Fail"});
+                localStorage.setItem("tours",JSON.stringify(this.tours))
+            } else {
+                this.routes.push({...ticket, status:"Fail"});
+                localStorage.setItem("tours",JSON.stringify(this.tours))
+            }
             this.fromTicket = null;
         },
         closeAddTicket(){
@@ -755,6 +796,7 @@ export default {
         },
         addHarbor(){
             this.harbors.push(this.newHarbor);
+            localStorage.setItem("harbors",JSON.stringify(this.harbors));
             if(this.harbors.length==3) this.closeAddHarbor();
             else {
                 this.newHarbor = null;
@@ -789,22 +831,33 @@ export default {
             if(this.resetType == "tickets") this.resetTickets();
             else if(this.resetType == "units") this.resetTrainsAndBoats();
             else if(this.resetType == "harbors") this.resetHarbors();
+            else {
+                this.resetTickets();
+                this.resetTrainsAndBoats();
+                this.resetHarbors();
+                this.gameId = "";
+            }
             this.dialogReset = false;
             this.resetType = "";
         },
         resetTickets(){
             this.routes = []
             this.tours = []
+            if(localStorage.getItem("routes")) localStorage.removeItem("routes")
+            if(localStorage.getItem("tours")) localStorage.removeItem("tours")
         },
         resetTrainsAndBoats(){
             this.trainsAndBoats = Object.assign({},this.defaultTrainsAndBoats);
             this.exchanges = 0;
+            if(localStorage.getItem("units")) localStorage.removeItem("units");
         },
         resetHarbors(){
             this.harbors = [];
+            if(localStorage.getItem("harbors")) localStorage.removeItem("harbors")
         },
         updateTrainsAndBoats(event){
             this.trainsAndBoats[event.units]+=event.update;
+            localStorage.setItem("units", JSON.stringify(this.trainsAndBoats));
         },
         toggleToDone(item){
             let id = this.routes.indexOf(item);
@@ -828,7 +881,42 @@ export default {
         }
     },
     mounted(){
-        this.tickets = Tickets.World
+        this.tickets = Tickets.World;
+        if(localStorage.getItem("id")){
+            try {
+                this.gameId = localStorage.getItem("id");
+            } catch (error) {
+                localStorage.removeItem("id");
+            }
+        }
+        if(localStorage.getItem("units")){
+            try {
+                this.trainsAndBoats = JSON.parse(localStorage.getItem("units"))
+            } catch (error) {
+                localStorage.removeItem('units');
+            }
+        }
+        if(localStorage.getItem("harbors")){
+            try {
+                this.harbors = JSON.parse(localStorage.getItem("harbors"))
+            } catch (error) {
+                localStorage.removeItem('harbors');
+            }
+        }
+        if(localStorage.getItem("routes")){
+            try {
+                this.routes = JSON.parse(localStorage.getItem("routes"))
+            } catch (error) {
+                localStorage.removeItem('routes');
+            }
+        }
+        if(localStorage.getItem("tours")){
+            try {
+                this.tours = JSON.parse(localStorage.getItem("tours"))
+            } catch (error) {
+                localStorage.removeItem('tours');
+            }
+        }
     }
   }
 </script>
