@@ -446,7 +446,7 @@
         </v-dialog>
 
         <v-dialog v-model="dialogSaveGame" max-width="400">
-            <v-card :loading="loadingOpenSaveGame">
+            <v-card>
                 <v-toolbar flat color="quaternary" dark>
                     <v-toolbar-title>Player selection</v-toolbar-title>
                 </v-toolbar>
@@ -455,7 +455,7 @@
                     <v-container fluid>
                         <v-row>
                             <v-col cols="auto">
-                                <v-select solo v-model="selectedPlayer" hide-details color="secondary" label="Select your name" :items="selectPlayer"></v-select>
+                                <v-select solo v-model="selectedPlayer" :loading="loadingOpenSaveGame" hide-details color="secondary" label="Select your name" :items="selectPlayer"></v-select>
                             </v-col>
                         </v-row>
                     </v-container>

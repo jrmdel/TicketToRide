@@ -78,13 +78,13 @@
                         </v-card-text>
                     </v-card>
                 </v-tab-item>
-                <template v-if="selectedGame">
+                <template v-if="selectedGame!=null">
                     <v-tab-item v-for="i in selectedGame.players.length" :key="i">
                         <v-card flat>
                             <v-container >
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Tickets</span>
+                                        <span class="text-h6 tertiary--text">Tickets {{i}}</span>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -132,9 +132,9 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].units">
-                                                        <tr v-for="(i,x) in selectedGame.players[i-1].units" :key="x">
+                                                        <tr v-for="(j,x) in selectedGame.players[i-1].units" :key="x">
                                                             <td>{{ x }}</td>
-                                                            <td>{{ i }}</td>
+                                                            <td>{{ j }}</td>
                                                         </tr>
                                                     </tbody>
                                                     <tbody v-show="!selectedGame.players[i-1].units">
@@ -151,9 +151,6 @@
                         </v-card>
                     </v-tab-item>
                 </template>
-                <v-tab-item>
-                    <v-card flat></v-card>
-                </v-tab-item>
             </v-tabs>
 
         </v-dialog>
@@ -243,7 +240,7 @@ export default {
             for(let i=0;i<item.players;i++){
                 let p = `player${i+1}`
                 let t = (item.version == "Around The World") ? Tickets.World : Tickets.GreatLakes
-                let doc = item[p];
+                let doc = Object.assign({},item[p]);
                 doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
                 computed.push(doc)
             }
