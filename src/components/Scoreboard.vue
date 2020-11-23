@@ -84,7 +84,7 @@
                             <v-container >
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Tickets {{i}}</span>
+                                        <span class="text-h6 tertiary--text">Tickets</span>
                                     </v-col>
                                 </v-row>
                                 <v-row>
