@@ -10,8 +10,11 @@
                     </v-toolbar>
                     <v-card-text>
                         <v-data-table :loading="loadingData" :headers="headers" :items="games" item-key="id" multi-sort>
-                            <template v-slot:[`item.actions`]="{ item }">
+                            <template v-slot:[`item.details`]="{ item }">
                                 <v-icon  @click="openDetails(item)">mdi-eye</v-icon>
+                            </template>
+                            <template v-slot:[`item.actions`]="{ item }">
+                                <v-icon color="red" @click="deleteItem(item)">mdi-delete-forever</v-icon>
                             </template>
                         </v-data-table>
                     </v-card-text>
@@ -22,8 +25,12 @@
         <v-dialog v-model="dialogDetails" max-width="800" @click:outside="closeDetails">
             <v-toolbar flat dark color="primary">
                 <v-toolbar-title>Game details</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon @click="closeDetails">
+                    <v-icon>mdi-close</v-icon>
+                </v-btn>
             </v-toolbar>
-            <v-tabs vertical color="secondary">
+            <v-tabs mobile-breakpoint="0" :vertical="$vuetify.breakpoint.mdAndUp" color="secondary">
                 <v-tab>
                     <v-icon left>mdi-chart-box-outline</v-icon>
                     Summary
@@ -170,7 +177,8 @@ export default {
                 {text:"Players", align:"start", value:"players", sortable: true},
                 {text:"Winner", align:"start", value:"winner", sortable: true},
                 {text:"Score", align:"start", value:"score", sortable: true},
-                {text:"Details", align:"center", value:"actions", sortable: false}
+                {text:"Details", align:"center", value:"details", sortable: false},
+                {text:"Actions", align:"center", value:"actions", sortable: false}
                 ],
             ticketHeaders:[
                 {text:"From", align:"start", value:"cities[0]", sortable: true, class:"primaryLight"},
@@ -241,12 +249,23 @@ export default {
                 let p = `player${i+1}`
                 let t = (item.version == "Around The World") ? Tickets.World : Tickets.GreatLakes
                 let doc = Object.assign({},item[p]);
-                doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
+                if(doc.tickets) doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
                 computed.push(doc)
             }
-            obj.players = computed
+            obj.players = computed;
             this.selectedGame = Object.assign({},obj);
             this.dialogDetails = true;
+        },
+        async deleteItem(item){
+            try {
+                let ok = window.confirm("You are about to delete this game. Are you sure ?")
+                if(ok){
+                    await db.collection('Games').doc(item.id).delete();
+                    console.log("Game deleted successfully");
+                }
+            } catch (error) {
+                console.warn("An error occured while deleting game : "+error);
+            }
         },
         closeDetails(){
             this.dialogDetails = false;

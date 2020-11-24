@@ -14,7 +14,7 @@
         </v-btn>
 
         <template v-slot:extension>
-            <v-tabs v-model="tab">
+            <v-tabs v-model="tab" mobile-breakpoint="0">
             <v-tabs-slider color="secondary"></v-tabs-slider>
             <v-tab>Current game</v-tab>
             <v-tab>Scoreboard</v-tab>

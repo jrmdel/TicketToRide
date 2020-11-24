@@ -39,19 +39,23 @@
                                     <v-row>
                                         <span class="text-h6 tertiary--text">Save your game</span>
                                     </v-row>
-                                    <v-row>
-                                        <v-col cols="12">
-                                            <v-row align="center" justify="center" justify-sm="start" no-gutters>
-                                                <v-col cols="auto">
-                                                    <v-text-field class="ma-2" solo hide-details label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
-                                                </v-col>
-                                                <v-col cols="auto">
-                                                    <v-btn class="ma-2" :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
-                                                        <v-icon>mdi-content-save-outline</v-icon>
-                                                        <span class="ml-3 mr-1">SAVE</span>
-                                                    </v-btn>
-                                                </v-col>
-                                            </v-row>
+                                    <v-row align="center" justify="center" justify-sm="start">
+                                        <v-col cols="auto">
+                                            <v-text-field class="ma-2" solo hide-details label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row align="center" justify="center" justify-sm="start" no-gutters>
+                                        <v-col cols="auto">
+                                            <v-btn class="ma-2" :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
+                                                <v-icon>mdi-content-save-outline</v-icon>
+                                                <span class="ml-3 mr-1">SAVE</span>
+                                            </v-btn>
+                                        </v-col>
+                                        <v-col cols="auto">
+                                            <v-btn class="ma-2" :disabled="gameId.length!=20" large color="secondary" @click="shareGameId">
+                                                <v-icon>mdi-share-variant</v-icon>
+                                                <span class="ml-3 mr-1">SHARE THIS ID</span>
+                                            </v-btn>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -772,6 +776,21 @@ export default {
                 this.closeSaveGame();
             }
         },
+        async shareGameId(){
+            this.loadingShare = true;
+            let shareData = {
+                title: 'Let\'s play!',
+                text: this.gameId,
+                url: 'https://jrmdel.github.io/TicketToRide',
+            }
+            try {
+                await navigator.share(shareData);
+            } catch (error) {
+                console.warn("Impossible to share the ID : "+error)
+            } finally {
+                this.loadingShare = false;
+            }
+        },
         openAddTicket(){
             this.dialogTicket = true;
         },
@@ -836,6 +855,7 @@ export default {
                 this.resetTrainsAndBoats();
                 this.resetHarbors();
                 this.gameId = "";
+                localStorage.removeItem("id");
             }
             this.dialogReset = false;
             this.resetType = "";
