@@ -14,6 +14,8 @@ export default new Vuetify({
                 accent: colors.yellow.accent4,
                 tertiary: colors.grey.darken4,
                 quaternary: "#B57F50",
+                success: "#00C49A",
+                error:"#C42348"
             }
         }
     }

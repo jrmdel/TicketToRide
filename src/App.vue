@@ -131,6 +131,7 @@ export default {
         closeCreate(){
             this.dialogCreate = false;
             this.loadingCreate = false;
+            this.players = 3;
             this.names = Object.assign({}, this.defaultNames);
             this.version = null;
             setTimeout(() => {

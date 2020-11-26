@@ -486,10 +486,11 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn color="accent" text @click="closeSaveGame">Cancel</v-btn>
-                    <v-btn color="secondary" :disabled="selectedPlayer==null" text @click="saveGame">Save</v-btn>
+                    <v-btn color="secondary" :loading="loadingSave" :disabled="selectedPlayer==null" text @click="saveGame">Save</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-snackbar top v-model="snack" :timeout="5000" :color="snackColor"> {{snackMsg}} </v-snackbar>
     </v-container>
 </template>
 
@@ -556,6 +557,10 @@ export default {
         gameId: "",
         loadingOpenSaveGame: false,
         saveGameSelectErrorMessage: null,
+        loadingSave: false,
+        snack: false,
+        snackColor: "",
+        snackMsg: ""
     }),
     props:{
         id: {
@@ -744,8 +749,9 @@ export default {
                         this.saveGameSelectErrorMessage = "The ID you entered is not assigned"
                     }
                 } catch (error) {
-                    this.saveGameSelectErrorMessage = "Oups, something wrong happened. Contact tha website admin."
+                    this.saveGameSelectErrorMessage = "Oups, something wrong happened. Contact the website admin."
                     console.error("When computing names from firebase document : "+error);
+                    this.notifySnack("Unable to retrieve the players' name. Try again.","error")
                 } finally {
                     this.loadingOpenSaveGame = false;
                 }
@@ -757,6 +763,7 @@ export default {
             this.saveGameSelectErrorMessage = null;
         },
         async saveGame(){
+            this.loadingSave = true;
             let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer)+1}`
             let routes = this.routes.map(x => {return {id:x.id, status:x.status}})
             let tours = this.tours.map(x =>{ return{id:x.id, status: x.status}})
@@ -770,10 +777,13 @@ export default {
             }
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
+                this.notifySnack("Your game was saved!","success")
             } catch (error) {
                 console.warn("Oups something went terribly wrong : "+error)
+                this.notifySnack("Someting went wrong. Try again.", "error");
             } finally {
                 this.closeSaveGame();
+                this.loadingSave = false;
             }
         },
         async shareGameId(){
@@ -898,6 +908,11 @@ export default {
         toggleToUnordered(item){
             let id = this.tours.indexOf(item);
             if(id > -1) this.tours[id].status = "Unordered"
+        },
+        notifySnack(msg,col){
+            this.snackColor = col;
+            this.snackMsg = msg;
+            this.snack = true;
         }
     },
     mounted(){

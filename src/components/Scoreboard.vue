@@ -233,6 +233,7 @@ export default {
             selectedGame: null,
             dialogDetails: false,
             loadingData: false,
+            unsubscribe: null,
         }
     },
     methods:{
@@ -276,32 +277,56 @@ export default {
             else if(status == "Fail") return "red"
             else return "amber"
         },
+        computeObjectFromFirebase(doc){
+            let docData = doc.data();
+            let p = []
+            for(let i=0;i<docData.players;i++){
+                let w = docData[`player${i+1}`]
+                p.push({name: w.name, score:w.score})
+            }
+            p.sort((a,b)=> b.score-a.score)
+            let top = p[0].score
+            let res = p.filter(x=>x.score==top)
+            let winner = ""
+            for(let j=0;j<res.length;j++){
+                (j==0) ? winner+=res[j].name : winner+=`, ${res[j].name}`
+            }
+            return {id: doc.id, ...docData, winner: winner, score:top, rankings:p}
+        },
         async getFirebaseData(){
             this.loadingData = true
             let snapshot = await db.collection('Games').get();
             let games = []
             snapshot.forEach(doc => {
-                let d = doc.data()
-                let p = []
-                for(let i=0;i<d.players;i++){
-                    let w = d[`player${i+1}`]
-                    p.push({name: w.name, score:w.score})
-                }
-                p.sort((a,b)=> b.score-a.score)
-                let top = p[0].score
-                let res = p.filter(x=>x.score==top)
-                let winner = ""
-                for(let j=0;j<res.length;j++){
-                    (j==0) ? winner+=res[j].name : winner+=`, ${res[j].name}`
-                }
-                games.push({id: doc.id, ...doc.data(), winner: winner, score:top, rankings:p})
+                games.push(this.computeObjectFromFirebase(doc))
             })
             this.games = games;
             this.loadingData = false;
         },
+        async getRealTimeData(){
+            this.isLoadingData = true;
+            let unsubscribe = await db.collection('Games').onSnapshot(query => {
+                query.docChanges().forEach(change => {
+                    if(change.type == "removed") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1)
+                    else {
+                        let doc = this.computeObjectFromFirebase(change.doc)
+                        if(change.type == "added") this.games.push(doc)
+                        else if(change.type == "modified") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1,doc)
+                    }
+                })
+            }, error=>{
+                console.warn("Firebase query failed : "+error);
+            })
+            this.unsubscribe = unsubscribe;
+            this.loadingData = false;
+        }
     },
     mounted(){
-        this.getFirebaseData()
+        //this.getFirebaseData()
+        this.getRealTimeData();
+    },
+    beforeDestroy(){
+        this.unsubscribe();
     }
 }
 </script>
