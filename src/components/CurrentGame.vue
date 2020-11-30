@@ -134,8 +134,8 @@
                                                 <v-icon large @click="deleteItem(item)">mdi-delete-forever</v-icon>
                                             </template>
                                             <template v-slot:[`item.actions`]="{ item }">
-                                                <v-icon large v-show="item.status != 'Done'" color="green" @click="toggleToDone(item)">mdi-check</v-icon>
-                                                <v-icon large v-show="item.status != 'Fail'" color="red" @click="toggleToFail(item)">mdi-close</v-icon>
+                                                <v-icon large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
+                                                <v-icon large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
                                                 <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
@@ -160,9 +160,9 @@
                                                 <v-icon large @click="deleteItem(item)">mdi-delete-forever</v-icon>
                                             </template>
                                             <template v-slot:[`item.actions`]="{ item }">
-                                                <v-icon class="mx-1" large v-show="item.status != 'Done'" color="green" @click="toggleToDone(item)">mdi-check</v-icon>
-                                                <v-icon class="mx-1" large v-show="item.status != 'Fail'" color="red" @click="toggleToFail(item)">mdi-close</v-icon>
-                                                <v-icon class="mx-1" large v-show="item.status != 'Unordered'" color="amber" @click="toggleToUnordered(item)">mdi-compass-off-outline</v-icon>
+                                                <v-icon class="mx-1" large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
+                                                <v-icon class="mx-1" large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
+                                                <v-icon class="mx-1" large v-show="item.status != 'Unordered'" color="amber" @click="toggleTo(item,'Unordered')">mdi-compass-off-outline</v-icon>
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
                                                 <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
@@ -588,7 +588,7 @@ export default {
         computedTicketScore:{
             get(){
                 let r = (this.routes.length>0) ? this.routes.map(x => (x.status=="Done") ? x.points : -1*x.points).reduce((a, b) => a + b, 0) : 0
-                let t = (this.tours.length>0) ? this.tours.map(x => (x.status=="Fail") ? x.points_failed : (x.status=="Done") ? x.points : x.points_unorderded) : 0
+                let t = (this.tours.length>0) ? this.tours.map(x => (x.status=="Fail") ? x.points_failed : (x.status=="Done") ? x.points : x.points_unorderded).reduce((a, b) => a + b, 0) : 0
                 return parseInt(r)+parseInt(t)
             }
         },
@@ -683,11 +683,9 @@ export default {
         },
         selectVersion:{
             handler(value){
-                this.resetTickets();
-                this.resetHarbors();
-                this.resetTrainsAndBoats();
                 if(value){
                     this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
+                    localStorage.setItem("version", value);
                 }
             }
         },
@@ -695,6 +693,15 @@ export default {
             handler(value){
                 if(value){
                     this.selectVersion = value
+                }
+            }
+        },
+        exchanges:{
+            handler(value){
+                if(value){
+                    localStorage.setItem("exchanges",value)
+                } else {
+                    if(localStorage.getItem("exchanges")) localStorage.removeItem("exchanges")
                 }
             }
         },
@@ -811,7 +818,7 @@ export default {
                 localStorage.setItem("tours",JSON.stringify(this.tours))
             } else {
                 this.routes.push({...ticket, status:"Fail"});
-                localStorage.setItem("tours",JSON.stringify(this.tours))
+                localStorage.setItem("routes",JSON.stringify(this.routes))
             }
             this.fromTicket = null;
         },
@@ -865,6 +872,9 @@ export default {
                 this.resetTrainsAndBoats();
                 this.resetHarbors();
                 this.gameId = "";
+                this.selectVersion = "Around The World"
+                this.tickets = Tickets.World;
+                localStorage.removeItem("version");
                 localStorage.removeItem("id");
             }
             this.dialogReset = false;
@@ -889,25 +899,15 @@ export default {
             this.trainsAndBoats[event.units]+=event.update;
             localStorage.setItem("units", JSON.stringify(this.trainsAndBoats));
         },
-        toggleToDone(item){
+        toggleTo(item,status){
             let id = this.routes.indexOf(item);
             if(id == -1){
-                this.tours[this.tours.indexOf(item)].status = "Done"
+                this.tours[this.tours.indexOf(item)].status = status
+                localStorage.setItem("tours",JSON.stringify(this.tours))
             } else {
-                this.routes[id].status = "Done"
+                this.routes[id].status = status;
+                localStorage.setItem("routes", JSON.stringify(this.routes));
             }
-        },
-        toggleToFail(item){
-            let id = this.routes.indexOf(item);
-            if(id == -1){
-                this.tours[this.tours.indexOf(item)].status = "Fail"
-            } else {
-                this.routes[id].status = "Fail"
-            }
-        },
-        toggleToUnordered(item){
-            let id = this.tours.indexOf(item);
-            if(id > -1) this.tours[id].status = "Unordered"
         },
         notifySnack(msg,col){
             this.snackColor = col;
@@ -916,7 +916,16 @@ export default {
         }
     },
     mounted(){
-        this.tickets = Tickets.World;
+        if(localStorage.getItem("version")){
+            try {
+                this.selectVersion = localStorage.getItem("version")
+                this.tickets = (this.version=="Great Lakes") ? Tickets.World : Tickets.GreatLakes
+            } catch (error) {
+                localStorage.removeItem("version");
+            }
+        } else {
+            this.tickets = Tickets.World
+        }
         if(localStorage.getItem("id")){
             try {
                 this.gameId = localStorage.getItem("id");
@@ -950,6 +959,13 @@ export default {
                 this.tours = JSON.parse(localStorage.getItem("tours"))
             } catch (error) {
                 localStorage.removeItem('tours');
+            }
+        }
+        if(localStorage.getItem("exchanges")){
+            try {
+                this.exchanges = localStorage.getItem("exchanges")
+            } catch (error) {
+                localStorage.removeItem('exchanges');
             }
         }
     }

@@ -14,7 +14,7 @@
                                 <v-icon  @click="openDetails(item)">mdi-eye</v-icon>
                             </template>
                             <template v-slot:[`item.actions`]="{ item }">
-                                <v-icon color="red" @click="deleteItem(item)">mdi-delete-forever</v-icon>
+                                <v-icon v-if="dateInRange(item.date)" color="quaternary" @click="joinGame(item)">mdi-puzzle-edit-outline</v-icon>
                             </template>
                         </v-data-table>
                     </v-card-text>
@@ -189,46 +189,6 @@ export default {
                 {text: "City", align:"start", value:"city", sortable: false, class:"primaryLight"},
                 {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight"}
             ],
-            /*games: [
-                {
-                    id:"3TLh5CIY36OFdBopZETx",
-                    date:"2020-11-15",
-                    version:"Around The World",
-                    players:2,
-                    player1: {
-                        name: "Jeremie",
-                        score: 147,
-                        tickets: [
-                            {id: 2, status:"Done"},
-                            {id: 43, status:"Done"}
-                        ],
-                        harbors:[
-                            {city:"Sydney", score:40}
-                        ],
-                        units:{
-                            "1":4,
-                            "2":3,
-                            "7":3
-                        }
-                    },
-                    player2: {
-                        name: "Delphine",
-                        score: 136,
-                        tickets:[
-                            {id: 5, status:"Done"},
-                            {id:61, status:"Unordered"}
-                        ],
-                        harbors:[
-                            {city: "Marseille", score:20}
-                        ],
-                        units:{
-                            "1":6,
-                            "2":2,
-                            "7":1
-                        }
-                    }
-                }
-            ],*/
             games: [],
             selectedGame: null,
             dialogDetails: false,
@@ -277,6 +237,18 @@ export default {
             else if(status == "Fail") return "red"
             else return "amber"
         },
+        dateInRange(date){
+            let d = new Date(Date.parse(date))
+            let today = new Date()
+            if(d > new Date(today.setDate(today.getDate() - 2))){
+                return true
+            } else return false
+        },
+        joinGame(item){
+            // Changes the tab and send the ID + version
+            let myEvent = {id: item.id, version: item.version}
+            this.$emit("joinGame",myEvent)
+        },
         computeObjectFromFirebase(doc){
             let docData = doc.data();
             let p = []
@@ -304,7 +276,7 @@ export default {
             this.loadingData = false;
         },
         async getRealTimeData(){
-            this.isLoadingData = true;
+            this.loadingData = true;
             let unsubscribe = await db.collection('Games').onSnapshot(query => {
                 query.docChanges().forEach(change => {
                     if(change.type == "removed") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1)

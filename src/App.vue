@@ -29,7 +29,7 @@
                     <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
+                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Help class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
@@ -137,6 +137,11 @@ export default {
             setTimeout(() => {
                 this.$refs.newGameForm.resetValidation();
             }, 50);
+        },
+        actOnJoinGame(event){
+            this.currentGameId = event.id;
+            this.currentGameVersion = event.version;
+            this.tab = 0;
         },
         async createGame(){
             this.loadingCreate = true;
