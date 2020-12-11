@@ -26,7 +26,7 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetPlayers="resetGamePlayers()"/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetPlayers="resetGamePlayers()"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
@@ -89,6 +89,31 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-dialog v-model="dialogWrongTickets" max-width="500">
+            <v-card>
+                <v-toolbar flat color="secondary" dark>
+                    <v-toolbar-title>Be careful !</v-toolbar-title>
+                </v-toolbar>
+                <v-card-text class="text-body-1 tertiary--text">
+                    <v-container>
+                        <v-row>
+                            <v-col>
+                                <div>You have just joined a game that <span class="font-weight-bold">does not</span> correspond to the tickets you have.</div>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <v-col>
+                                <div>Please reset your current game and try joining this one again afterwards.</div>
+                            </v-col>
+                        </v-row>
+                    </v-container>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="secondary" text @click="dialogWrongTickets=false">OK</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-app>
 </template>
 
@@ -119,6 +144,7 @@ export default {
         tab: null,
         newGameForm: false,
         dialogCreate: false,
+        dialogWrongTickets: false,
         currentGameId: "",
         currentGameVersion: "",
         currentGamePlayers: [],
@@ -139,9 +165,14 @@ export default {
             }, 50);
         },
         actOnJoinGame(event){
-            this.currentGameId = event.id;
-            this.currentGameVersion = event.version;
             this.tab = 0;
+            if(this.$refs.currentGame.getRoutes().filter(x => x.game != event.version).length > 0){
+                this.dialogWrongTickets = true;
+            } else {
+                this.currentGameId = event.id;
+                this.currentGameVersion = event.version;
+                this.resetGamePlayers();
+            }
         },
         resetGamePlayers(){
             this.currentGamePlayers = new Array();

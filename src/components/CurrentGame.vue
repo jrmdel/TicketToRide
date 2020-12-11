@@ -89,7 +89,7 @@
                             <v-row justify="center" justify-sm="space-around">
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of tickets</span>
-                                    <span class="ml-4 text-h3">{{routes.length+tours.length}}</span>
+                                    <span class="ml-4 text-h3">{{routes.length}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb completed</span>
@@ -134,35 +134,15 @@
                                                 <v-icon large @click="deleteItem(item)">mdi-delete-forever</v-icon>
                                             </template>
                                             <template v-slot:[`item.actions`]="{ item }">
-                                                <v-icon large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
-                                                <v-icon large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
-                                            </template>
-                                            <template v-slot:[`item.status`]="{ item }">
-                                                <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
-                                            </template>
-                                        </v-data-table>
-                                    </v-card>
-                                </v-col>
-                            </v-row>
-                            <v-row v-if="selectVersion == 'Around The World'">
-                                <v-col cols="12">
-                                    <v-card outlined flat class="primaryLight">
-                                        <v-card-title class="text-h4 font-weight-light">
-                                            Tours
-                                            <v-spacer></v-spacer>
-                                            <v-text-field v-model="searchTours" append-icon="mdi-magnify"
-                                            label="Search" single-line clearable hide-details></v-text-field>
-                                        </v-card-title>
-                                        <v-data-table class="py-6" :headers="headersTours" :items="tours" item-key='id'
-                                        :search="searchTours" multi-sort
-                                        :footer-props="{'items-per-page-options': [-1] }">
-                                            <template v-slot:[`item.delete`]="{ item }">
-                                                <v-icon large @click="deleteItem(item)">mdi-delete-forever</v-icon>
-                                            </template>
-                                            <template v-slot:[`item.actions`]="{ item }">
-                                                <v-icon class="mx-1" large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
-                                                <v-icon class="mx-1" large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
-                                                <v-icon class="mx-1" large v-show="item.status != 'Unordered'" color="amber" @click="toggleTo(item,'Unordered')">mdi-compass-off-outline</v-icon>
+                                                <div v-if="isTour(item.type)">
+                                                    <v-icon class="mx-1" large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
+                                                    <v-icon class="mx-1" large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
+                                                    <v-icon class="mx-1" large v-show="item.status != 'Unordered'" color="amber" @click="toggleTo(item,'Unordered')">mdi-compass-off-outline</v-icon>
+                                                </div>
+                                                <div v-else>
+                                                    <v-icon large v-show="item.status != 'Done'" color="green" @click="toggleTo(item,'Done')">mdi-check</v-icon>
+                                                    <v-icon large v-show="item.status != 'Fail'" color="red" @click="toggleTo(item,'Fail')">mdi-close</v-icon>
+                                                </div>
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
                                                 <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
@@ -526,7 +506,7 @@ export default {
         tickets: [],
         headersRoutes:[
             {text:"From", align:"start", value:"cities[0]", sortable: true},
-            {text:"To", align:"start", value:"cities[1]", sortable: true},
+            {text:"To", align:"start", value:"to", sortable: true},
             {text:"Points", align:"start", value:"points", sortable: true},
             {text:"Status", align:"start", value:"status", sortable: true},
             {text:"Actions", align:"center", value:"actions", sortable: false},
@@ -534,17 +514,6 @@ export default {
         ],
         searchRoutes: "",
         routes: [],
-        headersTours:[
-            {text:"From", align:"start", value:"cities[0]", sortable: true},
-            {text:"To", align:"start", value:"to", sortable: true},
-            {text:"Steps", align:"start", value:"cities.length", sortable: true},
-            {text:"Points", align:"start", value:"points", sortable: true},
-            {text:"Status", align:"start", value:"status", sortable: true},
-            {text:"Actions", align:"center", value:"actions", sortable: false},
-            {text:"Delete", align:"center", value:"delete", sortable: true},
-        ],
-        searchTours: "",
-        tours: [],
         selectVersion: "Around The World",
         selectPlayer: [],
         selectedPlayer: null,
@@ -582,14 +551,17 @@ export default {
         },
         computedCompletion:{
             get(){
-                return this.routes.filter(route => route.status == "Done").length+this.tours.filter(tour => tour.status != "Fail").length
+                return this.routes.filter(route => route.status == "Done").length
             }
         },
         computedTicketScore:{
             get(){
-                let r = (this.routes.length>0) ? this.routes.map(x => (x.status=="Done") ? x.points : -1*x.points).reduce((a, b) => a + b, 0) : 0
-                let t = (this.tours.length>0) ? this.tours.map(x => (x.status=="Fail") ? x.points_failed : (x.status=="Done") ? x.points : x.points_unorderded).reduce((a, b) => a + b, 0) : 0
-                return parseInt(r)+parseInt(t)
+                function computeScore(item){
+                    if(item.type == Types.TOUR){
+                        return (item.status=="Fail") ? item.points_failed : (item.status=="Done") ? item.points : item.points_unorderded
+                    } else return (item.status=="Done") ? item.points : -1*item.points
+                }
+                return (this.routes.length>0) ? this.routes.map(computeScore).reduce((a, b) => a + b, 0) : 0
             }
         },
         computedTrainsBoatsScore:{
@@ -601,16 +573,9 @@ export default {
         computedTopCities:{
             get(){
                 let r = this.routes
-                let t = this.tours
                 let counts = {};
                 for(let i=0, l=r.length; i<l; i++){
                     let c = r[i].cities
-                    for(let j=0; j<c.length; j++){
-                        counts[c[j]] = (counts[c[j]] || 0) + 1
-                    }
-                }
-                for(let i=0, l=t.length; i<l; i++){
-                    let c = t[i].cities
                     for(let j=0; j<c.length; j++){
                         counts[c[j]] = (counts[c[j]] || 0) + 1
                     }
@@ -621,19 +586,10 @@ export default {
         computedTopSuccessfulCities:{
             get(){
                 let r = this.routes
-                let t = this.tours
                 let counts = {};
                 for(let i=0, l=r.length; i<l; i++){
                     if(r[i].status != "Fail"){
                         let c = r[i].cities
-                        for(let j=0; j<c.length; j++){
-                            counts[c[j]] = (counts[c[j]] || 0) + 1
-                        }
-                    }
-                }
-                for(let i=0, l=t.length; i<l; i++){
-                    if(t[i].status != "Fail"){
-                        let c = t[i].cities
                         for(let j=0; j<c.length; j++){
                             counts[c[j]] = (counts[c[j]] || 0) + 1
                         }
@@ -723,7 +679,7 @@ export default {
     methods:{
         deleteItem(item){
             let id = this.routes.indexOf(item);
-            if(id < 0) this.tours.splice(this.tours.indexOf(item),1);
+            if(id < 0) this.notifySnack("Oups, ticket wasn't found", "error")
             else this.routes.splice(id,1);
         },
         getStatusColor(status){
@@ -773,11 +729,10 @@ export default {
             this.loadingSave = true;
             let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer)+1}`
             let routes = this.routes.map(x => {return {id:x.id, status:x.status}})
-            let tours = this.tours.map(x =>{ return{id:x.id, status: x.status}})
             let update = {
                 name: this.selectedPlayer,
                 score: parseInt(this.computedTicketScore+this.computedHarborsScore+this.computedTrainsBoatsScore),
-                tickets: routes.concat(tours),
+                tickets: routes,
                 harbors: this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}}),
                 units: this.trainsAndBoats,
                 exchanges: this.exchanges
@@ -811,15 +766,13 @@ export default {
         openAddTicket(){
             this.dialogTicket = true;
         },
+        isTour(type){
+            return type==Types.TOUR
+        },
         addTicket(){
             let ticket = (this.foundTickets.length == 1) ? this.foundTickets[0] : this.selectedTicket[0]
-            if(ticket.type == Types.TOUR){
-                this.tours.push({...ticket, status:"Fail"});
-                localStorage.setItem("tours",JSON.stringify(this.tours))
-            } else {
-                this.routes.push({...ticket, status:"Fail"});
-                localStorage.setItem("routes",JSON.stringify(this.routes))
-            }
+            this.routes.push({...ticket, status:"Fail"});
+            localStorage.setItem("routes",JSON.stringify(this.routes))
             this.fromTicket = null;
         },
         closeAddTicket(){
@@ -882,9 +835,7 @@ export default {
         },
         resetTickets(){
             this.routes = []
-            this.tours = []
             if(localStorage.getItem("routes")) localStorage.removeItem("routes")
-            if(localStorage.getItem("tours")) localStorage.removeItem("tours")
         },
         resetTrainsAndBoats(){
             this.trainsAndBoats = Object.assign({},this.defaultTrainsAndBoats);
@@ -902,8 +853,7 @@ export default {
         toggleTo(item,status){
             let id = this.routes.indexOf(item);
             if(id == -1){
-                this.tours[this.tours.indexOf(item)].status = status
-                localStorage.setItem("tours",JSON.stringify(this.tours))
+                this.notifySnack("Oups, ticket wasn't found", "error")
             } else {
                 this.routes[id].status = status;
                 localStorage.setItem("routes", JSON.stringify(this.routes));
@@ -922,7 +872,7 @@ export default {
         if(localStorage.getItem("version")){
             try {
                 this.selectVersion = localStorage.getItem("version")
-                this.tickets = (this.version=="Great Lakes") ? Tickets.World : Tickets.GreatLakes
+                this.tickets = (this.version=="Great Lakes") ? Tickets.GreatLakes : Tickets.World
             } catch (error) {
                 localStorage.removeItem("version");
             }
@@ -955,13 +905,6 @@ export default {
                 this.routes = JSON.parse(localStorage.getItem("routes"))
             } catch (error) {
                 localStorage.removeItem('routes');
-            }
-        }
-        if(localStorage.getItem("tours")){
-            try {
-                this.tours = JSON.parse(localStorage.getItem("tours"))
-            } catch (error) {
-                localStorage.removeItem('tours');
             }
         }
         if(localStorage.getItem("exchanges")){
