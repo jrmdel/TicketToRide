@@ -26,7 +26,7 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion"/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetPlayers="resetGamePlayers()"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
@@ -142,6 +142,9 @@ export default {
             this.currentGameId = event.id;
             this.currentGameVersion = event.version;
             this.tab = 0;
+        },
+        resetGamePlayers(){
+            this.currentGamePlayers = new Array();
         },
         async createGame(){
             this.loadingCreate = true;

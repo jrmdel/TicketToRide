@@ -850,7 +850,6 @@ export default {
             },50)
         },
         harborHasCity(city){
-            console.log(city)
             return this.harbors.includes(city)
         },
         getHarborScore(city){
@@ -876,6 +875,7 @@ export default {
                 this.tickets = Tickets.World;
                 localStorage.removeItem("version");
                 localStorage.removeItem("id");
+                this.$emit("resetPlayers");
             }
             this.dialogReset = false;
             this.resetType = "";
@@ -913,6 +913,9 @@ export default {
             this.snackColor = col;
             this.snackMsg = msg;
             this.snack = true;
+        },
+        getRoutes(){
+            return this.routes
         }
     },
     mounted(){
