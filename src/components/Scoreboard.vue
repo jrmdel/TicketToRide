@@ -79,7 +79,22 @@
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Statistics</span>
                                     </v-col>
-                                    <v-col cols=""></v-col>
+                                    <v-col cols="6">
+                                        <v-card tile color="secondary" dark>
+                                            <v-card-title class="text-subtitle-1">Total of units</v-card-title>
+                                            <v-card-text class="text-h4 white--text">
+                                                {{getTotalUnits(selectedGame.players)}}
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
+                                    <v-col cols="6">
+                                        <v-card tile color="primary" dark>
+                                            <v-card-title class="text-subtitle-1">Total of successful tickets</v-card-title>
+                                            <v-card-text class="text-h4 white--text">
+                                                {{getTotalSuccessfulTickets(selectedGame.players)}}
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
                                 </v-row>
                             </v-container>
                         </v-card-text>
@@ -89,6 +104,36 @@
                     <v-tab-item v-for="i in selectedGame.players.length" :key="i">
                         <v-card flat>
                             <v-container >
+                                <v-row>
+                                    <v-col cols="12">
+                                        <span class="text-h6 tertiary--text">Statistics</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="12">
+                                        <v-row>
+                                            <v-col cols="auto" class="mr-2">% tickets</v-col>
+                                            <v-col>
+                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedTickets.score/selectedGame.players[i-1].score"
+                                                readonly ></v-slider>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col cols="auto" class="mr-2">% harbors</v-col>
+                                            <v-col>
+                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedHarbors/selectedGame.players[i-1].score"
+                                                readonly ></v-slider>
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col cols="auto" class="mr-2">% units</v-col>
+                                            <v-col>
+                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedUnits.score/selectedGame.players[i-1].score"
+                                                readonly ></v-slider>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
+                                </v-row>
                                 <v-row>
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Tickets</span>
@@ -194,10 +239,38 @@ export default {
             dialogDetails: false,
             loadingData: false,
             unsubscribe: null,
+            scoreUnitsRule: {1:1, 2:2, 3:4, 4:7, 5:10, 6: 15, 7: 18, 8:21, 9:27},
         }
     },
     methods:{
         openDetails(item){
+            function getScoreAndNumberOfUnits(unitObject, rules){
+                let count = 0;
+                let score = 0;
+                for (let [key, value] of Object.entries(unitObject)){
+                    count += key*value;
+                    score += rules[key]*value;
+                }
+                return {count: count, score: score};
+            }
+            function getHarborsScore(arr){
+                let n = (3-arr.length)*-4;
+                return (arr.length>0) ? arr.map(x => x.score).reduce((a,b)=>a+b)+n : n;
+            }
+            function getTicketData(tickets){
+                let score = 0;
+                let fail = 0;
+                for(let i=0; i<tickets.length; i++){
+                    let o = tickets[i];
+                    if(o.status == "Done") score += o.points;
+                    else if(o.status == "Fail"){
+                        score += (o.points_failed) ? o.points_failed : -1*o.points;
+                        fail += 1;
+                    }
+                    else score += o.points_unorderded;
+                }
+                return {score: score, totalFailed: fail};
+            }
             let obj = {
                 date: item.date,
                 version: item.version,
@@ -211,7 +284,12 @@ export default {
                 let t = (item.version == "Around The World") ? Tickets.World : Tickets.GreatLakes
                 let doc = Object.assign({},item[p]);
                 if(doc.tickets) doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
-                computed.push(doc)
+                computed.push({
+                    ...doc,
+                    computedUnits: getScoreAndNumberOfUnits(doc.units, this.scoreUnitsRule),
+                    computedHarbors: getHarborsScore(doc.harbors),
+                    computedTickets: getTicketData(doc.tickets)
+                    })
             }
             obj.players = computed;
             this.selectedGame = Object.assign({},obj);
@@ -227,6 +305,22 @@ export default {
             } catch (error) {
                 console.warn("An error occured while deleting game : "+error);
             }
+        },
+        getTotalUnits(playersArr){
+            let nb = 0;
+            for(let i=0; i<playersArr.length; i++){
+                let p = playersArr[i];
+                nb += p.computedUnits.count
+            }
+            return nb;
+        },
+        getTotalSuccessfulTickets(playersArr){
+            let nb = 0;
+            for(let i=0; i<playersArr.length; i++){
+                let p = playersArr[i];
+                nb += p.tickets.length - p.computedTickets.totalFailed;
+            }
+            return nb;
         },
         closeDetails(){
             this.dialogDetails = false;

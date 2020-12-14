@@ -153,6 +153,7 @@ export default {
     methods:{
         openCreate(){
             this.dialogCreate = true;
+            this.updateTodaysDate();
         },
         closeCreate(){
             this.dialogCreate = false;
@@ -163,6 +164,9 @@ export default {
             setTimeout(() => {
                 this.$refs.newGameForm.resetValidation();
             }, 50);
+        },
+        updateTodaysDate(){
+            this.date = new Date().toISOString().substr(0,10);
         },
         actOnJoinGame(event){
             this.tab = 0;
