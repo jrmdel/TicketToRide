@@ -111,27 +111,7 @@
                                 </v-row>
                                 <v-row>
                                     <v-col cols="12">
-                                        <v-row>
-                                            <v-col cols="auto" class="mr-2">% tickets</v-col>
-                                            <v-col>
-                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedTickets.score/selectedGame.players[i-1].score"
-                                                readonly ></v-slider>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col cols="auto" class="mr-2">% harbors</v-col>
-                                            <v-col>
-                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedHarbors/selectedGame.players[i-1].score"
-                                                readonly ></v-slider>
-                                            </v-col>
-                                        </v-row>
-                                        <v-row>
-                                            <v-col cols="auto" class="mr-2">% units</v-col>
-                                            <v-col>
-                                                <v-slider color="secondary" :value="100*selectedGame.players[i-1].computedUnits.score/selectedGame.players[i-1].score"
-                                                readonly ></v-slider>
-                                            </v-col>
-                                        </v-row>
+                                        <apexchart type="bar" height="160" :options="optionsPointsChartPerPlayer" :series="computePointsGraph(selectedGame.players[i-1])"></apexchart>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -240,6 +220,50 @@ export default {
             loadingData: false,
             unsubscribe: null,
             scoreUnitsRule: {1:1, 2:2, 3:4, 4:7, 5:10, 6: 15, 7: 18, 8:21, 9:27},
+            optionsPointsChartPerPlayer: {
+                chart: {
+                    type: 'bar',
+                    stacked: true,
+                    stackType: '100%'
+                },
+                grid:{
+                    show:false,
+                },
+                plotOptions: {
+                    bar: {
+                        horizontal: true,
+                    },
+                },
+                colors:["#6A2E35","#C42348","#B57F50"],
+                stroke: {
+                    width: 1,
+                    colors: ['#fff']
+                },
+                xaxis: {
+                    categories: ["Points"],
+                    labels:{
+                        show:false,
+                        maxHeight:10,
+                    },
+                    axisBorder:{ show: false },
+                    axisTicks:{ show: false },
+                },
+                yaxis:{ show: false },
+                tooltip: {
+                    y: {
+                        formatter: function (val) {
+                            return Math.round(val) + "%"
+                        }
+                    }
+                },
+                fill: {
+                    opacity: 1
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'left',
+                }
+            },
         }
     },
     methods:{
@@ -321,6 +345,14 @@ export default {
                 nb += p.tickets.length - p.computedTickets.totalFailed;
             }
             return nb;
+        },
+        computePointsGraph(player){
+            let serie = [
+                {name: "Tickets", data: [100*player.computedTickets.score/player.score]},
+                {name: "Harbors", data: [100*player.computedHarbors/player.score]},
+                {name: "Units", data: [100*player.computedUnits.score/player.score]},
+            ];
+            return serie;
         },
         closeDetails(){
             this.dialogDetails = false;

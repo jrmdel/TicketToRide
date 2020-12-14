@@ -3,8 +3,11 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify';
 import firebase from 'firebase/app';
 import 'firebase/firestore'
-
-Vue.config.productionTip = false
+import VueApexCharts from 'vue-apexcharts';
+Vue.use(VueApexCharts);
+ 
+Vue.component('apexchart', VueApexCharts)
+Vue.config.productionTip = false;
 
 firebase.initializeApp({
   apiKey: "AIzaSyCcNwnXTiqHGQxOopRIRCrhLWKXnSygMTE",
