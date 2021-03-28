@@ -695,7 +695,7 @@ export default {
     },
     methods:{
         deleteItem(item){
-            let id = this.routes.indexOf(item);
+            let id = this.routes.findIndex(route=>route.id==item.id);
             if(id < 0) this.notifySnack("Oups, ticket wasn't found", "error")
             else this.routes.splice(id,1);
         },
@@ -861,7 +861,7 @@ export default {
             localStorage.setItem("units", JSON.stringify(this.trainsAndBoats));
         },
         toggleTo(item,status){
-            let id = this.routes.indexOf(item);
+            let id = this.routes.findIndex(route=>route.id==item.id);
             if(id == -1){
                 this.notifySnack("Oups, ticket wasn't found", "error")
             } else {
