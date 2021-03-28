@@ -26,7 +26,7 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetPlayers="resetGamePlayers()"/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetGameSession="resetGameSession()"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
@@ -150,6 +150,13 @@ export default {
         currentGamePlayers: [],
         loadingCreate: false,
     }),
+    watch:{
+        currentGameVersion: {
+            handler(value){
+                console.log(`Version changed to ${value}`);
+            }
+        }
+    },
     methods:{
         openCreate(){
             this.dialogCreate = true;
@@ -168,21 +175,32 @@ export default {
         updateTodaysDate(){
             this.date = new Date().toISOString().substr(0,10);
         },
-        actOnJoinGame(event){
-            this.tab = 0;
+        async actOnJoinGame(event){
             if(this.$refs.currentGame.getRoutes().filter(x => x.game != event.version).length > 0){
                 this.dialogWrongTickets = true;
             } else {
+                await this.resetGameSession();
                 this.currentGameId = event.id;
                 this.currentGameVersion = event.version;
-                this.resetGamePlayers();
             }
+            this.tab = 0;
         },
-        resetGamePlayers(){
-            this.currentGamePlayers = new Array();
+        resetGameSession(){
+            return new Promise((resolve, reject)=>{
+                try {
+                    this.currentGameId = "";
+                    this.currentGameVersion = "";
+                    this.currentGamePlayers = new Array();
+                    resolve();
+                } catch (error) {
+                    reject("An error occured while resetting game variables");
+                }
+            })
         },
         async createGame(){
             this.loadingCreate = true;
+            this.$refs.currentGame.resetAll();
+            await this.resetGameSession();
             let doc = {date: this.date, players: this.players, version: this.version}
             for(let i=0;i<this.players; i++){
                 let n = `player${i+1}`

@@ -127,7 +127,8 @@
                                             <v-text-field v-model="searchRoutes" append-icon="mdi-magnify"
                                             label="Search" single-line clearable hide-details></v-text-field>
                                         </v-card-title>
-                                        <v-data-table class="py-6" :headers="headersRoutes" :items="routes" item-key='id'
+                                        <v-data-table class="py-6" :headers="headersRoutes" 
+                                        :items="computedRoutesForHeaders" item-key='id'
                                         :search="searchRoutes" multi-sort
                                         :footer-props="{'items-per-page-options': [-1] }">
                                             <template v-slot:[`item.delete`]="{ item }">
@@ -146,9 +147,6 @@
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
                                                 <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
-                                            </template>
-                                            <template v-slot:[`item.to`]="{ item }">
-                                                {{item.cities.slice(-1)[0]}}
                                             </template>
                                         </v-data-table>
                                     </v-card>
@@ -380,7 +378,16 @@
                                 <v-select v-model="fromTicket" solo clearable color="secondary" label="From" :items="computedFromCities"></v-select>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="toTicket" :disabled="!fromTicket" :messages="(foundTickets.length == 1) ? '1 match found' : (foundTickets.length > 1) ? `${foundTickets.length} matches found` : null " solo clearable color="secondary" label="To" :items="toCities"></v-select>
+                                <v-select v-model="toTicket"
+                                :disabled="!fromTicket"
+                                :error-messages="(selectedTicket.length == 1) ? (routes.map(route=>route.id).includes(selectedTicket[0].id) ? 'This ticket has already been added' : '') : ''"
+                                :messages="(foundTickets.length == 1) ? '1 match found' : (foundTickets.length > 1) ? `${foundTickets.length} matches found` : null "
+                                solo
+                                clearable
+                                color="secondary"
+                                label="To"
+                                :items="toCities">
+                                </v-select>
                             </v-col>
                             <v-col cols="12" v-if="foundTickets.length>1">
                                 <span>Select your ticket</span>
@@ -399,7 +406,7 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn large text color="accent" @click="closeAddTicket">CLOSE</v-btn>
-                    <v-btn large :disabled="selectedTicket.length==0" text color="secondary" @click="addTicket">ADD TICKET</v-btn>
+                    <v-btn large :disabled="selectedTicket.length==0 || routes.map(route=>route.id).includes(selectedTicket[0].id)" text color="secondary" @click="addTicket">ADD TICKET</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -417,7 +424,7 @@
                                     <span class="text-h6 tertiary--text">Cities</span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-select v-model="newHarbor" :error-messages="(harbors.includes(newHarbor) ? 'This city already has a harbor' : '')" :items="computedFromCities" :rules="simpleRule" solo label="Choose a city"></v-select>
+                                    <v-select v-model="newHarbor" :error-messages="(harbors.includes(newHarbor) ? 'This city already has a harbor' : '')" :items="computedAnchorCities" :rules="simpleRule" solo label="Choose a city"></v-select>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -498,14 +505,14 @@ export default {
         foundTickets: [],
         selectedTicket: [],
         headersAddTicket:[
-            {text:"From", align:"start", value:"cities[0]", sortable: true},
+            {text:"From", align:"start", value:"from", sortable: true},
             {text:"To", align:"start", value:"to", sortable: true},
             {text:"Steps", align:"start", value:"cities.length", sortable: true},
             {text:"Points", align:"start", value:"points", sortable: true},
         ],
         tickets: [],
         headersRoutes:[
-            {text:"From", align:"start", value:"cities[0]", sortable: true},
+            {text:"From", align:"start", value:"from", sortable: true},
             {text:"To", align:"start", value:"to", sortable: true},
             {text:"Points", align:"start", value:"points", sortable: true},
             {text:"Status", align:"start", value:"status", sortable: true},
@@ -544,9 +551,19 @@ export default {
         }
     },
     computed:{
+        computedRoutesForHeaders: {
+            get(){
+                return this.routes.map(route=> { return {...route, "from":route.cities[0].name, "to":route.cities.slice(-1)[0].name} })
+            }
+        },
         computedFromCities:{
             get(){
-                return [...new Set(this.tickets.map(ticket => ticket.cities).flat())].sort()
+                return [...new Set(this.tickets.map(ticket => ticket.cities.map(city=>city.name)).flat())].sort()
+            }
+        },
+        computedAnchorCities:{
+            get(){
+                return [...new Set(this.tickets.map(ticket=> ticket.cities.filter(city=>city.anchor).map(city=>city.name)).flat() )].sort()
             }
         },
         computedCompletion:{
@@ -575,7 +592,7 @@ export default {
                 let r = this.routes
                 let counts = {};
                 for(let i=0, l=r.length; i<l; i++){
-                    let c = r[i].cities
+                    let c = r[i].cities.filter(city=>city.anchor).map(city=>city.name)
                     for(let j=0; j<c.length; j++){
                         counts[c[j]] = (counts[c[j]] || 0) + 1
                     }
@@ -589,7 +606,7 @@ export default {
                 let counts = {};
                 for(let i=0, l=r.length; i<l; i++){
                     if(r[i].status != "Fail"){
-                        let c = r[i].cities
+                        let c = r[i].cities.filter(city=>city.anchor).map(city=>city.name)
                         for(let j=0; j<c.length; j++){
                             counts[c[j]] = (counts[c[j]] || 0) + 1
                         }
@@ -616,7 +633,7 @@ export default {
                 this.toCities = [];
                 this.toTicket = null;
                 if(value){
-                    let a = this.tickets.filter(ticket => ticket.cities.includes(value)).map(ticket => ticket.cities).flat().sort()
+                    let a = this.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(value)).map(ticket => ticket.cities.map(city=>city.name)).flat().sort()
                     this.toCities = [...new Set(a)].filter(city => city != value)
                 }
             }
@@ -625,7 +642,7 @@ export default {
             handler(val){
                 this.foundTickets = []
                 if(val != null){
-                    this.foundTickets = this.tickets.filter(ticket => ticket.cities.includes(val)).filter(ticket=>ticket.cities.includes(this.fromTicket))
+                    this.foundTickets = this.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(val)).filter(ticket=>ticket.cities.map(city=>city.name).includes(this.fromTicket))
                 }
             }
         },
@@ -820,15 +837,8 @@ export default {
             else if(this.resetType == "units") this.resetTrainsAndBoats();
             else if(this.resetType == "harbors") this.resetHarbors();
             else {
-                this.resetTickets();
-                this.resetTrainsAndBoats();
-                this.resetHarbors();
-                this.gameId = "";
-                this.selectVersion = "Around The World"
-                this.tickets = Tickets.World;
-                localStorage.removeItem("version");
-                localStorage.removeItem("id");
-                this.$emit("resetPlayers");
+                this.resetAll();
+                this.$emit("resetGameSession");
             }
             this.dialogReset = false;
             this.resetType = "";
@@ -866,6 +876,16 @@ export default {
         },
         getRoutes(){
             return this.routes
+        },
+        resetAll(){
+            this.resetTickets();
+            this.resetTrainsAndBoats();
+            this.resetHarbors();
+            this.gameId = "";
+            this.selectVersion = "Around The World"
+            this.tickets = Tickets.World;
+            localStorage.removeItem("version");
+            localStorage.removeItem("id");
         }
     },
     mounted(){

@@ -126,8 +126,11 @@
                                                 <template v-slot:[`item.status`]="{ item }">
                                                     <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
                                                 </template>
-                                                <template v-slot:[`item.cities`]="{ item }">
-                                                    {{item.cities.slice(-1)[0]}}
+                                                <template v-slot:[`item.to`]="{ item }">
+                                                    {{item.cities.slice(-1)[0].name}}
+                                                </template>
+                                                <template v-slot:[`item.from`]="{ item }">
+                                                    {{item.cities[0].name}}
                                                 </template>
                                             </v-data-table>
                                         </v-card>
@@ -204,10 +207,10 @@ export default {
                 {text:"Score", align:"start", value:"score", sortable: true},
                 {text:"Details", align:"center", value:"details", sortable: false},
                 {text:"Actions", align:"center", value:"actions", sortable: false}
-                ],
+            ],
             ticketHeaders:[
-                {text:"From", align:"start", value:"cities[0]", sortable: true, class:"primaryLight"},
-                {text:"To", align:"start", value:"cities", sortable: true, class:"primaryLight"},
+                {text:"From", align:"start", value:"from", sortable: true, class:"primaryLight"},
+                {text:"To", align:"start", value:"to", sortable: true, class:"primaryLight"},
                 {text:"Status", align:"start", value:"status", sortable: true, class:"primaryLight"},
             ],
             harborsHeaders:[
@@ -306,13 +309,14 @@ export default {
             for(let i=0;i<item.players;i++){
                 let p = `player${i+1}`
                 let t = (item.version == "Around The World") ? Tickets.World : Tickets.GreatLakes
-                let doc = Object.assign({},item[p]);
+                let doc = {};
+                if(item[p]) doc = Object.assign({},item[p]);
                 if(doc.tickets) doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
                 computed.push({
                     ...doc,
-                    computedUnits: getScoreAndNumberOfUnits(doc.units, this.scoreUnitsRule),
-                    computedHarbors: getHarborsScore(doc.harbors),
-                    computedTickets: getTicketData(doc.tickets)
+                    computedUnits: getScoreAndNumberOfUnits(doc.units || {}, this.scoreUnitsRule),
+                    computedHarbors: getHarborsScore(doc.harbors || []),
+                    computedTickets: getTicketData(doc.tickets || [])
                     })
             }
             obj.players = computed;
