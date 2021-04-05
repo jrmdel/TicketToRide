@@ -313,7 +313,7 @@
                             <v-row justify="center" justify-sm="space-around">
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of units</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{Object.values(trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)}}</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{computedNumberUnits}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of exchanges</span>
@@ -625,6 +625,19 @@ export default {
                 }
                 return res-(4*(3-this.harbors.length));
             }
+        },
+        computedNumberUnits:{
+            get(){
+                return Object.values(trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)
+            }
+        },
+        computedLastNUnits:{
+            get(){
+                // TODO: rules
+                let totalPieces = (this.selectVersion == "Around The World") ? 60 : 50
+                let remaining = 6
+                return (totalPieces-remaining)<this.computedNumberUnits
+            }
         }
     },
     watch:{
@@ -689,6 +702,15 @@ export default {
             handler(value){
                 if(value){
                     localStorage.setItem("id",value);
+                }
+            }
+        },
+        computedLastNUnits:{
+            handler(value){
+                if(value){
+                    // TODO : rules
+                    let message = `You now have less than ${(this.selectVersion=="Around The World") ? "54" : "44"} units`
+                    this.notifySnack(message, "warning")
                 }
             }
         }
