@@ -628,7 +628,7 @@ export default {
         },
         computedNumberUnits:{
             get(){
-                return Object.values(trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)
+                return Object.values(this.trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)
             }
         },
         computedLastNUnits:{
@@ -636,7 +636,7 @@ export default {
                 // TODO: rules
                 let totalPieces = (this.selectVersion == "Around The World") ? 60 : 50
                 let remaining = 6
-                return (totalPieces-remaining)<this.computedNumberUnits
+                return (totalPieces-remaining)<=this.computedNumberUnits
             }
         }
     },
@@ -709,7 +709,7 @@ export default {
             handler(value){
                 if(value){
                     // TODO : rules
-                    let message = `You now have less than ${(this.selectVersion=="Around The World") ? "54" : "44"} units`
+                    let message = `You now have 6 or less units left`
                     this.notifySnack(message, "warning")
                 }
             }
