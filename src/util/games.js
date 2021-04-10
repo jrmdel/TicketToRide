@@ -1,4 +1,5 @@
 module.exports.Games = {
     WORLD:"Around The World",
-    GREAT_LAKES:"Great Lakes"
+    GREAT_LAKES:"Great Lakes",
+    EUROPE: "Europe"
 }

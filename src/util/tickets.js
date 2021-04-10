@@ -2,6 +2,7 @@ import { Types } from "./types"
 import { Games } from "./games"
 import { WorldCities } from "./world-cities"
 import { GreatLakesCities } from "./great-lakes-cities"
+import { EuropeCities } from "./europe-cities"
 
 let world = [
     {id: 1, game: Games.WORLD, type: Types.ROUTE, cities: [WorldCities.MEXICO, WorldCities.BEIJING], points: 13},
@@ -126,10 +127,60 @@ let greatlakes = [
     {id: 52, game: Games.GREAT_LAKES, cities: [GreatLakesCities.MARQUETTE, GreatLakesCities.ALBANY], points: 10},
     {id: 53, game: Games.GREAT_LAKES, cities: [GreatLakesCities.ERIE, GreatLakesCities.KINGSTON], points: 4},
     {id: 54, game: Games.GREAT_LAKES, cities: [GreatLakesCities.DULUTH, GreatLakesCities.MONTREAL], points: 19},
-    {id: 55, game: Games.GREAT_LAKES, cities: [GreatLakesCities.SYRACUSE, GreatLakesCities.NEW_YORK], points: 5}
+    {id: 55, game: Games.GREAT_LAKES, cities: [GreatLakesCities.SYRACUSE, GreatLakesCities.NEW_YORK], points: 5},
+];
+
+let europe = [
+    {id:1, game:Games.EUROPE, cities:[EuropeCities.EDINBURGH, EuropeCities.ATHINA], points: 21, long: true},
+    {id:2, game:Games.EUROPE, cities:[EuropeCities.CADIZ, EuropeCities.STOCKHOLM], points: 21, long:true },
+    {id:3, game:Games.EUROPE, cities:[EuropeCities.KOBENHAVN, EuropeCities.ERZURUM], points: 21, long:true },
+    {id:4, game:Games.EUROPE, cities:[EuropeCities.BREST, EuropeCities.PETROGRAD], points: 20, long:true },
+    {id:5, game:Games.EUROPE, cities:[EuropeCities.PALERMO, EuropeCities.MOSKVA], points: 20, long:true },
+    {id:6, game:Games.EUROPE, cities:[EuropeCities.LISBOA, EuropeCities.DANZIG], points: 20, long:true },
+    {id:7, game:Games.EUROPE, cities:[EuropeCities.FRANKFURT, EuropeCities.SMOLENSK], points: 13, long:false },
+    {id:8, game:Games.EUROPE, cities:[EuropeCities.BERLIN, EuropeCities.MOSKVA], points: 12, long:false },
+    {id:9, game:Games.EUROPE, cities:[EuropeCities.AMSTERDAM, EuropeCities.WILNO], points: 12, long:false },
+    {id:10, game:Games.EUROPE, cities:[EuropeCities.ATHINA, EuropeCities.WILNO], points: 11, long:false },
+    {id:11, game:Games.EUROPE, cities:[EuropeCities.STOCKHOLM, EuropeCities.WIEN], points: 11, long:false },
+    {id:12, game:Games.EUROPE, cities:[EuropeCities.ANGORA, EuropeCities.KHARKOV], points: 10, long:false },
+    {id:13, game:Games.EUROPE, cities:[EuropeCities.ESSEN, EuropeCities.KYIV], points: 10, long:false },
+    {id:14, game:Games.EUROPE, cities:[EuropeCities.RIGA, EuropeCities.BUCURESTI], points: 10, long:false },
+    {id:15, game:Games.EUROPE, cities:[EuropeCities.VENEZIA, EuropeCities.CONSTANTINOPLE], points: 10, long:false },
+    {id:16, game:Games.EUROPE, cities:[EuropeCities.LONDON, EuropeCities.WIEN], points: 10, long:false },
+    {id:17, game:Games.EUROPE, cities:[EuropeCities.BRUXELLES, EuropeCities.DANZIG], points: 9, long:false },
+    {id:18, game:Games.EUROPE, cities:[EuropeCities.BERLIN, EuropeCities.ROMA], points: 9, long:false },
+    {id:19, game:Games.EUROPE, cities:[EuropeCities.KYIV, EuropeCities.SOCHI], points: 8, long:false },
+    {id:20, game:Games.EUROPE, cities:[EuropeCities.ROMA, EuropeCities.SMYRNA], points: 8, long:false },
+    {id:21, game:Games.EUROPE, cities:[EuropeCities.BERLIN, EuropeCities.BUCURESTI], points: 8, long:false },
+    {id:22, game:Games.EUROPE, cities:[EuropeCities.SARAJEVO, EuropeCities.SEVASTOPOL], points: 8, long:false },
+    {id:23, game:Games.EUROPE, cities:[EuropeCities.SMOLENSK, EuropeCities.ROSTOV], points: 8, long:false },
+    {id:24, game:Games.EUROPE, cities:[EuropeCities.BARCELONA, EuropeCities.MUNCHEN], points: 8, long:false },
+    {id:25, game:Games.EUROPE, cities:[EuropeCities.BARCELONA, EuropeCities.BRUXELLES], points: 8, long:false },
+    {id:26, game:Games.EUROPE, cities:[EuropeCities.MARSEILLE, EuropeCities.ESSEN], points: 8, long:false },
+    {id:27, game:Games.EUROPE, cities:[EuropeCities.MADRID, EuropeCities.DIEPPE], points: 8, long:false },
+    {id:28, game:Games.EUROPE, cities:[EuropeCities.PALERMO, EuropeCities.CONSTANTINOPLE], points: 8, long:false },
+    {id:29, game:Games.EUROPE, cities:[EuropeCities.BREST, EuropeCities.VENEZIA], points: 8, long:false },
+    {id:30, game:Games.EUROPE, cities:[EuropeCities.PARIS, EuropeCities.WIEN], points: 8, long:false },
+	{id:31, game:Games.EUROPE, cities:[EuropeCities.MADRID, EuropeCities.ZURICH], points: 8, long:false },
+	{id:32, game:Games.EUROPE, cities:[EuropeCities.AMSTERDAM, EuropeCities.PAMPLONA], points: 7, long:false },
+	{id:33, game:Games.EUROPE, cities:[EuropeCities.EDINBURGH, EuropeCities.PARIS], points: 7, long:false },
+	{id:34, game:Games.EUROPE, cities:[EuropeCities.LONDON, EuropeCities.BERLIN], points: 7, long:false },
+	{id:35, game:Games.EUROPE, cities:[EuropeCities.PARIS, EuropeCities.ZAGRAB], points: 7, long:false },
+	{id:36, game:Games.EUROPE, cities:[EuropeCities.BREST, EuropeCities.MARSEILLE], points: 7, long:false },
+	{id:37, game:Games.EUROPE, cities:[EuropeCities.KYIV, EuropeCities.PETROGRAD], points: 6, long:false },
+	{id:38, game:Games.EUROPE, cities:[EuropeCities.ZURICH, EuropeCities.BUDAPEST], points: 6, long:false },
+	{id:39, game:Games.EUROPE, cities:[EuropeCities.ZURICH, EuropeCities.BRINDISI], points: 6, long:false },
+	{id:40, game:Games.EUROPE, cities:[EuropeCities.ZAGRAB, EuropeCities.BRINDISI], points: 6, long:false },
+	{id:41, game:Games.EUROPE, cities:[EuropeCities.WARSZAWA, EuropeCities.SMOLENSK], points: 6, long:false },
+	{id:42, game:Games.EUROPE, cities:[EuropeCities.SOFIA, EuropeCities.SMYRNA], points: 5, long:false },
+	{id:43, game:Games.EUROPE, cities:[EuropeCities.ATHINA, EuropeCities.ANGORA], points: 5, long:false },
+	{id:44, game:Games.EUROPE, cities:[EuropeCities.FRANKFURT, EuropeCities.KOBENHAVN], points: 5, long:false },
+	{id:45, game:Games.EUROPE, cities:[EuropeCities.ERZURUM, EuropeCities.ROSTOV], points: 5, long:false },
+	{id:46, game:Games.EUROPE, cities:[EuropeCities.BUDAPEST, EuropeCities.SOFIA], points: 5, long:false }
 ]
 
 export const Tickets = {
     World: world,
-    GreatLakes: greatlakes
+    GreatLakes: greatlakes,
+    Europe: europe
 };
