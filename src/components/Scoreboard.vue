@@ -9,7 +9,7 @@
                         <v-icon large>mdi-medal</v-icon>
                     </v-toolbar>
                     <v-card-text>
-                        <v-data-table :loading="loadingData" :headers="headers" :items="games" item-key="id" multi-sort>
+                        <v-data-table :loading="computedLoading" :headers="headers" :items="games" item-key="id" multi-sort>
                             <template v-slot:[`item.details`]="{ item }">
                                 <v-icon  @click="openDetails(item)">mdi-eye</v-icon>
                             </template>
@@ -17,6 +17,59 @@
                                 <v-icon v-if="dateInRange(item.date)" color="quaternary" @click="joinGame(item)">mdi-puzzle-edit-outline</v-icon>
                             </template>
                         </v-data-table>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+
+            <v-col>
+                <v-card>
+                    <v-toolbar flat dark color="secondary">
+                        <v-toolbar-title>Games insights</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon large>mdi-chart-arc</v-icon>
+                    </v-toolbar>
+                    <v-card-text>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="space-around" class="pt-3">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of games</span>
+                                    <span v-if="computedLoading" class="ml-4">
+                                        <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
+                                    </span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{games.length}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">points scored</span>
+                                    <span v-if="computedLoading" class="ml-4">
+                                        <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
+                                    </span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.points}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of successful tickets</span>
+                                    <span v-if="computedLoading" class="ml-4">
+                                        <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
+                                    </span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.nbSuccessTickets}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+
+                        <v-container fluid>
+                            <v-row>
+                                
+                                <v-col cols="12" md="6">
+                                    <v-card color="accent">
+                                        <v-card-title>Per player</v-card-title>
+                                    </v-card>
+                                </v-col>
+                                <v-col cols="12" md="6">
+                                    <v-card color="accent">
+                                        <v-card-title>Per version</v-card-title>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-container>
                     </v-card-text>
                 </v-card>
             </v-col>
@@ -49,7 +102,7 @@
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Rankings</span>
                                     </v-col>
-                                    <v-col cols="10">
+                                    <v-col cols="12" sm="10">
                                         <v-card outlined>
                                             <v-simple-table fixed-header>
                                                 <template v-slot:default>
@@ -79,7 +132,7 @@
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Statistics</span>
                                     </v-col>
-                                    <v-col cols="6">
+                                    <v-col cols="12" sm="6">
                                         <v-card tile color="secondary" dark>
                                             <v-card-title class="text-subtitle-1">Total of units</v-card-title>
                                             <v-card-text class="text-h4 white--text">
@@ -87,7 +140,7 @@
                                             </v-card-text>
                                         </v-card>
                                     </v-col>
-                                    <v-col cols="6">
+                                    <v-col cols="12" sm="6">
                                         <v-card tile color="primary" dark>
                                             <v-card-title class="text-subtitle-1">Total of successful tickets</v-card-title>
                                             <v-card-text class="text-h4 white--text">
@@ -195,6 +248,7 @@
 <script>
 import { db } from '@/main'
 import { Tickets } from '../util/tickets'
+//import jsonGames from '../util/savedGames04-21.json'
 
 export default {
     data(){
@@ -218,6 +272,7 @@ export default {
                 {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight"}
             ],
             games: [],
+            //games: jsonGames,
             selectedGame: null,
             dialogDetails: false,
             loadingData: false,
@@ -267,6 +322,94 @@ export default {
                     horizontalAlign: 'left',
                 }
             },
+        }
+    },
+    computed:{
+        computedLoading:{
+            get(){
+                // Returns true if loading
+                return Object.keys(this.computedMetadata).length==0
+            }
+        },
+        computedMetadata:{
+            get(){
+                if(this.games.length == 0) return {}
+                else{
+                    let res = {
+                        players: new Set(),
+                        versions: new Set(),
+                        points: 0,
+                        nbTickets: 0,
+                        nbSuccessTickets: 0,
+                        sharedFirst:0
+                    }
+                    let doc = null, p=null;
+                    for(let i=0, l=this.games.length; i<l; i++){
+                        try {
+                            doc = Object.assign({},this.games[i]);
+                            res.versions.add(doc.version);
+                            if(doc.draw) res.sharedFirst+= 1;
+                            for(let j=1;j<=doc.players;j++){
+                                p = Object.assign({},doc[`player${j}`]);
+                                res.players.add(p.name);
+                                res.points+=p.score;
+                                res.nbTickets+=p.tickets.length;
+                                if(p.tickets.length>0) res.nbSuccessTickets+=p.tickets.filter(item=>!item.status.match(/fail/ig)).length;
+                            }
+                        } catch (error) {
+                            console.warn(`Game with id ${this.games[i].id} raised an error during computation`)
+                        }
+                    }
+                    return res;
+                }
+            }
+        },
+        computeFromVersion2(){
+            if(this.games.length==0) return {}
+            else {
+            let t = Tickets.World;
+            let res = {
+                topTickets: t.map(doc=>{ return {
+                    ...doc, occurrences:0,
+                    resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
+                    resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
+                totalPoints: 0,
+                firstPlayerWins: 0,
+                numberOfGames: 0,
+                cumulPlayers: 0,
+                pointsTickets: 0,
+                pointsHarbors: 0,
+                pointsUnits: 0
+            }
+            let docs = this.games.filter(item=>item.version=="Around The World");
+            res.numberOfGames = docs.length;
+            let p = 0, player = null, index=0, winner = false;
+            for(let doc of docs){
+                p = doc.players;
+                res.cumulPlayers += p;
+                for(let j=1; j<=p; j++){
+                    player = Object.assign({},doc[`player${j}`]);
+                    if(player.name == doc.winner){
+                        if(j==1) res.firstPlayerWins++;
+                        winner = true;
+                    } else winner = false;
+                    res.totalPoints+=player.score;
+                    if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
+                    if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
+                    for (let ticket of player.tickets) {
+                        index = res.topTickets.findIndex(item=>item.id == ticket.id);
+                        if(index==-1) console.log(doc);
+                        else{
+                        res.topTickets[index].occurrences++;
+                        if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
+                        else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
+                        else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                        }
+                    }
+                }
+            }
+            return res;
+            }
         }
     },
     methods:{
@@ -358,6 +501,58 @@ export default {
             ];
             return serie;
         },
+        computeUnitsToPoints(units, exchanges){
+            // TODO Rules
+            let rules = [1,2,4,7,10,15,18,21,27]
+            return Object.values(units).map((val,i)=>val*rules[i]).reduce((a,b)=>a+b)-exchanges
+        },
+        computeFromVersion(version){
+            if(this.games.length == 0) return {}
+            else {
+                let t = (version == "Around The World") ? Tickets.World : Tickets.GreatLakes;
+                let res = {
+                    topTickets: t.map(doc=>{ return {
+                        ...doc, occurrences:0,
+                        resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
+                        resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
+                    totalPoints: 0,
+                    firstPlayerWins: 0,
+                    numberOfGames: 0,
+                    cumulPlayers: 0,
+                    pointsTickets: 0,
+                    pointsHarbors: 0,
+                    pointsUnits: 0
+                }
+                let docs = this.games.filter(item=>item.version==version);
+                res.numberOfGames = docs.length;
+                let p = 0, player = null, index=0, winner = false;
+                for(let doc of docs){
+                    p = doc.players;
+                    res.cumulPlayers += p;
+                    for(let j=1; j<=p; j++){
+                        player = Object.assign({},doc[`player${j}`]);
+                        if(player.name == doc.winner){
+                            if(j==1) res.firstPlayerWins++;
+                            winner = true;
+                        } else winner = false;
+                        res.totalPoints+=player.score;
+                        if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
+                        if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
+                        for (let ticket of player.tickets) {
+                            index = res.topTickets.findIndex(item=>item.id == ticket.id);
+                            if(index==-1) console.log(doc);
+                            else{
+                            res.topTickets[index].occurrences++;
+                            if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
+                            else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
+                            else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                            }
+                        }
+                    }
+                }
+                return res;
+            }
+        },
         closeDetails(){
             this.dialogDetails = false;
             this.selectedGame = null;
@@ -393,7 +588,7 @@ export default {
             for(let j=0;j<res.length;j++){
                 (j==0) ? winner+=res[j].name : winner+=`, ${res[j].name}`
             }
-            return {id: doc.id, ...docData, winner: winner, score:top, rankings:p}
+            return {id: doc.id, ...docData, winner: winner, score:top, rankings:p, draw:(res.length!=1)}
         },
         async getFirebaseData(){
             this.loadingData = true
@@ -425,7 +620,14 @@ export default {
     },
     mounted(){
         //this.getFirebaseData()
+        // The one below is the good one
         this.getRealTimeData();
+
+        // For development purposes
+        /*this.loadingData = true;
+        setTimeout(()=>{
+            this.loadingData = false
+        }, 2500)*/
     },
     beforeDestroy(){
         this.unsubscribe();
