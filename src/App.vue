@@ -26,7 +26,7 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" @resetGameSession="resetGameSession()"/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" :gamesAndRules="gamesAndRules" :appLoaded="appLoaded" @resetGameSession="resetGameSession()" @findVersion="findVersion($event)"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
@@ -50,7 +50,7 @@
                                     <span class="text-h6 tertiary--text">Type of game</span>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-select v-model="version" solo :rules="newVersionRules" color="secondary" hide-details label="Game Version" :items="['Around The World', 'Great Lakes']"></v-select>
+                                    <v-select v-model="version" solo :rules="newVersionRules" color="secondary" hide-details label="Game Version" :items="(gamesAndRules.length>0) ? gamesAndRules : []" item-text="name" return-object></v-select>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <v-subheader>Number of players</v-subheader>
@@ -121,6 +121,7 @@
 import CurrentGame from './components/CurrentGame';
 import Scoreboard from './components/Scoreboard';
 import Help from './components/Help';
+import { Games } from './util/games';
 import { db } from "./main";
 
 export default {
@@ -146,14 +147,24 @@ export default {
         dialogCreate: false,
         dialogWrongTickets: false,
         currentGameId: "",
-        currentGameVersion: "",
+        currentGameVersion: {},
         currentGamePlayers: [],
         loadingCreate: false,
+        gamesAndRules: Games,
+        appLoaded: false
     }),
     watch:{
         currentGameVersion: {
             handler(value){
-                console.log(`Version changed to ${value}`);
+                console.log(`Version changed to ${value.name}`);
+            }
+        },
+        gamesAndRules: {
+            immediate: true,
+            handler(value){
+                if(value){
+                    this.appLoaded = true;
+                }
             }
         }
     },
@@ -181,7 +192,7 @@ export default {
             } else {
                 await this.resetGameSession();
                 this.currentGameId = event.id;
-                this.currentGameVersion = event.version;
+                this.currentGameVersion = Object.assign({},this.gamesAndRules.find(game=>game.name == event.version));
             }
             this.tab = 0;
         },
@@ -189,7 +200,7 @@ export default {
             return new Promise((resolve, reject)=>{
                 try {
                     this.currentGameId = "";
-                    this.currentGameVersion = "";
+                    this.currentGameVersion = {};
                     this.currentGamePlayers = new Array();
                     resolve();
                 } catch (error) {
@@ -197,21 +208,24 @@ export default {
                 }
             })
         },
+        findVersion(event){
+            this.currentGameVersion = this.gamesAndRules.find(game=>game.name==event.version);
+            console.log(`Event sent from child: currentGameVerison = ${this.currentGameVersion}`)
+        },
         async createGame(){
             this.loadingCreate = true;
             this.$refs.currentGame.resetAll();
             await this.resetGameSession();
-            let doc = {date: this.date, players: this.players, version: this.version}
+            let doc = {date: this.date, players: this.players, version: this.version.name}
             for(let i=0;i<this.players; i++){
                 let n = `player${i+1}`
-                doc[n] = {name: this.names[i+1], score:-12}
+                doc[n] = {name: this.names[i+1], score:this.version.initialScore}
             }
             console.log(doc)
             let d = await db.collection('Games').add(doc)
             this.currentGameId = d.id;
-            console.log(this.currentGameId)
             // Sets the currentGame variables
-            this.currentGameVersion = this.version;
+            this.currentGameVersion = Object.assign({},this.version);
             this.currentGamePlayers = Object.values(this.names).splice(0,this.players)
             // Create then close
             this.closeCreate();

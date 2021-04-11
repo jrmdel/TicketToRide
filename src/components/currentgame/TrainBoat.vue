@@ -9,8 +9,8 @@
         </v-btn>
         <span class="ml-4 text-h6">{{numberOfUnits}}x</span>
         <v-icon >mdi-train</v-icon>
-        <span class="text-h6">/</span>
-        <v-icon>mdi-ferry</v-icon>
+        <span v-show="hasBoats" class="text-h6">/</span>
+        <v-icon v-show="hasBoats">mdi-ferry</v-icon>
     </v-row>
 </template>
 
@@ -29,6 +29,9 @@ export default {
         numberOfUnits:{
             type: Number,
             required: true
+        },
+        hasBoats: {
+            type: Boolean
         }
     },
     methods:{

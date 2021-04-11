@@ -36,21 +36,21 @@
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
-                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{games.length}}</span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{games.length || 0}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">points scored</span>
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
-                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.points}}</span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.points || 0}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of successful tickets</span>
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
-                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.nbSuccessTickets}}</span>
+                                    <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.nbSuccessTickets || 0}}</span>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -602,7 +602,7 @@ export default {
         },
         async getRealTimeData(){
             this.loadingData = true;
-            let unsubscribe = await db.collection('Games').onSnapshot(query => {
+            let unsubscribe = await db.collection('Games').orderBy("date","desc").onSnapshot(query => {
                 query.docChanges().forEach(change => {
                     if(change.type == "removed") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1)
                     else {

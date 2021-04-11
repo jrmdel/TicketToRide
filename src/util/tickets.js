@@ -1,8 +1,13 @@
 import { Types } from "./types"
-import { Games } from "./games"
 import { WorldCities } from "./world-cities"
 import { GreatLakesCities } from "./great-lakes-cities"
 import { EuropeCities } from "./europe-cities"
+
+var Games = {
+    WORLD: "Around The World",
+    GREAT_LAKES: "Great Lakes",
+    EUROPE: "Europe"
+}
 
 let world = [
     {id: 1, game: Games.WORLD, type: Types.ROUTE, cities: [WorldCities.MEXICO, WorldCities.BEIJING], points: 13},

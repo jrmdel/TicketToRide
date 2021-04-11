@@ -17,7 +17,7 @@
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-select class="mx-2" solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="['Around The World','Great Lakes']"></v-select>
+                                            <v-select class="mx-2" solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="gamesAndRules" item-text="name" return-object></v-select>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -77,7 +77,7 @@
                     </v-card-subtitle>
                 </v-card>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" v-show="selectVersion != null">
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your tickets</v-toolbar-title>
@@ -156,7 +156,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" v-show="computedVersionHasHarbors">
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your harbors</v-toolbar-title>
@@ -301,10 +301,10 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12" v-show="selectVersion != null">
                 <v-card>
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your trains and boats</v-toolbar-title>
+                        <v-toolbar-title>Your trains <span v-show="computedVersionHasBoats">and boats</span></v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-train</v-icon>
                     </v-toolbar>
@@ -315,7 +315,7 @@
                                     <span class="text-caption">nb of units</span>
                                     <span class="ml-4 text-sm-h3 text-h4">{{computedNumberUnits}}</span>
                                 </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                <v-col v-show="computedVersionHasExchanges" class="mx-8 mx-sm-0" cols="auto">
                                     <span class="text-caption">nb of exchanges</span>
                                     <span class="ml-4 text-sm-h3 text-h4">{{exchanges}}</span>
                                 </v-col>
@@ -341,13 +341,13 @@
                                     <span class="text-h6 tertiary--text">Claimed routes</span>
                                 </v-col>
                             </v-row>
-                            <TrainBoat v-for="i in 9" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" @update-value="updateTrainsAndBoats($event)"/>
-                            <v-row>
+                            <TrainBoat v-for="i in computedKeysUnits" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" :hasBoats="computedVersionHasBoats" @update-value="updateTrainsAndBoats($event)"/>
+                            <v-row v-show="computedVersionHasExchanges">
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Exchanges</span>
                                 </v-col>
                             </v-row>
-                            <v-row class="ml-sm-4" align="center" justify="center" justify-sm="start">
+                            <v-row v-show="computedVersionHasExchanges" class="ml-sm-4" align="center" justify="center" justify-sm="start">
                                 <v-btn large icon :disabled="exchanges==0" @click="exchanges-=1">
                                     <v-icon color="red">mdi-minus</v-icon>
                                 </v-btn>
@@ -483,7 +483,7 @@
 
 <script>
 import { Types } from '../util/types';
-import { Tickets } from '../util/tickets';
+//import { Tickets } from '../util/tickets';
 import TrainBoat from './currentgame/TrainBoat'
 import { db } from '../main';
 
@@ -521,9 +521,11 @@ export default {
         ],
         searchRoutes: "",
         routes: [],
-        selectVersion: "Around The World",
+        selectVersion: null,
         selectPlayer: [],
         selectedPlayer: null,
+        trainStations: 0,
+        longestBonus: 0,
         harbors: [],
         newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
@@ -547,7 +549,16 @@ export default {
             default: ()=>[]
         },
         version: {
-            type: String
+            type: Object,
+            default: ()=>{}
+        },
+        gamesAndRules: {
+            type: Array,
+            default: ()=>[]
+        },
+        appLoaded:{
+            type: Boolean,
+            default: false
         }
     },
     computed:{
@@ -558,12 +569,12 @@ export default {
         },
         computedFromCities:{
             get(){
-                return [...new Set(this.tickets.map(ticket => ticket.cities.map(city=>city.name)).flat())].sort()
+                return (this.selectVersion) ? [...new Set(this.selectVersion.tickets.map(ticket => ticket.cities.map(city=>city.name)).flat())].sort() : [];
             }
         },
         computedAnchorCities:{
             get(){
-                return [...new Set(this.tickets.map(ticket=> ticket.cities.filter(city=>city.anchor).map(city=>city.name)).flat() )].sort()
+                return (this.selectVersion && this.selectVersion.hasHarbors) ? [...new Set(this.selectVersion.tickets.map(ticket=> ticket.cities.filter(city=>city.anchor).map(city=>city.name)).flat() )].sort() : [];
             }
         },
         computedCompletion:{
@@ -617,13 +628,23 @@ export default {
         },
         computedHarborsScore:{
             get(){
-                let res = 0;
-                let bonus = (this.selectVersion == "Around The World") ? 10 : 0;
-                for(let i=0; i<this.harbors.length; i++){
-                    let found = this.computedTopSuccessfulCities.find(x => x.city == this.harbors[i])
-                    if(found) res += Math.min(10*found.num,30)+bonus
-                }
-                return res-(4*(3-this.harbors.length));
+                if(this.computedVersionHasHarbors) {
+                    let res = 0;
+                    for(let i=0; i<this.harbors.length; i++){
+                        let found = this.computedTopSuccessfulCities.find(x => x.city == this.harbors[i])
+                        if(found && found.num>0){
+                            res += this.selectVersion.harborRule[Math.min(found.num,3)-1]
+                        }
+                    }
+                    return res + (this.selectVersion.pointsPerUnsetHarbor*(this.selectVersion.numberOfHarborsPerPlayer-this.harbors.length));
+                } else return 0
+            }
+        },
+        computedTrainStationsScore:{
+            get(){
+                if(this.computedVersionHasTrainStations){
+                    return this.selectVersion.pointsPerUnsetTrainStation*(this.selectVersion.numberOfTrainStationsPerPlayer-this.trainStations) + this.trainStations*this.selectVersion.trainStationRule;
+                } else return 0
             }
         },
         computedNumberUnits:{
@@ -631,12 +652,43 @@ export default {
                 return Object.values(this.trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)
             }
         },
+        computedVersionHasHarbors:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasHarbors : false
+            }
+        },
+        computedVersionHasTrainStations:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasTrainStations : false
+            }
+        },
+        computedVersionHasBoats:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasBoats : false
+            }
+        },
+        computedVersionHasExchanges:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasExchanges : false
+            }
+        },
+        computedVersionHasLongest:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasLongest : false
+            }
+        },
         computedLastNUnits:{
             get(){
-                // TODO: rules
-                let totalPieces = (this.selectVersion == "Around The World") ? 60 : 50
-                let remaining = 6
-                return (totalPieces-remaining)<=this.computedNumberUnits
+                if(this.selectVersion){
+                    return (this.selectVersion.units-this.selectVersion.threshold)<=this.computedNumberUnits
+                } else return false
+            }
+        },
+        computedKeysUnits:{
+            get(){
+                if(this.selectVersion){
+                    return Object.keys(this.selectVersion.pointsPerRoute).map(k=>parseInt(k))
+                } else return []
             }
         }
     },
@@ -646,7 +698,7 @@ export default {
                 this.toCities = [];
                 this.toTicket = null;
                 if(value){
-                    let a = this.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(value)).map(ticket => ticket.cities.map(city=>city.name)).flat().sort()
+                    let a = this.selectVersion.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(value)).map(ticket => ticket.cities.map(city=>city.name)).flat().sort()
                     this.toCities = [...new Set(a)].filter(city => city != value)
                 }
             }
@@ -655,7 +707,7 @@ export default {
             handler(val){
                 this.foundTickets = []
                 if(val != null){
-                    this.foundTickets = this.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(val)).filter(ticket=>ticket.cities.map(city=>city.name).includes(this.fromTicket))
+                    this.foundTickets = this.selectVersion.tickets.filter(ticket => ticket.cities.map(city=>city.name).includes(val)).filter(ticket=>ticket.cities.map(city=>city.name).includes(this.fromTicket))
                 }
             }
         },
@@ -669,15 +721,15 @@ export default {
         },
         selectVersion:{
             handler(value){
-                if(value){
-                    this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
-                    localStorage.setItem("version", value);
+                if(value && value.name){
+                    //this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
+                    localStorage.setItem("version", value.name);
                 }
             }
         },
         version:{
             handler(value){
-                if(value){
+                if(Object.keys(value).length>0){
                     this.selectVersion = value
                 }
             }
@@ -705,13 +757,28 @@ export default {
                 }
             }
         },
+        longestBonus:{
+            handler(value){
+                if(value) localStorage.setItem("longestBonus",value);
+            }
+        },
+        trainStations:{
+            handler(value){
+                if(value) localStorage.setItem("trainStations",value);
+            }
+        },
         computedLastNUnits:{
             handler(value){
                 if(value){
-                    // TODO : rules
-                    let message = `You now have 6 or less units left`
+                    let message = `You now have ${this.selectVersion.threshold} or less units left`
                     this.notifySnack(message, "warning")
                 }
+            }
+        },
+        appLoaded: {
+            immediate: true,
+            handler(value){
+                if(value) this.initialiseFromLocalStorage();
             }
         }
     },
@@ -772,10 +839,12 @@ export default {
                 name: this.selectedPlayer,
                 score: parseInt(this.computedTicketScore+this.computedHarborsScore+this.computedTrainsBoatsScore),
                 tickets: routes,
-                harbors: this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}}),
-                units: this.trainsAndBoats,
-                exchanges: this.exchanges
+                units: this.trainsAndBoats
             }
+            if(this.computedVersionHasHarbors) update["harbors"] = this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}});
+            if(this.computedVersionHasExchanges) update["exchanges"] = this.exchanges;
+            if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore();
+            if(this.computedVersionHasLongest) update["longestBonus"] = this.longestBonus;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
                 this.notifySnack("Your game was saved!","success")
@@ -846,8 +915,9 @@ export default {
         },
         getHarborScore(city){
             let found = this.computedTopSuccessfulCities.find(x => x.city == city)
-            let bonus = (this.selectVersion == "Around The World") ? 10 : 0
-            if(found) return Math.min(10*found.num,30)+bonus
+            if(found && found.num>0){
+                return this.selectVersion.harborRule[Math.min(found.num,3)-1]
+            }
             else return 0
         },
         openReset(type){
@@ -858,6 +928,8 @@ export default {
             if(this.resetType == "tickets") this.resetTickets();
             else if(this.resetType == "units") this.resetTrainsAndBoats();
             else if(this.resetType == "harbors") this.resetHarbors();
+            else if(this.resetType == "trainStations") this.resetTrainStations();
+            else if(this.resetType == "longest") this.resetLongest();
             else {
                 this.resetAll();
                 this.$emit("resetGameSession");
@@ -877,6 +949,14 @@ export default {
         resetHarbors(){
             this.harbors = [];
             if(localStorage.getItem("harbors")) localStorage.removeItem("harbors")
+        },
+        resetTrainStations(){
+            this.trainStations = 0;
+            if(localStorage.getItem("trainStations")) localStorage.removeItem("trainStations")
+        },
+        resetLongest(){
+            this.longestBonus = 0;
+            if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus")
         },
         updateTrainsAndBoats(event){
             this.trainsAndBoats[event.units]+=event.update;
@@ -899,61 +979,63 @@ export default {
         getRoutes(){
             return this.routes
         },
+        findVersion(version){
+            let myEvent = { version: version }
+            this.$emit("findVersion",myEvent)
+        },
         resetAll(){
             this.resetTickets();
             this.resetTrainsAndBoats();
             this.resetHarbors();
             this.gameId = "";
-            this.selectVersion = "Around The World"
-            this.tickets = Tickets.World;
+            this.selectVersion = null;
             localStorage.removeItem("version");
             localStorage.removeItem("id");
-        }
-    },
-    mounted(){
-        if(localStorage.getItem("version")){
-            try {
-                this.selectVersion = localStorage.getItem("version")
-                this.tickets = (this.version=="Great Lakes") ? Tickets.GreatLakes : Tickets.World
-            } catch (error) {
-                localStorage.removeItem("version");
+        },
+        initialiseFromLocalStorage(){
+            if(localStorage.getItem("version")){
+                try {
+                    this.findVersion(localStorage.getItem("version"));
+                } catch (error) {
+                    localStorage.removeItem("version");
+                }
+            } else {
+                this.selectVersion = null;
             }
-        } else {
-            this.tickets = Tickets.World
-        }
-        if(localStorage.getItem("id")){
-            try {
-                this.gameId = localStorage.getItem("id");
-            } catch (error) {
-                localStorage.removeItem("id");
+            if(localStorage.getItem("id")){
+                try {
+                    this.gameId = localStorage.getItem("id");
+                } catch (error) {
+                    localStorage.removeItem("id");
+                }
             }
-        }
-        if(localStorage.getItem("units")){
-            try {
-                this.trainsAndBoats = JSON.parse(localStorage.getItem("units"))
-            } catch (error) {
-                localStorage.removeItem('units');
+            if(localStorage.getItem("units")){
+                try {
+                    this.trainsAndBoats = JSON.parse(localStorage.getItem("units"))
+                } catch (error) {
+                    localStorage.removeItem('units');
+                }
             }
-        }
-        if(localStorage.getItem("harbors")){
-            try {
-                this.harbors = JSON.parse(localStorage.getItem("harbors"))
-            } catch (error) {
-                localStorage.removeItem('harbors');
+            if(localStorage.getItem("harbors")){
+                try {
+                    this.harbors = JSON.parse(localStorage.getItem("harbors"))
+                } catch (error) {
+                    localStorage.removeItem('harbors');
+                }
             }
-        }
-        if(localStorage.getItem("routes")){
-            try {
-                this.routes = JSON.parse(localStorage.getItem("routes"))
-            } catch (error) {
-                localStorage.removeItem('routes');
+            if(localStorage.getItem("routes")){
+                try {
+                    this.routes = JSON.parse(localStorage.getItem("routes"))
+                } catch (error) {
+                    localStorage.removeItem('routes');
+                }
             }
-        }
-        if(localStorage.getItem("exchanges")){
-            try {
-                this.exchanges = localStorage.getItem("exchanges")
-            } catch (error) {
-                localStorage.removeItem('exchanges');
+            if(localStorage.getItem("exchanges")){
+                try {
+                    this.exchanges = localStorage.getItem("exchanges")
+                } catch (error) {
+                    localStorage.removeItem('exchanges');
+                }
             }
         }
     }
