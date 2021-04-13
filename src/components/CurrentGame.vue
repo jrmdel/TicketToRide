@@ -2,6 +2,7 @@
     <v-container fluid>
         <v-row>
             <v-col cols="12">
+                <!--Your Game-->
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your game</v-toolbar-title>
@@ -17,7 +18,14 @@
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-select class="mx-2" solo v-model="selectVersion" hide-details color="secondary" label="Select the game" :items="gamesAndRules" item-text="name" return-object></v-select>
+                                            <v-select class="mx-2"
+                                            solo v-model="selectVersion"
+                                            hide-details color="secondary"
+                                            label="Select the game"
+                                            :items="gamesAndRules"
+                                            item-text="name"
+                                            return-object>
+                                            </v-select>
                                         </v-col>
                                     </v-row>
                                 </v-col>
@@ -28,7 +36,7 @@
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
                                             <v-chip class="ml-sm-8" x-large color="secondary">
-                                                <span class="text-h3">{{parseInt(computedTicketScore+computedHarborsScore+computedTrainsBoatsScore)}}</span>
+                                                <span class="text-h3">{{computedTotalScore}}</span>
                                             </v-chip>
                                         </v-col>
                                     </v-row>
@@ -78,6 +86,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" v-show="selectVersion != null">
+                <!--Your tickets-->
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your tickets</v-toolbar-title>
@@ -157,6 +166,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" v-show="computedVersionHasHarbors">
+                <!--Your harbors-->
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your harbors</v-toolbar-title>
@@ -223,7 +233,7 @@
                                                             <v-col cols="12">
                                                                 <v-icon :color="(harbors.length<i) ? undefined : 'accent'" class="mx-4">mdi-medal-outline</v-icon>
                                                                 <span v-if="harbors.length>i-1">{{getHarborScore(harbors[i-1])}}</span>
-                                                                <span v-else>- 4</span>
+                                                                <span v-else>{{(selectVersion) ? selectVersion.pointsPerUnsetHarbor : 0 }}</span>
                                                             </v-col>
                                                         </v-row>
                                                     </v-container>
@@ -301,7 +311,125 @@
                     </v-card-text>
                 </v-card>
             </v-col>
+            <v-col cols="12" v-show="computedVersionHasTrainStations">
+                <!--Your train stations-->
+                <v-card>
+                    <v-toolbar flat color="primary" dark>
+                        <v-toolbar-title>Your train stations</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon large>mdi-railroad-light</v-icon>
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="space-around">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of train stations</span>
+                                    <span class="ml-4 text-h3">{{trainStations}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">current score</span>
+                                    <span class="ml-4 text-h3">{{computedTrainStationsScore}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="end">
+                                <v-col cols="auto">
+                                    <v-btn x-large color="accent" @click="openReset('train stations')">
+                                        <v-icon>mdi-restore</v-icon>
+                                        <span class="ml-3 mr-1">RESET</span>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-row>
+                                        <span class="text-h6 tertiary--text">Built train stations</span>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col v-for="i in 3" :key="i" cols="12" md="4">
+                                            <v-card outlined>
+                                                <v-card-title>
+                                                    <span>Station #{{i}}</span>
+                                                    <v-spacer></v-spacer>
+                                                    <v-icon v-if="!(trainStations<i)" large color="red" @click="trainStations--">mdi-close</v-icon>
+                                                    <v-icon v-else large color="green" @click="trainStations++">mdi-plus</v-icon>
+                                                </v-card-title>
+                                                <v-card-text class="my-n3">
+                                                    <v-container fluid>
+                                                        <v-row class="text-body-1" align="center">
+                                                            <v-col cols="12">
+                                                                <v-icon :color="(trainStations<i) ? undefined : 'accent'" class="mx-4">mdi-medal-outline</v-icon>
+                                                                <span v-if="trainStations>i-1">{{(selectVersion) ? selectVersion.trainStationRule : 0 }}</span>
+                                                                <span v-else>{{(selectVersion) ? selectVersion.pointsPerUnsetTrainStation : 0 }}</span>
+                                                            </v-col>
+                                                        </v-row>
+                                                    </v-container>
+                                                </v-card-text>
+                                            </v-card>
+                                        </v-col>
+                                    </v-row>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+            <v-col cols="12" v-show="computedVersionHasLongest">
+                <!--Your bonuses-->
+                <v-card>
+                    <v-toolbar flat color="primary" dark>
+                        <v-toolbar-title>Your bonuses</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-icon large>mdi-trophy-award</v-icon>
+                    </v-toolbar>
+                    <v-card-subtitle>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="space-around">
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">nb of bonuses</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{longestBonus}}</span>
+                                </v-col>
+                                <v-col class="mx-8 mx-sm-0" cols="auto">
+                                    <span class="text-caption">score</span>
+                                    <span class="ml-4 text-sm-h3 text-h4">{{computedBonusScore}}</span>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-subtitle>
+                    <v-card-text>
+                        <v-container fluid>
+                            <v-row justify="center" justify-sm="end">
+                                <v-col cols="auto">
+                                    <v-btn x-large color="accent" @click="openReset('bonuses')">
+                                        <v-icon>mdi-restore</v-icon>
+                                        <span class="ml-3 mr-1">RESET</span>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row v-show="computedVersionHasLongest">
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">Longest continous path</span>
+                                </v-col>
+                            </v-row>
+                            <v-row v-show="computedVersionHasLongest" class="ml-sm-4" align="center" justify="center" justify-sm="start">
+                                <v-btn large icon :disabled="longestBonus==0" @click="longestBonus-=1">
+                                    <v-icon color="red">mdi-minus</v-icon>
+                                </v-btn>
+                                <span class="text-h6">{{longestBonus}}</span>
+                                <v-btn large icon :disabled="longestBonus==1" @click="longestBonus+=1">
+                                    <v-icon color="green">mdi-plus</v-icon>
+                                </v-btn>
+                                <v-icon class="ml-4">mdi-transit-connection-variant</v-icon>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </v-col>
             <v-col cols="12" v-show="selectVersion != null">
+                <!--Your units-->
                 <v-card>
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your trains <span v-show="computedVersionHasBoats">and boats</span></v-toolbar-title>
@@ -483,7 +611,6 @@
 
 <script>
 import { Types } from '../util/types';
-//import { Tickets } from '../util/tickets';
 import TrainBoat from './currentgame/TrainBoat'
 import { db } from '../main';
 
@@ -524,6 +651,7 @@ export default {
         selectVersion: null,
         selectPlayer: [],
         selectedPlayer: null,
+        lockSelect: true,
         trainStations: 0,
         longestBonus: 0,
         harbors: [],
@@ -647,6 +775,20 @@ export default {
                 } else return 0
             }
         },
+        computedBonusScore:{
+            get(){
+                if(this.computedVersionHasLongest){
+                    return this.selectVersion.longestPoints*this.longestBonus
+                } else return 0
+            }
+        },
+        computedTotalScore:{
+            get(){
+                if(this.selectVersion){
+                    return parseInt(this.computedTicketScore+this.computedTrainsBoatsScore+this.computedHarborsScore+this.computedTrainStationsScore+this.computedBonusScore)
+                } else return 0
+            }
+        },
         computedNumberUnits:{
             get(){
                 return Object.values(this.trainsAndBoats).map((x,i)=> x*(i+1) ).reduce((a, b) => a + b, 0)
@@ -722,7 +864,6 @@ export default {
         selectVersion:{
             handler(value){
                 if(value && value.name){
-                    //this.tickets = (value=="Around The World") ? Tickets.World : Tickets.GreatLakes
                     localStorage.setItem("version", value.name);
                 }
             }
@@ -928,8 +1069,8 @@ export default {
             if(this.resetType == "tickets") this.resetTickets();
             else if(this.resetType == "units") this.resetTrainsAndBoats();
             else if(this.resetType == "harbors") this.resetHarbors();
-            else if(this.resetType == "trainStations") this.resetTrainStations();
-            else if(this.resetType == "longest") this.resetLongest();
+            else if(this.resetType == "train stations") this.resetTrainStations();
+            else if(this.resetType == "bonuses") this.resetBonuses();
             else {
                 this.resetAll();
                 this.$emit("resetGameSession");
@@ -954,7 +1095,7 @@ export default {
             this.trainStations = 0;
             if(localStorage.getItem("trainStations")) localStorage.removeItem("trainStations")
         },
-        resetLongest(){
+        resetBonuses(){
             this.longestBonus = 0;
             if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus")
         },
@@ -978,6 +1119,9 @@ export default {
         },
         getRoutes(){
             return this.routes
+        },
+        toggleLockSelect(){
+            this.lockSelect = !this.lockSelect;
         },
         findVersion(version){
             let myEvent = { version: version }
@@ -1007,6 +1151,20 @@ export default {
                     this.gameId = localStorage.getItem("id");
                 } catch (error) {
                     localStorage.removeItem("id");
+                }
+            }
+            if(localStorage.getItem("longestBonus")){
+                try {
+                    this.longestBonus = localStorage.getItem("longestBonus");
+                } catch (error) {
+                    localStorage.removeItem("longestBonus");
+                }
+            }
+            if(localStorage.getItem("trainStations")){
+                try {
+                    this.trainStations = localStorage.getItem("trainStations");
+                } catch (error) {
+                    localStorage.removeItem("trainStations");
                 }
             }
             if(localStorage.getItem("units")){
