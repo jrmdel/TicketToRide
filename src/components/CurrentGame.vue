@@ -900,12 +900,12 @@ export default {
         },
         longestBonus:{
             handler(value){
-                if(value) localStorage.setItem("longestBonus",value);
+                if(value!=null) localStorage.setItem("longestBonus",value);
             }
         },
         trainStations:{
             handler(value){
-                if(value) localStorage.setItem("trainStations",value);
+                if(value!=null) localStorage.setItem("trainStations",value);
             }
         },
         computedLastNUnits:{
@@ -978,13 +978,13 @@ export default {
             let routes = this.routes.map(x => {return {id:x.id, status:x.status}})
             let update = {
                 name: this.selectedPlayer,
-                score: parseInt(this.computedTicketScore+this.computedHarborsScore+this.computedTrainsBoatsScore),
+                score: this.computedTotalScore,
                 tickets: routes,
                 units: this.trainsAndBoats
             }
             if(this.computedVersionHasHarbors) update["harbors"] = this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}});
             if(this.computedVersionHasExchanges) update["exchanges"] = this.exchanges;
-            if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore();
+            if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore;
             if(this.computedVersionHasLongest) update["longestBonus"] = this.longestBonus;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
@@ -1131,6 +1131,8 @@ export default {
             this.resetTickets();
             this.resetTrainsAndBoats();
             this.resetHarbors();
+            this.resetTrainStations();
+            this.resetBonuses();
             this.gameId = "";
             this.selectVersion = null;
             localStorage.removeItem("version");
