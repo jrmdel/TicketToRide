@@ -26,10 +26,15 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame" :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion" :gamesAndRules="gamesAndRules" :appLoaded="appLoaded" @resetGameSession="resetGameSession()" @findVersion="findVersion($event)"/>
+                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame"
+                    :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion"
+                    :gamesAndRules="gamesAndRules" :appLoaded="appLoaded"
+                    @resetGameSession="resetGameSession()" @popUp="popUp($event)" @findVersion="findVersion($event)"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4" @joinGame="actOnJoinGame($event)"/>
+                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4"
+                    :gamesAndRules="gamesAndRules"
+                    @joinGame="actOnJoinGame($event)" @popUp="popUp($event)"/>
                 </v-tab-item>
                 <v-tab-item>
                     <Help class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
@@ -114,6 +119,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-snackbar top v-model="snack" :timeout="5000" :color="snackColor"> {{snackMsg}} </v-snackbar>
     </v-app>
 </template>
 
@@ -151,7 +157,10 @@ export default {
         currentGamePlayers: [],
         loadingCreate: false,
         gamesAndRules: Games,
-        appLoaded: false
+        appLoaded: false,
+        snack: false,
+        snackColor: "",
+        snackMsg: ""
     }),
     watch:{
         currentGameVersion: {
@@ -229,6 +238,11 @@ export default {
             this.currentGamePlayers = Object.values(this.names).splice(0,this.players)
             // Create then close
             this.closeCreate();
+        },
+        popUp(event){
+            this.snackColor = event.color;
+            this.snackMsg = event.msg;
+            this.snack = true;
         },
         computeLabel(number){
             return `Player ${number}`

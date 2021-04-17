@@ -157,6 +157,7 @@
                     <v-tab-item v-for="i in selectedGame.players.length" :key="i">
                         <v-card flat>
                             <v-container >
+                                <!--
                                 <v-row>
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Statistics</span>
@@ -165,6 +166,28 @@
                                 <v-row>
                                     <v-col cols="12">
                                         <apexchart type="bar" height="160" :options="optionsPointsChartPerPlayer" :series="computePointsGraph(selectedGame.players[i-1])"></apexchart>
+                                    </v-col>
+                                </v-row> -->
+                                <v-row v-if="computedHasLongest">
+                                    <v-col cols="12">
+                                        <span class="text-h6 tertiary--text">Bonuses</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-if="computedHasLongest">
+                                    <v-col cols="12">
+                                        <v-card outlined :disabled="selectedGame.players[i-1].longestBonus==0">
+                                            <v-toolbar class="text-caption font-weight-bold text--secondary" flat dense color="primaryLight">
+                                                Longest path
+                                            </v-toolbar>
+                                            <v-container>
+                                                <v-row justify="space-around">
+                                                    <v-icon :color="(selectedGame.players[i-1].longestBonus!=0) ? 'accent' : 'primary'">
+                                                        {{(selectedGame.players[i-1].longestBonus!=0) ? "mdi-star" : "mdi-star-off-outline"}}
+                                                    </v-icon>
+                                                    <span class="text-h6 font-weight-regular tertiary--text"> {{selectedGame.players[i-1].longestBonus}} </span>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -189,17 +212,47 @@
                                         </v-card>
                                     </v-col>
                                 </v-row>
-                                <v-row>
+                                <v-row v-if="computedHasHarbors">
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Harbors</span>
                                     </v-col>
                                 </v-row>
-                                <v-row>
+                                <v-row v-if="computedHasHarbors">
                                     <v-col cols="12">
                                         <v-card outlined>
                                             <v-data-table :headers="harborsHeaders" :items="selectedGame.players[i-1].harbors"
                                             :footer-props="{'items-per-page-options': [-1] }">
                                             </v-data-table>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-if="computedHasTrainStations">
+                                    <v-col cols="12">
+                                        <span class="text-h6 tertiary--text">Train stations</span>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-if="computedHasTrainStations">
+                                    <v-col cols="12">
+                                        <v-card outlined>
+                                            <v-simple-table fixed-header>
+                                                <template v-slot:default>
+                                                    <thead>
+                                                        <tr>
+                                                            <th class="primaryLight text-left">Score</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody v-show="selectedGame.players[i-1].trainStations">
+                                                        <tr>
+                                                            <td>{{ selectedGame.players[i-1].trainStations }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                    <tbody v-show="!selectedGame.players[i-1].trainStations">
+                                                        <tr>
+                                                            <td colspan="2">No stations yet</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </template>
+                                            </v-simple-table>
                                         </v-card>
                                     </v-col>
                                 </v-row>
@@ -274,6 +327,7 @@ export default {
             games: [],
             //games: jsonGames,
             selectedGame: null,
+            selectedVersion: null,
             dialogDetails: false,
             loadingData: false,
             unsubscribe: null,
@@ -324,11 +378,32 @@ export default {
             },
         }
     },
+    props:{
+        gamesAndRules:{
+            type: Array,
+            default:()=>[]
+        }
+    },
     computed:{
         computedLoading:{
             get(){
                 // Returns true if loading
                 return Object.keys(this.computedMetadata).length==0
+            }
+        },
+        computedHasHarbors:{
+            get(){
+                return this.selectedVersion && this.selectedVersion.hasHarbors
+            }
+        },
+        computedHasLongest:{
+            get(){
+                return this.selectedVersion && this.selectedVersion.hasLongest
+            }
+        },
+        computedHasTrainStations:{
+            get(){
+                return this.selectedVersion && this.selectedVersion.hasTrainStations
             }
         },
         computedMetadata:{
@@ -414,14 +489,14 @@ export default {
     },
     methods:{
         openDetails(item){
-            function getScoreAndNumberOfUnits(unitObject, rules){
+            function getScoreAndNumberOfUnits(unitObject, exchanges, rules){
                 let count = 0;
                 let score = 0;
                 for (let [key, value] of Object.entries(unitObject)){
                     count += key*value;
                     score += rules[key]*value;
                 }
-                return {count: count, score: score};
+                return {count: count, score: score-exchanges};
             }
             function getHarborsScore(arr){
                 let n = (3-arr.length)*-4;
@@ -441,6 +516,8 @@ export default {
                 }
                 return {score: score, totalFailed: fail};
             }
+            if(this.gamesAndRules.findIndex(game=>game.name==item.version)==-1) return this.popUp("This game version is not supported","error")
+            this.selectedVersion = Object.assign({},this.gamesAndRules.find(game=>game.name==item.version));
             let obj = {
                 date: item.date,
                 version: item.version,
@@ -448,18 +525,20 @@ export default {
                 score: item.score,
                 rankings: item.rankings
             }
-            let computed = []
+            let computed = [];
+            let p = "";
+            let doc = {};
             for(let i=0;i<item.players;i++){
-                let p = `player${i+1}`
-                let t = (item.version == "Around The World") ? Tickets.World : Tickets.GreatLakes
-                let doc = {};
+                p = `player${i+1}`;
                 if(item[p]) doc = Object.assign({},item[p]);
-                if(doc.tickets) doc.tickets = doc.tickets.map(x => { return {...x, ...t.find(o => x.id==o.id)} })
+                if(doc.tickets) doc.tickets = doc.tickets.map(x => { return {...x, ...this.selectedVersion.tickets.find(o => x.id==o.id)} })
                 computed.push({
                     ...doc,
-                    computedUnits: getScoreAndNumberOfUnits(doc.units || {}, this.scoreUnitsRule),
+                    computedUnits: getScoreAndNumberOfUnits(doc.units || {}, item.exchanges || 0,this.selectedVersion.pointsPerRoute),
                     computedHarbors: getHarborsScore(doc.harbors || []),
-                    computedTickets: getTicketData(doc.tickets || [])
+                    computedTickets: getTicketData(doc.tickets || []),
+                    computedTrainStations: doc.trainStations || 0,
+                    computedLongest: (this.selectedVersion.hasLongest) ? this.selectedVersion.longestPoints*doc.longestBonus : 0
                     })
             }
             obj.players = computed;
@@ -556,6 +635,7 @@ export default {
         closeDetails(){
             this.dialogDetails = false;
             this.selectedGame = null;
+            this.selectedVersion = null;
         },
         getStatusColor(status){
             if(status == "Done") return "green"
@@ -570,9 +650,12 @@ export default {
             } else return false
         },
         joinGame(item){
-            // Changes the tab and send the ID + version
+            // Will change the tab and send the ID + version
             let myEvent = {id: item.id, version: item.version}
             this.$emit("joinGame",myEvent)
+        },
+        popUp(msg, color){
+            this.$emit("popUp", {msg, color})
         },
         computeObjectFromFirebase(doc){
             let docData = doc.data();

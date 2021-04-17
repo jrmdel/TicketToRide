@@ -605,7 +605,6 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <v-snackbar top v-model="snack" :timeout="5000" :color="snackColor"> {{snackMsg}} </v-snackbar>
     </v-container>
 </template>
 
@@ -664,9 +663,6 @@ export default {
         loadingOpenSaveGame: false,
         saveGameSelectErrorMessage: null,
         loadingSave: false,
-        snack: false,
-        snackColor: "",
-        snackMsg: ""
     }),
     props:{
         id: {
@@ -985,7 +981,7 @@ export default {
             if(this.computedVersionHasHarbors) update["harbors"] = this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}});
             if(this.computedVersionHasExchanges) update["exchanges"] = this.exchanges;
             if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore;
-            if(this.computedVersionHasLongest) update["longestBonus"] = this.longestBonus;
+            if(this.computedVersionHasLongest) update["longestBonus"] = this.computedBonusScore;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
                 this.notifySnack("Your game was saved!","success")
@@ -1112,10 +1108,8 @@ export default {
                 localStorage.setItem("routes", JSON.stringify(this.routes));
             }
         },
-        notifySnack(msg,col){
-            this.snackColor = col;
-            this.snackMsg = msg;
-            this.snack = true;
+        notifySnack(msg,color){
+            this.$emit("popUp",{msg, color});
         },
         getRoutes(){
             return this.routes
