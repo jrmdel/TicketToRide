@@ -16,11 +16,6 @@
 
 <script>
 export default {
-    data(){
-        return{
-
-        }
-    },
     props:{
         currentTotal:{
             type: Number,

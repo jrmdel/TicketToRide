@@ -94,39 +94,16 @@
                         <v-icon large>mdi-ticket-confirmation-outline</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
-                        <v-container fluid>
-                            <v-row justify="center" justify-sm="space-around">
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of tickets</span>
-                                    <span class="ml-4 text-h3">{{routes.length}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb completed</span>
-                                    <span class="ml-4 text-h3">{{computedCompletion}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">current score</span>
-                                    <span class="ml-4 text-h3">{{computedTicketScore}}</span>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <Indicators
+                        leftText="nb of tickets" :leftIndicator="routes.length" 
+                        centerText="nb completed" :centerIndicator="computedCompletion"
+                        rightText="current score" :rightIndicator="computedTicketScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
-                            <v-row justify="center" justify-sm="space-between">
-                                <v-col cols="auto">
-                                    <v-btn x-large color="primary" @click="openAddTicket">
-                                        <v-icon>mdi-card-plus-outline</v-icon>
-                                        <span class="ml-3 mr-1">ADD A TICKET</span>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="auto">
-                                    <v-btn x-large color="accent" @click="openReset('tickets')">
-                                        <v-icon>mdi-restore</v-icon>
-                                        <span class="ml-3 mr-1">RESET</span>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <TwoButtons
+                            leftColor="primary" leftIcon="mdi-card-plus-outline" leftText="ADD A TICKET" @clickLeft="openAddTicket"
+                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('tickets')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-card outlined flat color="primaryLight">
@@ -174,39 +151,16 @@
                         <v-icon large>mdi-anchor</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
-                        <v-container fluid>
-                            <v-row justify="center" justify-sm="space-around">
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of cities</span>
-                                    <span class="ml-4 text-h3">{{computedTopCities.length}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of harbors</span>
-                                    <span class="ml-4 text-h3">{{harbors.length}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">current score</span>
-                                    <span class="ml-4 text-h3">{{computedHarborsScore}}</span>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <Indicators
+                        leftText="nb of cities" :leftIndicator="computedTopCities.length" 
+                        centerText="nb of harbors" :centerIndicator="harbors.length"
+                        rightText="current score" :rightIndicator="computedHarborsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
-                            <v-row justify="center" justify-sm="space-between">
-                                <v-col cols="auto">
-                                    <v-btn x-large :disabled="harbors.length>2" color="primary" @click="openAddHarbor">
-                                        <v-icon>mdi-ship-wheel</v-icon>
-                                        <span class="ml-3 mr-1">ADD A HARBOR</span>
-                                    </v-btn>
-                                </v-col>
-                                <v-col cols="auto">
-                                    <v-btn x-large color="accent" @click="openReset('harbors')">
-                                        <v-icon>mdi-restore</v-icon>
-                                        <span class="ml-3 mr-1">RESET</span>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <TwoButtons
+                            :leftDisabledCondition="harbors.length>2" leftColor="primary" leftIcon="mdi-ship-wheel" leftText="ADD A HARBOR" @clickLeft="openAddHarbor"
+                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('harbors')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-row>
@@ -243,68 +197,10 @@
                                     </v-row>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-row>
-                                        <span class="text-h6 tertiary--text">Top potential cities</span>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="12">
-                                            <v-card outlined>
-                                                <v-simple-table fixed-header>
-                                                    <template v-slot:default>
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="blue-grey lighten-4 text-left">City</th>
-                                                                <th class="blue-grey lighten-4 text-left">Number</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody v-show="computedTopCities.length > 0">
-                                                            <tr v-for="item in computedTopCities" :key="item.city">
-                                                                <td>{{ item.city }}</td>
-                                                                <td>{{ item.num }}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                        <tbody v-show="computedTopCities.length == 0">
-                                                            <tr>
-                                                                <td colspan="2">No cities yet</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </template>
-                                                </v-simple-table>
-                                            </v-card>
-                                        </v-col>
-                                    </v-row>
+                                    <SimpleTable title="Top potential cities" leftColumn="City" rightColumn="Number" :data="computedTopCities" emptyText="No cities yet" />
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-row>
-                                        <span class="text-h6 tertiary--text">Top successful cities</span>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="12">
-                                            <v-card outlined>
-                                                <v-simple-table fixed-header>
-                                                    <template v-slot:default>
-                                                        <thead>
-                                                            <tr>
-                                                                <th class="blue-grey lighten-4 text-left">City</th>
-                                                                <th class="blue-grey lighten-4 text-left">Number</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody v-show="computedTopSuccessfulCities.length > 0">
-                                                            <tr v-for="item in computedTopSuccessfulCities" :key="item.city">
-                                                                <td>{{ item.city }}</td>
-                                                                <td>{{ item.num }}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                        <tbody v-show="computedTopSuccessfulCities.length == 0">
-                                                            <tr>
-                                                                <td colspan="2">No successful cities yet</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </template>
-                                                </v-simple-table>
-                                            </v-card>
-                                        </v-col>
-                                    </v-row>
+                                    <SimpleTable title="Top successful cities" leftColumn="City" rightColumn="Number" :data="computedTopSuccessfulCities" emptyText="No successful cities yet"/>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -320,29 +216,16 @@
                         <v-icon large>mdi-railroad-light</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
-                        <v-container fluid>
-                            <v-row justify="center" justify-sm="space-around">
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of train stations</span>
-                                    <span class="ml-4 text-h3">{{trainStations}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">current score</span>
-                                    <span class="ml-4 text-h3">{{computedTrainStationsScore}}</span>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <Indicators
+                        leftText="nb of train stations" :leftIndicator="trainStations" 
+                        :centerCondition="false"
+                        rightText="current score" :rightIndicator="computedTrainStationsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
-                            <v-row justify="center" justify-sm="end">
-                                <v-col cols="auto">
-                                    <v-btn x-large color="accent" @click="openReset('train stations')">
-                                        <v-icon>mdi-restore</v-icon>
-                                        <span class="ml-3 mr-1">RESET</span>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <TwoButtons
+                            :leftActive="false"
+                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('train stations')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-row>
@@ -386,29 +269,16 @@
                         <v-icon large>mdi-trophy-award</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
-                        <v-container fluid>
-                            <v-row justify="center" justify-sm="space-around">
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of bonuses</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{longestBonus}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">score</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{computedBonusScore}}</span>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <Indicators
+                        leftText="nb of bonuses" :leftIndicator="longestBonus" 
+                        :centerCondition="false"
+                        rightText="score" :rightIndicator="computedBonusScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
-                            <v-row justify="center" justify-sm="end">
-                                <v-col cols="auto">
-                                    <v-btn x-large color="accent" @click="openReset('bonuses')">
-                                        <v-icon>mdi-restore</v-icon>
-                                        <span class="ml-3 mr-1">RESET</span>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <TwoButtons
+                            :leftActive="false"
+                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('bonuses')"/>
                             <v-row v-show="computedVersionHasLongest">
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Longest continous path</span>
@@ -437,39 +307,22 @@
                         <v-icon large>mdi-train</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
-                        <v-container fluid>
-                            <v-row justify="center" justify-sm="space-around">
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of units</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{computedNumberUnits}}</span>
-                                </v-col>
-                                <v-col v-show="computedVersionHasExchanges" class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of exchanges</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{exchanges}}</span>
-                                </v-col>
-                                <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">current score</span>
-                                    <span class="ml-4 text-sm-h3 text-h4">{{computedTrainsBoatsScore}}</span>
-                                </v-col>
-                            </v-row>
-                        </v-container>
+                        <Indicators
+                        leftText="nb of units" :leftIndicator="computedNumberUnits" 
+                        centerText="nb of exchanges" :centerIndicator="exchanges" :centerCondition="computedVersionHasExchanges"
+                        rightText="current score" :rightIndicator="computedTrainsBoatsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
-                            <v-row justify="center" justify-sm="end">
-                                <v-col cols="auto">
-                                    <v-btn x-large color="accent" @click="openReset('units')">
-                                        <v-icon>mdi-restore</v-icon>
-                                        <span class="ml-3 mr-1">RESET</span>
-                                    </v-btn>
-                                </v-col>
-                            </v-row>
+                            <TwoButtons
+                            :leftActive="false"
+                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('units')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Claimed routes</span>
                                 </v-col>
                             </v-row>
-                            <TrainBoat v-for="i in computedKeysUnits" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" :hasBoats="computedVersionHasBoats" @update-value="updateTrainsAndBoats($event)"/>
+                            <Units v-for="i in computedKeysUnits" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" :hasBoats="computedVersionHasBoats" @update-value="updateTrainsAndBoats($event)"/>
                             <v-row v-show="computedVersionHasExchanges">
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">Exchanges</span>
@@ -610,12 +463,18 @@
 
 <script>
 import { Types } from '../util/types';
-import TrainBoat from './currentgame/TrainBoat'
+import Units from './currentgame/Units';
+import Indicators from "./currentgame/Indicators";
+import SimpleTable from "./currentgame/SimpleTable";
+import TwoButtons from "./currentgame/TwoButtons";
 import { db } from '../main';
 
 export default {
     components:{
-        TrainBoat
+        Units,
+        Indicators,
+        SimpleTable,
+        TwoButtons
     },
     data: () => ({
         dialogTicket: false,
@@ -1151,14 +1010,14 @@ export default {
             }
             if(localStorage.getItem("longestBonus")){
                 try {
-                    this.longestBonus = localStorage.getItem("longestBonus");
+                    this.longestBonus = parseInt(localStorage.getItem("longestBonus"));
                 } catch (error) {
                     localStorage.removeItem("longestBonus");
                 }
             }
             if(localStorage.getItem("trainStations")){
                 try {
-                    this.trainStations = localStorage.getItem("trainStations");
+                    this.trainStations = parseInt(localStorage.getItem("trainStations"));
                 } catch (error) {
                     localStorage.removeItem("trainStations");
                 }
@@ -1186,7 +1045,7 @@ export default {
             }
             if(localStorage.getItem("exchanges")){
                 try {
-                    this.exchanges = localStorage.getItem("exchanges")
+                    this.exchanges = parseInt(localStorage.getItem("exchanges"));
                 } catch (error) {
                     localStorage.removeItem('exchanges');
                 }
