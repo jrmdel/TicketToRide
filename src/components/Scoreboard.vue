@@ -83,7 +83,8 @@
                     <v-icon>mdi-close</v-icon>
                 </v-btn>
             </v-toolbar>
-            <v-tabs mobile-breakpoint="0" :vertical="$vuetify.breakpoint.mdAndUp" color="secondary">
+            <v-tabs mobile-breakpoint="0" :vertical="$vuetify.breakpoint.mdAndUp" color="secondary" background-color="primary">
+                <v-tabs-slider color="secondary"></v-tabs-slider>
                 <v-tab>
                     <v-icon left>mdi-chart-box-outline</v-icon>
                     Summary
@@ -108,8 +109,8 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="blue-grey lighten-4 text-left">Name</th>
-                                                            <th class="blue-grey lighten-4 text-left">Score</th>
+                                                            <th class="primaryLight text-left darkenBlack--text">Name</th>
+                                                            <th class="primaryLight text-left darkenBlack--text">Score</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.rankings.length > 0">
@@ -141,7 +142,7 @@
                                         </v-card>
                                     </v-col>
                                     <v-col cols="12" sm="6">
-                                        <v-card tile color="primary" dark>
+                                        <v-card tile color="quaternary" dark>
                                             <v-card-title class="text-subtitle-1">Total of successful tickets</v-card-title>
                                             <v-card-text class="text-h4 white--text">
                                                 {{getTotalSuccessfulTickets(selectedGame.players)}}
@@ -238,7 +239,7 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="primaryLight text-left">Score</th>
+                                                            <th class="primaryLight darkenBlack--text text-left">Score</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].trainStations">
@@ -268,8 +269,8 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="primaryLight text-left">Routes</th>
-                                                            <th class="primaryLight text-left">Number</th>
+                                                            <th class="primaryLight darkenBlack--text text-left">Routes</th>
+                                                            <th class="primaryLight darkenBlack--text text-left">Number</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].units">
@@ -301,7 +302,7 @@
 <script>
 import { db } from '@/main'
 import { Tickets } from '../util/tickets'
-//import jsonGames from '../util/savedGames04-21.json'
+import jsonGames from '../util/savedGames04-21.json'
 
 export default {
     data(){
@@ -316,16 +317,16 @@ export default {
                 {text:"Actions", align:"center", value:"actions", sortable: false}
             ],
             ticketHeaders:[
-                {text:"From", align:"start", value:"from", sortable: true, class:"primaryLight"},
-                {text:"To", align:"start", value:"to", sortable: true, class:"primaryLight"},
-                {text:"Status", align:"start", value:"status", sortable: true, class:"primaryLight"},
+                {text:"From", align:"start", value:"from", sortable: true, class:"primaryLight darkenBlack--text"},
+                {text:"To", align:"start", value:"to", sortable: true, class:"primaryLight darkenBlack--text"},
+                {text:"Status", align:"start", value:"status", sortable: true, class:"primaryLight darkenBlack--text"},
             ],
             harborsHeaders:[
-                {text: "City", align:"start", value:"city", sortable: false, class:"primaryLight"},
-                {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight"}
+                {text: "City", align:"start", value:"city", sortable: false, class:"primaryLight darkenBlack--text"},
+                {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight darkenBlack--text"}
             ],
-            games: [],
-            //games: jsonGames,
+            //games: [],
+            games: jsonGames,
             selectedGame: null,
             selectedVersion: null,
             dialogDetails: false,
@@ -442,48 +443,48 @@ export default {
         computeFromVersion2(){
             if(this.games.length==0) return {}
             else {
-            let t = Tickets.World;
-            let res = {
-                topTickets: t.map(doc=>{ return {
-                    ...doc, occurrences:0,
-                    resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
-                    resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
-                totalPoints: 0,
-                firstPlayerWins: 0,
-                numberOfGames: 0,
-                cumulPlayers: 0,
-                pointsTickets: 0,
-                pointsHarbors: 0,
-                pointsUnits: 0
-            }
-            let docs = this.games.filter(item=>item.version=="Around The World");
-            res.numberOfGames = docs.length;
-            let p = 0, player = null, index=0, winner = false;
-            for(let doc of docs){
-                p = doc.players;
-                res.cumulPlayers += p;
-                for(let j=1; j<=p; j++){
-                    player = Object.assign({},doc[`player${j}`]);
-                    if(player.name == doc.winner){
-                        if(j==1) res.firstPlayerWins++;
-                        winner = true;
-                    } else winner = false;
-                    res.totalPoints+=player.score;
-                    if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
-                    if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
-                    for (let ticket of player.tickets) {
-                        index = res.topTickets.findIndex(item=>item.id == ticket.id);
-                        if(index==-1) console.log(doc);
-                        else{
-                        res.topTickets[index].occurrences++;
-                        if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
-                        else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
-                        else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                let t = Tickets.World;
+                let res = {
+                    topTickets: t.map(doc=>{ return {
+                        ...doc, occurrences:0,
+                        resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
+                        resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
+                    totalPoints: 0,
+                    firstPlayerWins: 0,
+                    numberOfGames: 0,
+                    cumulPlayers: 0,
+                    pointsTickets: 0,
+                    pointsHarbors: 0,
+                    pointsUnits: 0
+                }
+                let docs = this.games.filter(item=>item.version=="Around The World");
+                res.numberOfGames = docs.length;
+                let p = 0, player = null, index=0, winner = false;
+                for(let doc of docs){
+                    p = doc.players;
+                    res.cumulPlayers += p;
+                    for(let j=1; j<=p; j++){
+                        player = Object.assign({},doc[`player${j}`]);
+                        if(player.name == doc.winner){
+                            if(j==1) res.firstPlayerWins++;
+                            winner = true;
+                        } else winner = false;
+                        res.totalPoints+=player.score;
+                        if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
+                        if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
+                        for (let ticket of player.tickets) {
+                            index = res.topTickets.findIndex(item=>item.id == ticket.id);
+                            if(index==-1) console.log(doc);
+                            else{
+                            res.topTickets[index].occurrences++;
+                            if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
+                            else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
+                            else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                            }
                         }
                     }
                 }
-            }
-            return res;
+                return res;
             }
         }
     },
@@ -704,16 +705,16 @@ export default {
     mounted(){
         //this.getFirebaseData()
         // The one below is the good one
-        this.getRealTimeData();
+        //this.getRealTimeData();
 
         // For development purposes
-        /*this.loadingData = true;
+        this.loadingData = true;
         setTimeout(()=>{
             this.loadingData = false
-        }, 2500)*/
+        }, 2500)
     },
     beforeDestroy(){
-        this.unsubscribe();
+        //this.unsubscribe();
     }
 }
 </script>

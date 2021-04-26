@@ -1,26 +1,49 @@
 <template>
     <v-app>
         <v-app-bar app color="primary" dark>
-        <div class="d-flex align-center">
-            <!-- <v-icon large>mdi-ticket-confirmation-outline</v-icon> -->
-            <span class="text-h5 font-weight-light">Ticket To Ride</span>
-        </div>
+            <div class="d-flex align-center">
+                <!-- <v-icon large>mdi-ticket-confirmation-outline</v-icon> -->
+                <span class="text-h5 font-weight-light">Ticket To Ride</span>
+            </div>
 
-        <v-spacer></v-spacer>
+            <v-spacer></v-spacer>
 
-        <v-btn text @click="openCreate">
-            <span class="mr-2">New game</span>
-            <v-icon>mdi-checkerboard-plus</v-icon>
-        </v-btn>
+            <v-btn text @click="openCreate">
+                <span class="mr-2">New game</span>
+                <v-icon>mdi-checkerboard-plus</v-icon>
+            </v-btn>
+            <v-divider vertical inset></v-divider>
+            <v-menu v-model="menuSettings" :close-on-content-click="false" left bottom offset-y>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on">
+                        <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                </template>
+                <v-card min-width="250">
+                    <v-toolbar flat color="primaryLight">
+                        <v-toolbar-title class="darkenBlack--text">Settings</v-toolbar-title>
+                    </v-toolbar>
+                    <v-card-text>
+                        <v-container>
+                            <v-row align="center">
+                                <v-switch v-model="computedTheme" class="pt-0 mt-0" label="Dark theme :" inset color="accent"
+                                hide-details>
+                                </v-switch>
+                                <div class="text-subtitle-1 ml-1">{{(computedTheme) ? 'On' : 'Off'}}</div>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </v-menu>
 
-        <template v-slot:extension>
-            <v-tabs v-model="tab" mobile-breakpoint="0">
-            <v-tabs-slider color="secondary"></v-tabs-slider>
-            <v-tab>Current game</v-tab>
-            <v-tab>Scoreboard</v-tab>
-            <v-tab>Help</v-tab>
-            </v-tabs>
-        </template>
+            <template v-slot:extension>
+                <v-tabs v-model="tab" mobile-breakpoint="0">
+                <v-tabs-slider color="secondary"></v-tabs-slider>
+                <v-tab>Current game</v-tab>
+                <v-tab>Scoreboard</v-tab>
+                <v-tab>Help</v-tab>
+                </v-tabs>
+            </template>
         </v-app-bar>
 
         <v-main>
@@ -148,6 +171,7 @@ export default {
         defaultNames: {1: "", 2:"", 3:"", 4:"", 5:""},
         date: new Date().toISOString().substr(0,10),
         menu: false,
+        menuSettings: false,
         tab: null,
         newGameForm: false,
         dialogCreate: false,
@@ -174,6 +198,17 @@ export default {
                 if(value){
                     this.appLoaded = true;
                 }
+            }
+        }
+    },
+    computed:{
+        computedTheme:{
+            get(){
+                return this.$vuetify.theme.dark
+            },
+            set(value){
+                this.$vuetify.theme.dark = value;
+                localStorage.setItem("dark-theme", value);
             }
         }
     },
@@ -246,11 +281,29 @@ export default {
         },
         computeLabel(number){
             return `Player ${number}`
+        },
+        toggleTheme(){
+            this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+        }
+    },
+    mounted(){
+        if(localStorage.getItem("dark-theme")){
+            try {
+                this.$vuetify.theme.dark = (localStorage.getItem("dark-theme")=='true');
+            } catch (error) {
+                localStorage.removeItem('dark-theme');
+            }
         }
     }
 };
 </script>
 
+<style>
+    /* Fixing selected tab invisible in dark mode */
+    .v-tabs-slider-wrapper, .v-tab--active {
+        color: #fff !important;
+    }
+</style>
 <style>
     .v-card__text, .v-card__title {
        word-break: normal; /* maybe !important  */

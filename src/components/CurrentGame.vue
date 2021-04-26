@@ -108,10 +108,10 @@
                                 <v-col cols="12">
                                     <v-card outlined flat color="primaryLight">
                                         <v-card-title class="text-h4 font-weight-light">
-                                            Routes
+                                            <span class="darkenBlack--text">Routes</span>
                                             <v-spacer></v-spacer>
-                                            <v-text-field v-model="searchRoutes" append-icon="mdi-magnify"
-                                            label="Search" single-line clearable hide-details></v-text-field>
+                                            <v-text-field v-model="searchRoutes" append-icon="mdi-magnify" label="Search" single-line
+                                            clearable hide-details light></v-text-field>
                                         </v-card-title>
                                         <v-data-table class="py-6" :headers="headersRoutes" 
                                         :items="computedRoutesForHeaders" item-key='id'

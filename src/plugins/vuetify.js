@@ -13,9 +13,17 @@ export default new Vuetify({
                 secondary: "#6A2E35",
                 accent: colors.yellow.accent4,
                 tertiary: colors.grey.darken4,
+                darkenBlack: colors.grey.darken4,
                 quaternary: "#B57F50",
                 success: "#00C49A",
                 error:"#C42348"
+            },
+            dark: {
+                secondary: colors.green.accent4,
+                primaryLight: colors.blue.lighten4,
+                tertiary: colors.grey.lighten5,
+                quaternary: colors.orange.darken2,
+                darkenBlack: colors.grey.darken4
             }
         }
     }

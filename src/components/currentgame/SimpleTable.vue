@@ -10,8 +10,8 @@
                         <template v-slot:default>
                             <thead>
                                 <tr>
-                                    <th class="blue-grey lighten-4 text-left">{{ leftColumn }}</th>
-                                    <th class="blue-grey lighten-4 text-left">{{ rightColumn }}</th>
+                                    <th class="primaryLight text-left darkenBlack--text">{{ leftColumn }}</th>
+                                    <th class="primaryLight text-left darkenBlack--text">{{ rightColumn }}</th>
                                 </tr>
                             </thead>
                             <tbody v-show="data.length > 0">
