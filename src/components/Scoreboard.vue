@@ -302,7 +302,7 @@
 <script>
 import { db } from '@/main'
 import { Tickets } from '../util/tickets'
-import jsonGames from '../util/savedGames04-21.json'
+//import jsonGames from '../util/savedGames04-21.json'
 
 export default {
     data(){
@@ -325,8 +325,8 @@ export default {
                 {text: "City", align:"start", value:"city", sortable: false, class:"primaryLight darkenBlack--text"},
                 {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight darkenBlack--text"}
             ],
-            //games: [],
-            games: jsonGames,
+            games: [],
+            //games: jsonGames,
             selectedGame: null,
             selectedVersion: null,
             dialogDetails: false,
@@ -705,16 +705,16 @@ export default {
     mounted(){
         //this.getFirebaseData()
         // The one below is the good one
-        //this.getRealTimeData();
+        this.getRealTimeData();
 
         // For development purposes
-        this.loadingData = true;
+        /*this.loadingData = true;
         setTimeout(()=>{
             this.loadingData = false
-        }, 2500)
+        }, 2500)*/
     },
     beforeDestroy(){
-        //this.unsubscribe();
+        this.unsubscribe();
     }
 }
 </script>
