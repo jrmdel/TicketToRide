@@ -176,16 +176,16 @@
                                 </v-row>
                                 <v-row v-if="computedHasLongest">
                                     <v-col cols="12">
-                                        <v-card outlined :disabled="selectedGame.players[i-1].longestBonus==0">
+                                        <v-card outlined :disabled="(selectedGame.players[i-1].longestBonus || 0)==0">
                                             <v-toolbar class="text-caption font-weight-bold text--secondary" flat dense color="primaryLight">
                                                 Longest path
                                             </v-toolbar>
                                             <v-container>
                                                 <v-row justify="space-around">
-                                                    <v-icon :color="(selectedGame.players[i-1].longestBonus!=0) ? 'accent' : 'primary'">
-                                                        {{(selectedGame.players[i-1].longestBonus!=0) ? "mdi-star" : "mdi-star-off-outline"}}
+                                                    <v-icon :color="((selectedGame.players[i-1].longestBonus || 0)!=0) ? 'accent' : 'primary'">
+                                                        {{((selectedGame.players[i-1].longestBonus || 0)!=0) ? "mdi-star" : "mdi-star-off-outline"}}
                                                     </v-icon>
-                                                    <span class="text-h6 font-weight-regular tertiary--text"> {{selectedGame.players[i-1].longestBonus}} </span>
+                                                    <span class="text-h6 font-weight-regular tertiary--text"> {{selectedGame.players[i-1].longestBonus || 0}} </span>
                                                 </v-row>
                                             </v-container>
                                         </v-card>
@@ -209,6 +209,9 @@
                                                 <template v-slot:[`item.from`]="{ item }">
                                                     {{item.cities[0].name}}
                                                 </template>
+                                                <template v-slot:no-data>
+                                                    No tickets yet
+                                                </template>
                                             </v-data-table>
                                         </v-card>
                                     </v-col>
@@ -223,6 +226,9 @@
                                         <v-card outlined>
                                             <v-data-table :headers="harborsHeaders" :items="selectedGame.players[i-1].harbors"
                                             :footer-props="{'items-per-page-options': [-1] }">
+                                                <template v-slot:no-data>
+                                                    No harbors yet
+                                                </template>
                                             </v-data-table>
                                         </v-card>
                                     </v-col>
@@ -539,7 +545,7 @@ export default {
                     computedHarbors: getHarborsScore(doc.harbors || []),
                     computedTickets: getTicketData(doc.tickets || []),
                     computedTrainStations: doc.trainStations || 0,
-                    computedLongest: (this.selectedVersion.hasLongest) ? this.selectedVersion.longestPoints*doc.longestBonus : 0
+                    computedLongest: (this.selectedVersion.hasLongest) ? this.selectedVersion.longestPoints*(doc.longestBonus || 0) : 0
                     })
             }
             obj.players = computed;
@@ -569,7 +575,7 @@ export default {
             let nb = 0;
             for(let i=0; i<playersArr.length; i++){
                 let p = playersArr[i];
-                nb += p.tickets.length - p.computedTickets.totalFailed;
+                nb += (p.tickets?.length || 0) - p.computedTickets.totalFailed;
             }
             return nb;
         },
@@ -686,12 +692,12 @@ export default {
         },
         async getRealTimeData(){
             this.loadingData = true;
-            let unsubscribe = await db.collection('Games').orderBy("date","desc").onSnapshot(query => {
+            let unsubscribe = await db.collection('Games').orderBy("date").onSnapshot(query => {
                 query.docChanges().forEach(change => {
                     if(change.type == "removed") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1)
                     else {
                         let doc = this.computeObjectFromFirebase(change.doc)
-                        if(change.type == "added") this.games.push(doc)
+                        if(change.type == "added") this.games.unshift(doc)
                         else if(change.type == "modified") this.games.splice(this.games.findIndex(el => el.id == change.doc.id),1,doc)
                     }
                 })
