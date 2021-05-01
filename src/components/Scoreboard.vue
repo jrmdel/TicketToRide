@@ -64,8 +64,27 @@
                                     </v-card>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-card color="accent">
-                                        <v-card-title>Per version</v-card-title>
+                                    <v-card color="background" elevation="1">
+                                        <v-toolbar flat color="accent">
+                                            <v-toolbar-title>Per version</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-card-text v-if="!computedLoading">
+                                            <v-container fluid>
+                                                <v-row>
+                                                    <v-col cols="12">
+                                                        <span class="text-h6 tertiary--text">Select version</span>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="7">
+                                                        <v-select v-model="insightsVersion" solo clearable
+                                                        color="secondary" label="Version" :items="computedMetadataVersions">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row>
+                                                    <v-col></v-col>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card-text>
                                     </v-card>
                                 </v-col>
                             </v-row>
@@ -335,6 +354,7 @@ export default {
             //games: jsonGames,
             selectedGame: null,
             selectedVersion: null,
+            insightsVersion: null,
             dialogDetails: false,
             loadingData: false,
             unsubscribe: null,
@@ -446,6 +466,11 @@ export default {
                 }
             }
         },
+        computedMetadataVersions:{
+            get(){
+                return (this.computedMetadata?.versions) ? Array.from(this.computedMetadata.versions) : []
+            }
+        },
         computeFromVersion2(){
             if(this.games.length==0) return {}
             else {
@@ -461,7 +486,9 @@ export default {
                     cumulPlayers: 0,
                     pointsTickets: 0,
                     pointsHarbors: 0,
-                    pointsUnits: 0
+                    pointsTrainStations: 0,
+                    pointsUnits: 0,
+                    pointsBonus: 0
                 }
                 let docs = this.games.filter(item=>item.version=="Around The World");
                 res.numberOfGames = docs.length;
@@ -482,10 +509,10 @@ export default {
                             index = res.topTickets.findIndex(item=>item.id == ticket.id);
                             if(index==-1) console.log(doc);
                             else{
-                            res.topTickets[index].occurrences++;
-                            if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
-                            else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
-                            else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                                res.topTickets[index].occurrences++;
+                                if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
+                                else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
+                                else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
                             }
                         }
                     }

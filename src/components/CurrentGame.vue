@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12">
                 <!--Your Game-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your game</v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -87,7 +87,7 @@
             </v-col>
             <v-col cols="12" v-show="selectVersion != null">
                 <!--Your tickets-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your tickets</v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -144,7 +144,7 @@
             </v-col>
             <v-col cols="12" v-show="computedVersionHasHarbors">
                 <!--Your harbors-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your harbors</v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -209,7 +209,7 @@
             </v-col>
             <v-col cols="12" v-show="computedVersionHasTrainStations">
                 <!--Your train stations-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your train stations</v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -262,7 +262,7 @@
             </v-col>
             <v-col cols="12" v-show="computedVersionHasLongest">
                 <!--Your bonuses-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your bonuses</v-toolbar-title>
                         <v-spacer></v-spacer>
@@ -300,7 +300,7 @@
             </v-col>
             <v-col cols="12" v-show="selectVersion != null">
                 <!--Your units-->
-                <v-card>
+                <v-card color="background">
                     <v-toolbar flat color="primary" dark>
                         <v-toolbar-title>Your trains <span v-show="computedVersionHasBoats">and boats</span></v-toolbar-title>
                         <v-spacer></v-spacer>
