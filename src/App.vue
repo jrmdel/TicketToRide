@@ -263,7 +263,7 @@ export default {
             let doc = {date: this.date, players: this.players, version: this.version.name}
             for(let i=0;i<this.players; i++){
                 let n = `player${i+1}`
-                doc[n] = {name: this.names[i+1], score:this.version.initialScore}
+                doc[n] = {name: this.names[i+1], score:this.version.initialScore, tickets:[]}
             }
             console.log(doc)
             let d = await db.collection('Games').add(doc)

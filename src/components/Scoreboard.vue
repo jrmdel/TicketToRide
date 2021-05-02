@@ -76,12 +76,24 @@
                                                     </v-col>
                                                     <v-col cols="12" sm="7">
                                                         <v-select v-model="insightsVersion" solo clearable
-                                                        color="secondary" label="Version" :items="computedMetadataVersions">
+                                                        color="secondary" label="Version" :items="gamesAndRules"
+                                                        item-text="name" return-object>
                                                         </v-select>
                                                     </v-col>
                                                 </v-row>
-                                                <v-row>
-                                                    <v-col></v-col>
+                                                <v-row v-if="insightsVersion">
+                                                    <v-col cols="12">
+                                                        <span class="text-h6 tertiary--text">Data</span>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <v-data-table class="py-6" :headers="headersTicketsVersion" 
+                                                        :items="computedInsightsTicketsVersion" item-key='id'
+                                                        :search="searchInsightsTicketsVersion" multi-sort>
+                                                            <template v-slot:[`item.cities`]="{ item }">
+                                                                {{item.cities.slice(-1)[0].name}}
+                                                            </template>
+                                                        </v-data-table>
+                                                    </v-col>
                                                 </v-row>
                                             </v-container>
                                         </v-card-text>
@@ -326,7 +338,6 @@
 
 <script>
 import { db } from '@/main'
-import { Tickets } from '../util/tickets'
 //import jsonGames from '../util/savedGames04-21.json'
 
 export default {
@@ -403,12 +414,32 @@ export default {
                     horizontalAlign: 'left',
                 }
             },
+            //Insights data
+            searchInsightsTicketsVersion: "",
+            headersTicketsVersion: [
+                {text:"From", align:"start", value:"cities[0].name", sortable: true},
+                {text:"To", align:"start", value:"cities", sortable: true},
+                {text:"Appeared", align:"start", value:"occurrences", sortable: true},
+                {text:"Win rate", align:"start", value:"winRate", sortable: true},
+                {text:"Completion", align:"start", value:"completionRate", sortable: true}
+            ],
+            insightsFromVersion: null 
         }
     },
     props:{
         gamesAndRules:{
             type: Array,
             default:()=>[]
+        }
+    },
+    watch:{
+        insightsVersion:{
+            handler(value){
+                this.insightsFromVersion = null
+                if(value){
+                    this.insightsFromVersion = Object.assign({},this.computeFromVersion(value.name));
+                }
+            }
         }
     },
     computed:{
@@ -447,77 +478,30 @@ export default {
                     }
                     let doc = null, p=null;
                     for(let i=0, l=this.games.length; i<l; i++){
-                        try {
-                            doc = Object.assign({},this.games[i]);
-                            res.versions.add(doc.version);
-                            if(doc.draw) res.sharedFirst+= 1;
-                            for(let j=1;j<=doc.players;j++){
-                                p = Object.assign({},doc[`player${j}`]);
-                                res.players.add(p.name);
-                                res.points+=p.score;
-                                res.nbTickets+=p.tickets.length;
-                                if(p.tickets.length>0) res.nbSuccessTickets+=p.tickets.filter(item=>!item.status.match(/fail/ig)).length;
+                        doc = Object.assign({},this.games[i]);
+                        if(this.gameEnded(doc)){
+                            try {
+                                res.versions.add(doc.version);
+                                if(doc.draw) res.sharedFirst+= 1;
+                                for(let j=1;j<=doc.players;j++){
+                                    p = Object.assign({},doc[`player${j}`]);
+                                    res.players.add(p.name);
+                                    res.points+=p.score;
+                                    res.nbTickets+=p.tickets.length;
+                                    if(p.tickets.length>0) res.nbSuccessTickets+=p.tickets.filter(item=>!item.status.match(/fail/ig)).length;
+                                }
+                            } catch (error) {
+                                console.warn(`Game with id ${this.games[i].id} raised an error during computation`)
                             }
-                        } catch (error) {
-                            console.warn(`Game with id ${this.games[i].id} raised an error during computation`)
                         }
                     }
                     return res;
                 }
             }
         },
-        computedMetadataVersions:{
+        computedInsightsTicketsVersion:{
             get(){
-                return (this.computedMetadata?.versions) ? Array.from(this.computedMetadata.versions) : []
-            }
-        },
-        computeFromVersion2(){
-            if(this.games.length==0) return {}
-            else {
-                let t = Tickets.World;
-                let res = {
-                    topTickets: t.map(doc=>{ return {
-                        ...doc, occurrences:0,
-                        resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
-                        resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
-                    totalPoints: 0,
-                    firstPlayerWins: 0,
-                    numberOfGames: 0,
-                    cumulPlayers: 0,
-                    pointsTickets: 0,
-                    pointsHarbors: 0,
-                    pointsTrainStations: 0,
-                    pointsUnits: 0,
-                    pointsBonus: 0
-                }
-                let docs = this.games.filter(item=>item.version=="Around The World");
-                res.numberOfGames = docs.length;
-                let p = 0, player = null, index=0, winner = false;
-                for(let doc of docs){
-                    p = doc.players;
-                    res.cumulPlayers += p;
-                    for(let j=1; j<=p; j++){
-                        player = Object.assign({},doc[`player${j}`]);
-                        if(player.name == doc.winner){
-                            if(j==1) res.firstPlayerWins++;
-                            winner = true;
-                        } else winner = false;
-                        res.totalPoints+=player.score;
-                        if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
-                        if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
-                        for (let ticket of player.tickets) {
-                            index = res.topTickets.findIndex(item=>item.id == ticket.id);
-                            if(index==-1) console.log(doc);
-                            else{
-                                res.topTickets[index].occurrences++;
-                                if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
-                                else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
-                                else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
-                            }
-                        }
-                    }
-                }
-                return res;
+                return (this.insightsFromVersion?.topTickets) ? this.insightsFromVersion.topTickets : []
             }
         }
     },
@@ -606,6 +590,13 @@ export default {
             }
             return nb;
         },
+        gameEnded(game){
+            let p = game?.players || 0;
+            for(let i=1; i<=p; i++){
+                if((game[`player${i}`]?.tickets?.length || 0 ) == 0) return false
+            }
+            return true
+        },
         computePointsGraph(player){
             let serie = [
                 {name: "Tickets", data: [100*player.computedTickets.score/player.score]},
@@ -620,13 +611,13 @@ export default {
             return Object.values(units).map((val,i)=>val*rules[i]).reduce((a,b)=>a+b)-exchanges
         },
         computeFromVersion(version){
-            if(this.games.length == 0) return {}
+            if(this.games.length==0) return {}
             else {
-                let t = (version == "Around The World") ? Tickets.World : Tickets.GreatLakes;
+                let t = this.insightsVersion.tickets;
                 let res = {
                     topTickets: t.map(doc=>{ return {
                         ...doc, occurrences:0,
-                        resultWinDone:0, resultWinFail:0, resultWinUnordered:0,
+                        resultWinDone:0, resultWinFail:0, resultWinUnordered:0, winRate: "0.0", completionRate: "0.0",
                         resultLossDone:0, resultLossFail:0, resultLossUnordered:0 } }),
                     totalPoints: 0,
                     firstPlayerWins: 0,
@@ -634,31 +625,37 @@ export default {
                     cumulPlayers: 0,
                     pointsTickets: 0,
                     pointsHarbors: 0,
-                    pointsUnits: 0
+                    pointsTrainStations: 0,
+                    pointsUnits: 0,
+                    pointsBonus: 0
                 }
                 let docs = this.games.filter(item=>item.version==version);
                 res.numberOfGames = docs.length;
                 let p = 0, player = null, index=0, winner = false;
                 for(let doc of docs){
-                    p = doc.players;
-                    res.cumulPlayers += p;
-                    for(let j=1; j<=p; j++){
-                        player = Object.assign({},doc[`player${j}`]);
-                        if(player.name == doc.winner){
-                            if(j==1) res.firstPlayerWins++;
-                            winner = true;
-                        } else winner = false;
-                        res.totalPoints+=player.score;
-                        if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
-                        if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
-                        for (let ticket of player.tickets) {
-                            index = res.topTickets.findIndex(item=>item.id == ticket.id);
-                            if(index==-1) console.log(doc);
-                            else{
-                            res.topTickets[index].occurrences++;
-                            if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
-                            else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
-                            else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                    if(this.gameEnded(doc)){
+                        p = doc.players;
+                        res.cumulPlayers += p;
+                        for(let j=1; j<=p; j++){
+                            player = Object.assign({},doc[`player${j}`]);
+                            if(player.name == doc.winner){
+                                if(j==1) res.firstPlayerWins++;
+                                winner = true;
+                            } else winner = false;
+                            res.totalPoints+=player.score;
+                            if(player.harbors) res.pointsHarbors+=(player.harbors.map(h=>h.score).reduce((a,b)=>a+b,0)-4*(3-player.harbors.length));
+                            if(player.units) res.pointsUnits += this.computeUnitsToPoints(player.units, player.exchanges || 0);
+                            for (let ticket of player.tickets) {
+                                index = res.topTickets.findIndex(item=>item.id == ticket.id);
+                                if(index==-1) console.log(doc);
+                                else{
+                                    res.topTickets[index].occurrences++;
+                                    if(ticket.status.match(/done/i)) (winner) ? res.topTickets[index].resultWinDone++ : res.topTickets[index].resultLossDone++;
+                                    else if(ticket.status.match(/fail/i)) (winner) ? res.topTickets[index].resultWinFail++ : res.topTickets[index].resultLossFail++;
+                                    else (winner) ? res.topTickets[index].resultWinUnordered++ : res.topTickets[index].resultLossUnordered++;
+                                    res.topTickets[index].winRate = Number.parseFloat(100*(res.topTickets[index].resultWinDone+res.topTickets[index].resultWinFail+res.topTickets[index].resultWinUnordered)/res.topTickets[index].occurrences).toFixed(1)
+                                    res.topTickets[index].completionRate = Number.parseFloat(100*(res.topTickets[index].resultWinDone+res.topTickets[index].resultLossDone+res.topTickets[index].resultWinUnordered +res.topTickets[index].resultLossUnordered)/res.topTickets[index].occurrences).toFixed(1)
+                                }
                             }
                         }
                     }
