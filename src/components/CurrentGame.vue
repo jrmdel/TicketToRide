@@ -18,13 +18,9 @@
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-select class="mx-2"
-                                            solo v-model="selectVersion"
-                                            hide-details color="secondary"
-                                            label="Select the game"
-                                            :items="gamesAndRules"
-                                            item-text="name"
-                                            return-object>
+                                            <v-select class="mx-2" solo v-model="selectVersion" hide-details
+                                            color="secondary" label="Select the game" :items="gamesAndRules"
+                                            item-text="name" return-object>
                                             </v-select>
                                         </v-col>
                                     </v-row>

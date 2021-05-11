@@ -59,8 +59,32 @@
                             <v-row>
                                 
                                 <v-col cols="12" md="6">
-                                    <v-card color="accent">
-                                        <v-card-title>Per player</v-card-title>
+                                    <v-card color="background" elevation="1">
+                                        <v-toolbar flat color="accent">
+                                            <v-toolbar-title>Per player</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-card-text v-if="!computedLoading">
+                                            <v-container fluid>
+                                                <v-row>
+                                                    <v-col cols="12">
+                                                        <span class="text-h6 tertiary--text">Select player</span>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="7">
+                                                        <v-select v-model="insightsPlayer" solo clearable
+                                                        color="secondary" label="Player" :items="computedPlayers">
+                                                        </v-select>
+                                                    </v-col>
+                                                </v-row>
+                                                <v-row v-if="insightsPlayer">
+                                                    <v-col cols="12">
+                                                        <span class="text-h6 tertiary--text">Data</span>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <apexchart type="pie" :options="insightsPerGameOptions" :series="insightsFromPlayer.playersPerGame || []"></apexchart>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card-text>
                                     </v-card>
                                 </v-col>
                                 <v-col cols="12" md="6">
@@ -365,7 +389,6 @@ export default {
             //games: jsonGames,
             selectedGame: null,
             selectedVersion: null,
-            insightsVersion: null,
             dialogDetails: false,
             loadingData: false,
             unsubscribe: null,
@@ -423,13 +446,21 @@ export default {
                 {text:"Win rate", align:"start", value:"winRate", sortable: true},
                 {text:"Completion", align:"start", value:"completionRate", sortable: true}
             ],
-            insightsFromVersion: null 
+            insightsVersion: null,
+            insightsFromVersion: null,
+            insightsPlayer: null,
+            insightsFromPlayer: null,
+            insightsPerGameOptions: null
         }
     },
     props:{
         gamesAndRules:{
             type: Array,
             default:()=>[]
+        },
+        darkTheme: {
+            type: Boolean,
+            default: false
         }
     },
     watch:{
@@ -439,6 +470,25 @@ export default {
                 if(value){
                     this.insightsFromVersion = Object.assign({},this.computeFromVersion(value.name));
                 }
+            }
+        },
+        insightsPlayer:{
+            handler(value){
+                this.insightsFromPlayer = null;
+                this.insightsPerGameOptions = null;
+                if(value){
+                    this.computePlayerInsightsPerGameOptions(this.darkTheme);
+                    this.insightsFromPlayer = Object.assign({},this.computeFromPlayer(value))
+                }
+            }
+        },
+        darkTheme:{
+            handler(value){
+                this.insightsPerGameOptions = { 
+                    chart: { background: (value) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
+                    theme: { mode: (value) ? "dark" : "light", monochrome: { color: (value) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary } } 
+                    };
+                //this.insightsPerGameOptions = { theme: { mode: (value) ? "dark" : "light" } }
             }
         }
     },
@@ -502,6 +552,11 @@ export default {
         computedInsightsTicketsVersion:{
             get(){
                 return (this.insightsFromVersion?.topTickets) ? this.insightsFromVersion.topTickets : []
+            }
+        },
+        computedPlayers:{
+            get(){
+                return Array.from(this.computedMetadata?.players || [])
             }
         }
     },
@@ -605,6 +660,16 @@ export default {
             ];
             return serie;
         },
+        computePlayerInsightsPerGameOptions(dark){
+            this.insightsPerGameOptions = Object.assign({}, {
+                chart: { type: "pie", background: (dark) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
+                labels: ["2 players","3 players","4 players","5 players"],
+                theme: {
+                    mode: (dark) ? 'dark' : 'light',
+                    monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary }
+                }
+            })
+        },
         computeUnitsToPoints(units, exchanges){
             // TODO Rules
             let rules = [1,2,4,7,10,15,18,21,27]
@@ -657,6 +722,32 @@ export default {
                                     res.topTickets[index].completionRate = Number.parseFloat(100*(res.topTickets[index].resultWinDone+res.topTickets[index].resultLossDone+res.topTickets[index].resultWinUnordered +res.topTickets[index].resultLossUnordered)/res.topTickets[index].occurrences).toFixed(1)
                                 }
                             }
+                        }
+                    }
+                }
+                return res;
+            }
+        },
+        computeFromPlayer(player){
+            if(this.games.length == 0) return {}
+            else{
+                let res = {
+                    totalGames: 0,
+                    totalWins: 0,
+                    totalDraws: 0,
+                    playersPerGame: new Array(4).fill(0),
+                    versionPerGame: new Array(this.gamesAndRules.length).fill(0)
+                }
+                let docs = this.games || [];
+                for(let doc of docs){
+                    let p = doc.players || 0;
+                    for(let i=1; i<=p; i++){
+                        if(doc[`player${i}`]?.name == player && (doc[`player${i}`]?.tickets?.length || 0 ) != 0){
+                            res.totalGames++;
+                            if(doc.draw && doc.winner.match(new RegExp(player,"ig"))) res.totalDraws++;
+                            if(doc.winner == player) res.totalWins++;
+                            res.playersPerGame[p-2]++;
+                            res.versionPerGame[this.gamesAndRules.findIndex(item=>item.name==doc.version)]++;
                         }
                     }
                 }

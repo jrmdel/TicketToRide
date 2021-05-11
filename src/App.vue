@@ -56,7 +56,7 @@
                 </v-tab-item>
                 <v-tab-item>
                     <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4"
-                    :gamesAndRules="gamesAndRules"
+                    :gamesAndRules="gamesAndRules" :darkTheme="computedTheme"
                     @joinGame="actOnJoinGame($event)" @popUp="popUp($event)"/>
                 </v-tab-item>
                 <v-tab-item>
