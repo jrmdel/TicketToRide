@@ -58,7 +58,7 @@
                         <v-container fluid>
                             <v-row>
                                 
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
                                             <v-toolbar-title>Per player</v-toolbar-title>
@@ -80,14 +80,27 @@
                                                         <span class="text-h6 tertiary--text">Data</span>
                                                     </v-col>
                                                     <v-col cols="6">
-                                                        <apexchart type="pie" :options="insightsPerGameOptions" :series="insightsFromPlayer.playersPerGame || []"></apexchart>
+                                                        <v-row>
+                                                            <apexchart type="pie" :options="insightsPerGameOptions" :series="insightsFromPlayer.playersPerGame || []"></apexchart>
+                                                        </v-row>
+                                                        <v-row justify="center">
+                                                            <span>Number of players</span>
+                                                        </v-row>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <v-row>
+                                                            <apexchart type="pie" :options="insightsPlayerVersionOptions" :series="insightsFromPlayer.versionPerGame || []"></apexchart>
+                                                        </v-row>
+                                                        <v-row justify="center">
+                                                            <span>Version</span>
+                                                        </v-row>
                                                     </v-col>
                                                 </v-row>
                                             </v-container>
                                         </v-card-text>
                                     </v-card>
                                 </v-col>
-                                <v-col cols="12" md="6">
+                                <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
                                             <v-toolbar-title>Per version</v-toolbar-title>
@@ -450,7 +463,8 @@ export default {
             insightsFromVersion: null,
             insightsPlayer: null,
             insightsFromPlayer: null,
-            insightsPerGameOptions: null
+            insightsPerGameOptions: null,
+            insightsPlayerVersionOptions: null
         }
     },
     props:{
@@ -478,7 +492,8 @@ export default {
                 this.insightsPerGameOptions = null;
                 if(value){
                     this.computePlayerInsightsPerGameOptions(this.darkTheme);
-                    this.insightsFromPlayer = Object.assign({},this.computeFromPlayer(value))
+                    this.computeInsightsPlayerVersionOptions(this.darkTheme);
+                    this.insightsFromPlayer = Object.assign({},this.computeFromPlayer(value));
                 }
             }
         },
@@ -487,7 +502,11 @@ export default {
                 this.insightsPerGameOptions = { 
                     chart: { background: (value) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
                     theme: { mode: (value) ? "dark" : "light", monochrome: { color: (value) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary } } 
-                    };
+                };
+                this.insightsPlayerVersionOptions = {
+                    chart: { background: (value) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
+                    theme: { mode: (value) ? "dark" : "light", monochrome: { color: (value) ? this.$vuetify.theme.themes.dark.secondary : this.$vuetify.theme.themes.light.secondary } } 
+                }
                 //this.insightsPerGameOptions = { theme: { mode: (value) ? "dark" : "light" } }
             }
         }
@@ -667,6 +686,16 @@ export default {
                 theme: {
                     mode: (dark) ? 'dark' : 'light',
                     monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary }
+                }
+            })
+        },
+        computeInsightsPlayerVersionOptions(dark){
+            this.insightsPlayerVersionOptions = Object.assign({}, {
+                chart: { type: "pie", background: (dark) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
+                labels: this.gamesAndRules.map(rule=>rule.name),
+                theme: {
+                    mode: (dark) ? 'dark' : 'light',
+                    monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.secondary : this.$vuetify.theme.themes.light.secondary }
                 }
             })
         },
