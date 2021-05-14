@@ -79,16 +79,16 @@
                                                     <v-col cols="12">
                                                         <span class="text-h6 tertiary--text">Data</span>
                                                     </v-col>
-                                                    <v-col cols="6">
-                                                        <v-row>
+                                                    <v-col cols="10" md="6">
+                                                        <v-row justify="center">
                                                             <apexchart type="pie" :options="insightsPerGameOptions" :series="insightsFromPlayer.playersPerGame || []"></apexchart>
                                                         </v-row>
                                                         <v-row justify="center">
                                                             <span>Number of players</span>
                                                         </v-row>
                                                     </v-col>
-                                                    <v-col cols="6">
-                                                        <v-row>
+                                                    <v-col cols="10" md="6">
+                                                        <v-row justify="center">
                                                             <apexchart type="pie" :options="insightsPlayerVersionOptions" :series="insightsFromPlayer.versionPerGame || []"></apexchart>
                                                         </v-row>
                                                         <v-row justify="center">
@@ -168,6 +168,27 @@
                         <v-card-text v-if="selectedGame!=null">
                             <v-container>
                                 <v-row>
+                                    <v-col cols="12">
+                                        <span class="text-h6 tertiary--text">Info</span>
+                                    </v-col>
+                                    <v-col cols="12" sm="10">
+                                        <v-row class="mt-n3">
+                                            <v-col cols="auto" sm="6">
+                                                <v-row no-gutters align="center" justify="start">
+                                                    <v-text-field prepend-icon="mdi-calendar"
+                                                    label="Date" v-model="selectedGame.date" readonly>
+                                                    </v-text-field>
+                                                </v-row>
+                                            </v-col>
+                                            <v-col cols="auto" sm="6">
+                                                <v-row no-gutters align="center" justify="start">
+                                                    <v-text-field prepend-icon="mdi-map-legend"
+                                                    label="Version" v-model="selectedGame.version" readonly>
+                                                    </v-text-field>
+                                                </v-row>
+                                            </v-col>
+                                        </v-row>
+                                    </v-col>
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">Rankings</span>
                                     </v-col>
