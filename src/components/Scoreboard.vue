@@ -119,6 +119,17 @@
                                                             centerText="wins" :centerIndicator="insightsPlayerAdditional.totalWins"
                                                             rightText="win rate" :rightIndicator="insightsPlayerAdditional.winRate" :rightIsPercentage="true"/>
                                                         </v-col>
+                                                        <v-col cols="12">
+                                                            <span class="text-subtitle-1 tertiary--text">Favorite tickets</span>
+                                                        </v-col>
+                                                        <v-col cols="12">
+                                                            <v-data-table class="py-6" :headers="headersTicketsVersion" 
+                                                            :items="insightsPlayerAdditional.tickets" item-key='id' multi-sort>
+                                                                <template v-slot:[`item.cities`]="{ item }">
+                                                                    {{item.cities.slice(-1)[0].name}}
+                                                                </template>
+                                                            </v-data-table>
+                                                        </v-col>
                                                     </template>
                                                 </v-row>
                                             </v-container>
@@ -871,17 +882,45 @@ export default {
             let data = {
                 totalGames: 0,
                 totalWins: 0,
-                winRate: 0
+                winRate: 0,
+                tickets: (version) ? this.gamesAndRules.find(rule=>rule.name==version).tickets.map(doc=>{ return {
+                    ...doc, occurrences:0, wins:0, completed: 0, winRate: "0.0", completionRate: "0.0" } }) : []
             };
             if(filtered.length == 0) return data
             else {
                 data.totalGames = filtered.length;
                 for(let doc of filtered){
-                    if(!doc.draw && doc.winner == this.insightsPlayer) data.totalWins++
+                    let isWon = !doc.draw && doc.winner == this.insightsPlayer;
+                    if(isWon) data.totalWins++
+                    if(version){
+                        let playerData = this.getPlayerFromGame(doc,this.insightsPlayer)
+                        for(let i=0, l=(playerData?.tickets?.length || 0); i<l; i++){
+                            let index = data.tickets.findIndex(item=>item.id == playerData?.tickets[i]?.id);
+                            if(index!=-1){
+                                data.tickets[index].occurrences ++;
+                                if(isWon) data.tickets[index].wins ++
+                                if(!playerData.tickets[i].status.match(/fail/i)) data.tickets[index].completed ++
+                            }
+                        }
+                        playerData = null;
+                    }
                 }
+                data.tickets = data.tickets.map(ticket=> {
+                    return {
+                        ...ticket,
+                        winRate: (ticket.occurrences!=0) ? Number.parseFloat(100*(ticket.wins/ticket.occurrences)).toFixed(1) : ticket.winRate,
+                        completionRate: (ticket.occurrences!=0) ? Number.parseFloat(100*(ticket.completed/ticket.occurrences)).toFixed(1) : ticket.completionRate
+                        }
+                }).sort((a,b)=>b.occurrences-a.occurrences)
                 data.winRate = data.totalWins/data.totalGames
                 return data;
             }
+        },
+        getPlayerFromGame(game, name){
+            for(let i=1, n=(game?.players || 0); i<=n; i++){
+                if(game[`player${i}`]?.name == name) return game[`player${i}`]
+            }
+            return null
         },
         closeDetails(){
             this.dialogDetails = false;
