@@ -57,7 +57,7 @@
 
                         <v-container fluid>
                             <v-row>
-                                
+                                <!--Per player-->
                                 <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
@@ -79,27 +79,53 @@
                                                     <v-col cols="12">
                                                         <span class="text-h6 tertiary--text">Data</span>
                                                     </v-col>
-                                                    <v-col cols="10" md="6">
+                                                    <v-col cols="12">
+                                                        <indicators leftText="wins" :leftIndicator="insightsFromPlayer.totalWins"
+                                                        centerText="draws" :centerIndicator="insightsFromPlayer.totalDraws"
+                                                        rightText="losses" :rightIndicator="(insightsFromPlayer.totalGames)-(insightsFromPlayer.totalWins+insightsFromPlayer.totalDraws)"/>
+                                                    </v-col>
+                                                    <v-col cols="12" sm="10" md="6">
                                                         <v-row justify="center">
                                                             <apexchart type="pie" :options="insightsPerGameOptions" :series="insightsFromPlayer.playersPerGame || []"></apexchart>
                                                         </v-row>
-                                                        <v-row justify="center">
-                                                            <span>Number of players</span>
-                                                        </v-row>
                                                     </v-col>
-                                                    <v-col cols="10" md="6">
+                                                    <v-col cols="12" sm="10" md="6">
                                                         <v-row justify="center">
                                                             <apexchart type="pie" :options="insightsPlayerVersionOptions" :series="insightsFromPlayer.versionPerGame || []"></apexchart>
                                                         </v-row>
-                                                        <v-row justify="center">
-                                                            <span>Version</span>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <span class="text-h6 tertiary--text">Additional data</span>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <v-row>
+                                                            <v-col cols="12" md="6">
+                                                                <v-select v-model="insightsPlayerFilterVersion" outlined clearable
+                                                                color="secondary" label="Filter by version" :items="gamesAndRules"
+                                                                item-text="name" item-value="name" hide-details>
+                                                                </v-select>
+                                                            </v-col>
+                                                            <v-col cols="12" md="6">
+                                                                <v-select v-model="insightsPlayerFilterPlayers" outlined clearable
+                                                                color="secondary" label="Filter by players" :items="potentialPlayers"
+                                                                item-text="text" item-value="value" hide-details>
+                                                                </v-select>
+                                                            </v-col>
                                                         </v-row>
                                                     </v-col>
+                                                    <template v-if="insightsPlayerAdditional">
+                                                        <v-col cols="12">
+                                                            <indicators leftText="games" :leftIndicator="insightsPlayerAdditional.totalGames"
+                                                            centerText="wins" :centerIndicator="insightsPlayerAdditional.totalWins"
+                                                            rightText="win rate" :rightIndicator="insightsPlayerAdditional.winRate" :rightIsPercentage="true"/>
+                                                        </v-col>
+                                                    </template>
                                                 </v-row>
                                             </v-container>
                                         </v-card-text>
                                     </v-card>
                                 </v-col>
+                                <!--Per version-->
                                 <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
@@ -396,9 +422,11 @@
 
 <script>
 import { db } from '@/main'
+import Indicators from './currentgame/Indicators.vue'
 //import jsonGames from '../util/savedGames04-21.json'
 
 export default {
+    components: { Indicators },
     data(){
         return {
             headers: [
@@ -427,6 +455,12 @@ export default {
             loadingData: false,
             unsubscribe: null,
             scoreUnitsRule: {1:1, 2:2, 3:4, 4:7, 5:10, 6: 15, 7: 18, 8:21, 9:27},
+            potentialPlayers: [
+                { text: "2 players", value: 2 },
+                { text: "3 players", value: 3 },
+                { text: "4 players", value: 4 },
+                { text: "5 players", value: 5 }
+            ],
             optionsPointsChartPerPlayer: {
                 chart: {
                     type: 'bar',
@@ -485,7 +519,10 @@ export default {
             insightsPlayer: null,
             insightsFromPlayer: null,
             insightsPerGameOptions: null,
-            insightsPlayerVersionOptions: null
+            insightsPlayerVersionOptions: null,
+            insightsPlayerFilterVersion: null,
+            insightsPlayerFilterPlayers: null,
+            insightsPlayerAdditional: null
         }
     },
     props:{
@@ -515,7 +552,27 @@ export default {
                     this.computePlayerInsightsPerGameOptions(this.darkTheme);
                     this.computeInsightsPlayerVersionOptions(this.darkTheme);
                     this.insightsFromPlayer = Object.assign({},this.computeFromPlayer(value));
+                    if(this.insightsPlayerFilterVersion || this.insightsPlayerFilterPlayers){
+                        this.insightsPlayerAdditional = Object.assign({},this.computePlayerInsightsFromFilters(this.insightsPlayerFilterPlayers, this.insightsPlayerFilterVersion));
+                    }
+                } else {
+                    this.insightsPlayerFilterVersion = null;
+                    this.insightsPlayerFilterPlayers = null;
                 }
+            }
+        },
+        insightsPlayerFilterPlayers: {
+            handler(value){
+                if(value || this.insightsPlayerFilterVersion){
+                    this.insightsPlayerAdditional = Object.assign({},this.computePlayerInsightsFromFilters(value, this.insightsPlayerFilterVersion));
+                } else this.insightsPlayerAdditional = null;
+            }
+        },
+        insightsPlayerFilterVersion: {
+            handler(value){
+                if(value || this.insightsPlayerFilterPlayers){
+                    this.insightsPlayerAdditional = Object.assign({},this.computePlayerInsightsFromFilters(this.insightsPlayerFilterPlayers, value));
+                } else this.insightsPlayerAdditional = null;
             }
         },
         darkTheme:{
@@ -707,7 +764,9 @@ export default {
                 theme: {
                     mode: (dark) ? 'dark' : 'light',
                     monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary }
-                }
+                },
+                legend: { position: "bottom" },
+                title: { text: "Number of players" }
             })
         },
         computeInsightsPlayerVersionOptions(dark){
@@ -717,7 +776,9 @@ export default {
                 theme: {
                     mode: (dark) ? 'dark' : 'light',
                     monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.secondary : this.$vuetify.theme.themes.light.secondary }
-                }
+                },
+                legend: { position: "bottom" },
+                title: { text: "Version" }
             })
         },
         computeUnitsToPoints(units, exchanges){
@@ -794,7 +855,7 @@ export default {
                     for(let i=1; i<=p; i++){
                         if(doc[`player${i}`]?.name == player && (doc[`player${i}`]?.tickets?.length || 0 ) != 0){
                             res.totalGames++;
-                            if(doc.draw && doc.winner.match(new RegExp(player,"ig"))) res.totalDraws++;
+                            if(doc.draw && doc.score==doc.rankings.find(o=>o.name == this.insightsPlayer)?.score) res.totalDraws++;
                             if(doc.winner == player) res.totalWins++;
                             res.playersPerGame[p-2]++;
                             res.versionPerGame[this.gamesAndRules.findIndex(item=>item.name==doc.version)]++;
@@ -802,6 +863,24 @@ export default {
                     }
                 }
                 return res;
+            }
+        },
+        computePlayerInsightsFromFilters(players, version){
+            // Let's filter the games
+            let filtered = this.games.filter(game=> ((version) ? game.version == version : true) && ((players) ? game.players == players : true) && game.rankings.some(item=>item.name == this.insightsPlayer));
+            let data = {
+                totalGames: 0,
+                totalWins: 0,
+                winRate: 0
+            };
+            if(filtered.length == 0) return data
+            else {
+                data.totalGames = filtered.length;
+                for(let doc of filtered){
+                    if(!doc.draw && doc.winner == this.insightsPlayer) data.totalWins++
+                }
+                data.winRate = data.totalWins/data.totalGames
+                return data;
             }
         },
         closeDetails(){

@@ -1,13 +1,11 @@
 <template>
     <v-app>
-        <v-app-bar app color="primary" dark>
+        <v-app-bar app color="primary" dark hide-on-scroll>
             <div class="d-flex align-center">
                 <!-- <v-icon large>mdi-ticket-confirmation-outline</v-icon> -->
                 <span class="text-h5 font-weight-light">Ticket To Ride</span>
             </div>
-
             <v-spacer></v-spacer>
-
             <v-btn text @click="openCreate">
                 <span class="mr-2">New game</span>
                 <v-icon>mdi-checkerboard-plus</v-icon>
@@ -49,18 +47,18 @@
         <v-main>
             <v-tabs-items v-model="tab">
                 <v-tab-item>
-                    <CurrentGame class="pa-6 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame"
+                    <CurrentGame class="pa-4 pa-sm-12 pa-md-16 ma-md-4" ref="currentGame"
                     :id="currentGameId" :players="currentGamePlayers" :version="currentGameVersion"
                     :gamesAndRules="gamesAndRules" :appLoaded="appLoaded"
                     @resetGameSession="resetGameSession()" @popUp="popUp($event)" @findVersion="findVersion($event)"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Scoreboard class="pa-6 pa-sm-12 pa-md-16 ma-md-4"
+                    <Scoreboard class="pa-4 pa-sm-12 pa-md-16 ma-md-4"
                     :gamesAndRules="gamesAndRules" :darkTheme="computedTheme"
                     @joinGame="actOnJoinGame($event)" @popUp="popUp($event)"/>
                 </v-tab-item>
                 <v-tab-item>
-                    <Help class="pa-6 pa-sm-12 pa-md-16 ma-md-4"/>
+                    <Help class="pa-4 pa-sm-12 pa-md-16 ma-md-4"/>
                 </v-tab-item>
             </v-tabs-items>
         </v-main>

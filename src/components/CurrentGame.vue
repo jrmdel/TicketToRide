@@ -341,9 +341,13 @@
         </v-row>
 
         <v-dialog v-model="dialogTicket" max-width="660" @click:outside="closeAddTicket">
-            <v-card>
+            <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
                     <v-toolbar-title>New Ticket</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="closeAddTicket">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
                 </v-toolbar>
                 <v-card-text>
                     <v-container fluid>
@@ -372,7 +376,10 @@
                                     <v-data-table v-model="selectedTicket" class="py-6" :headers="headersAddTicket" :items="foundTickets" item-key='id'
                                     hide-default-footer single-select show-select>
                                         <template v-slot:[`item.to`]="{ item }">
-                                            {{item.cities.slice(-1)[0]}}
+                                            {{item.cities.slice(-1)[0].name}}
+                                        </template>
+                                        <template v-slot:[`item.from`]="{ item }">
+                                            {{item.cities[0].name}}
                                         </template>
                                     </v-data-table>
                                 </v-card>
@@ -389,9 +396,13 @@
         </v-dialog>
 
         <v-dialog v-model="dialogHarbor" max-width="660" @click:outside="closeAddHarbor">
-            <v-card>
+            <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
                     <v-toolbar-title>New Harbor</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="closeAddHarbor">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
                 </v-toolbar>
                 <v-card-text>
                     <v-form v-model="harborForm" ref="harborForm">
@@ -416,7 +427,7 @@
         </v-dialog>
 
         <v-dialog v-model="dialogReset" max-width="400">
-            <v-card>
+            <v-card color="background">
                 <v-card-title><span class="text-h5">Reset {{resetType}}</span></v-card-title>
 
                 <v-card-text>
@@ -430,10 +441,14 @@
             </v-card>
         </v-dialog>
 
-        <v-dialog v-model="dialogSaveGame" max-width="400">
-            <v-card>
+        <v-dialog v-model="dialogSaveGame" max-width="500">
+            <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
                     <v-toolbar-title>Player selection</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon @click="closeSaveGame">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
                 </v-toolbar>
                 <v-card-text>
                     <v-container fluid>
