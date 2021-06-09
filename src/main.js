@@ -4,8 +4,9 @@ import vuetify from './plugins/vuetify';
 import firebase from 'firebase/app';
 import 'firebase/firestore'
 import VueApexCharts from 'vue-apexcharts';
+import i18n from './i18n'
 Vue.use(VueApexCharts);
- 
+
 Vue.component('apexchart', VueApexCharts)
 Vue.config.productionTip = false;
 
@@ -23,5 +24,6 @@ export const db = firebase.firestore();
 
 new Vue({
   vuetify,
+  i18n,
   render: h => h(App)
 }).$mount('#app')

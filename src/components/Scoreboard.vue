@@ -4,7 +4,7 @@
             <v-col cols="12">
                 <v-card>
                     <v-toolbar flat dark color="secondary">
-                        <v-toolbar-title>Overall Scoreboard</v-toolbar-title>
+                        <v-toolbar-title>{{$t('scoreboard.overall.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-medal</v-icon>
                     </v-toolbar>
@@ -24,7 +24,7 @@
             <v-col>
                 <v-card>
                     <v-toolbar flat dark color="secondary">
-                        <v-toolbar-title>Games insights</v-toolbar-title>
+                        <v-toolbar-title>{{$t('scoreboard.insights.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-chart-arc</v-icon>
                     </v-toolbar>
@@ -32,21 +32,21 @@
                         <v-container fluid>
                             <v-row justify="center" justify-sm="space-around" class="pt-3">
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of games</span>
+                                    <span class="text-caption">{{$t('scoreboard.insights.indicators.left')}}</span>
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
                                     <span v-else class="ml-4 text-sm-h3 text-h4">{{games.length || 0}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">points scored</span>
+                                    <span class="text-caption">{{$t('scoreboard.insights.indicators.center')}}</span>
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
                                     <span v-else class="ml-4 text-sm-h3 text-h4">{{computedMetadata.points || 0}}</span>
                                 </v-col>
                                 <v-col class="mx-8 mx-sm-0" cols="auto">
-                                    <span class="text-caption">nb of successful tickets</span>
+                                    <span class="text-caption">{{$t('scoreboard.insights.indicators.right')}}</span>
                                     <span v-if="computedLoading" class="ml-4">
                                         <v-progress-circular size="50" width="3" indeterminate></v-progress-circular>
                                     </span>
@@ -61,28 +61,29 @@
                                 <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
-                                            <v-toolbar-title>Per player</v-toolbar-title>
+                                            <v-toolbar-title>{{$t('scoreboard.insights.player.title')}}</v-toolbar-title>
                                         </v-toolbar>
                                         <v-card-text v-if="!computedLoading">
                                             <v-container fluid>
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <span class="text-h6 tertiary--text">Select player</span>
+                                                        <span class="text-h6 tertiary--text">{{$t('scoreboard.insights.player.select.title')}}</span>
                                                     </v-col>
                                                     <v-col cols="12" sm="7">
                                                         <v-select v-model="insightsPlayer" solo clearable
-                                                        color="secondary" label="Player" :items="computedPlayers">
+                                                        color="secondary" :label="$t('scoreboard.insights.player.select.label')" :items="computedPlayers">
                                                         </v-select>
                                                     </v-col>
                                                 </v-row>
                                                 <v-row v-if="insightsPlayer">
                                                     <v-col cols="12">
-                                                        <span class="text-h6 tertiary--text">Data</span>
+                                                        <span class="text-h6 tertiary--text">{{$t('scoreboard.insights.player.data.title')}}</span>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <indicators leftText="wins" :leftIndicator="insightsFromPlayer.totalWins"
-                                                        centerText="draws" :centerIndicator="insightsFromPlayer.totalDraws"
-                                                        rightText="losses" :rightIndicator="(insightsFromPlayer.totalGames)-(insightsFromPlayer.totalWins+insightsFromPlayer.totalDraws)"/>
+                                                        <indicators 
+                                                        :leftText="$t('scoreboard.insights.player.data.indicators.left')" :leftIndicator="insightsFromPlayer.totalWins"
+                                                        :centerText="$t('scoreboard.insights.player.data.indicators.center')" :centerIndicator="insightsFromPlayer.totalDraws"
+                                                        :rightText="$t('scoreboard.insights.player.data.indicators.right')" :rightIndicator="(insightsFromPlayer.totalGames)-(insightsFromPlayer.totalWins+insightsFromPlayer.totalDraws)"/>
                                                     </v-col>
                                                     <v-col cols="12" sm="10" md="6">
                                                         <v-row justify="center">
@@ -95,19 +96,19 @@
                                                         </v-row>
                                                     </v-col>
                                                     <v-col cols="12">
-                                                        <span class="text-h6 tertiary--text">Additional data</span>
+                                                        <span class="text-h6 tertiary--text">{{$t('scoreboard.insights.player.additional.title')}}</span>
                                                     </v-col>
                                                     <v-col cols="12">
                                                         <v-row>
                                                             <v-col cols="12" md="6">
                                                                 <v-select v-model="insightsPlayerFilterVersion" outlined clearable
-                                                                color="secondary" label="Filter by version" :items="gamesAndRules"
-                                                                item-text="name" item-value="name" hide-details>
+                                                                color="secondary" :label="$t('scoreboard.insights.player.additional.filter.version')"
+                                                                :items="gamesAndRules" item-text="name" item-value="name" hide-details>
                                                                 </v-select>
                                                             </v-col>
                                                             <v-col cols="12" md="6">
                                                                 <v-select v-model="insightsPlayerFilterPlayers" outlined clearable
-                                                                color="secondary" label="Filter by players" :items="potentialPlayers"
+                                                                color="secondary" :label="$t('scoreboard.insights.player.additional.filter.players')" :items="potentialPlayers"
                                                                 item-text="text" item-value="value" hide-details>
                                                                 </v-select>
                                                             </v-col>
@@ -115,12 +116,13 @@
                                                     </v-col>
                                                     <template v-if="insightsPlayerAdditional">
                                                         <v-col cols="12">
-                                                            <indicators leftText="games" :leftIndicator="insightsPlayerAdditional.totalGames"
-                                                            centerText="wins" :centerIndicator="insightsPlayerAdditional.totalWins"
-                                                            rightText="win rate" :rightIndicator="insightsPlayerAdditional.winRate" :rightIsPercentage="true"/>
+                                                            <indicators 
+                                                            :leftText="$t('scoreboard.insights.player.additional.indicators.left')" :leftIndicator="insightsPlayerAdditional.totalGames"
+                                                            :centerText="$t('scoreboard.insights.player.additional.indicators.center')" :centerIndicator="insightsPlayerAdditional.totalWins"
+                                                            :rightText="$t('scoreboard.insights.player.additional.indicators.right')" :rightIndicator="insightsPlayerAdditional.winRate" :rightIsPercentage="true"/>
                                                         </v-col>
                                                         <v-col cols="12">
-                                                            <span class="text-subtitle-1 tertiary--text">Favorite tickets</span>
+                                                            <span class="text-subtitle-1 tertiary--text">{{$t('scoreboard.insights.player.additional.subtitle')}}</span>
                                                         </v-col>
                                                         <v-col cols="12">
                                                             <v-data-table class="py-6" :headers="headersTicketsVersion" 
@@ -140,24 +142,24 @@
                                 <v-col cols="12" lg="6">
                                     <v-card color="background" elevation="1">
                                         <v-toolbar flat color="accent">
-                                            <v-toolbar-title>Per version</v-toolbar-title>
+                                            <v-toolbar-title>{{$t('scoreboard.insights.version.title')}}</v-toolbar-title>
                                         </v-toolbar>
                                         <v-card-text v-if="!computedLoading">
                                             <v-container fluid>
                                                 <v-row>
                                                     <v-col cols="12">
-                                                        <span class="text-h6 tertiary--text">Select version</span>
+                                                        <span class="text-h6 tertiary--text">{{$t('scoreboard.insights.version.select.title')}}</span>
                                                     </v-col>
                                                     <v-col cols="12" sm="7">
                                                         <v-select v-model="insightsVersion" solo clearable
-                                                        color="secondary" label="Version" :items="gamesAndRules"
+                                                        color="secondary" :label="$t('scoreboard.insights.version.select.label')" :items="gamesAndRules"
                                                         item-text="name" return-object>
                                                         </v-select>
                                                     </v-col>
                                                 </v-row>
                                                 <v-row v-if="insightsVersion">
                                                     <v-col cols="12">
-                                                        <span class="text-h6 tertiary--text">Data</span>
+                                                        <span class="text-h6 tertiary--text">{{$t('scoreboard.insights.version.data.title')}}</span>
                                                     </v-col>
                                                     <v-col>
                                                         <v-data-table class="py-6" :headers="headersTicketsVersion" 
@@ -182,7 +184,7 @@
 
         <v-dialog v-model="dialogDetails" max-width="800" @click:outside="closeDetails">
             <v-toolbar flat dark color="primary">
-                <v-toolbar-title>Game details</v-toolbar-title>
+                <v-toolbar-title>{{$t('scoreboard.overall.dialog.title')}}</v-toolbar-title>
                 <v-spacer></v-spacer>
                 <v-btn icon @click="closeDetails">
                     <v-icon>mdi-close</v-icon>
@@ -192,7 +194,7 @@
                 <v-tabs-slider color="secondary"></v-tabs-slider>
                 <v-tab>
                     <v-icon left>mdi-chart-box-outline</v-icon>
-                    Summary
+                    {{$t('scoreboard.overall.dialog.tabs.summary.title')}}
                 </v-tab>
                 <template v-if="selectedGame">
                     <v-tab v-for="item in selectedGame.players" :key="item.name">
@@ -206,28 +208,34 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Info</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.summary.info.title')}}
+                                        </span>
                                     </v-col>
                                     <v-col cols="12" sm="10">
                                         <v-row class="mt-n3">
                                             <v-col cols="auto" sm="6">
                                                 <v-row no-gutters align="center" justify="start">
                                                     <v-text-field prepend-icon="mdi-calendar"
-                                                    label="Date" v-model="selectedGame.date" readonly>
+                                                    :label="$t('scoreboard.overall.dialog.tabs.summary.info.date')"
+                                                    v-model="selectedGame.date" readonly>
                                                     </v-text-field>
                                                 </v-row>
                                             </v-col>
                                             <v-col cols="auto" sm="6">
                                                 <v-row no-gutters align="center" justify="start">
                                                     <v-text-field prepend-icon="mdi-map-legend"
-                                                    label="Version" v-model="selectedGame.version" readonly>
+                                                    :label="$t('scoreboard.overall.dialog.tabs.summary.info.version')"
+                                                    v-model="selectedGame.version" readonly>
                                                     </v-text-field>
                                                 </v-row>
                                             </v-col>
                                         </v-row>
                                     </v-col>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Rankings</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.summary.rankings.title')}}
+                                        </span>
                                     </v-col>
                                     <v-col cols="12" sm="10">
                                         <v-card outlined>
@@ -235,8 +243,12 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="primaryLight text-left darkenBlack--text">Name</th>
-                                                            <th class="primaryLight text-left darkenBlack--text">Score</th>
+                                                            <th class="primaryLight text-left darkenBlack--text">
+                                                                {{$t('scoreboard.overall.dialog.tabs.summary.rankings.name')}}
+                                                            </th>
+                                                            <th class="primaryLight text-left darkenBlack--text">
+                                                                {{$t('scoreboard.overall.dialog.tabs.summary.rankings.score')}}
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.rankings.length > 0">
@@ -247,7 +259,9 @@
                                                     </tbody>
                                                     <tbody v-show="selectedGame.rankings.length == 0">
                                                         <tr>
-                                                            <td colspan="2">No players yet</td>
+                                                            <td colspan="2">
+                                                                {{$t('scoreboard.overall.dialog.tabs.summary.rankings.no-data')}}
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </template>
@@ -257,11 +271,15 @@
                                 </v-row>
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Statistics</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.summary.statistics.title')}}
+                                        </span>
                                     </v-col>
                                     <v-col cols="12" sm="6">
                                         <v-card tile color="secondary" dark>
-                                            <v-card-title class="text-subtitle-1">Total of units</v-card-title>
+                                            <v-card-title class="text-subtitle-1">
+                                                {{$t('scoreboard.overall.dialog.tabs.summary.statistics.units')}}
+                                            </v-card-title>
                                             <v-card-text class="text-h4 white--text">
                                                 {{getTotalUnits(selectedGame.players)}}
                                             </v-card-text>
@@ -269,7 +287,9 @@
                                     </v-col>
                                     <v-col cols="12" sm="6">
                                         <v-card tile color="quaternary" dark>
-                                            <v-card-title class="text-subtitle-1">Total of successful tickets</v-card-title>
+                                            <v-card-title class="text-subtitle-1">
+                                                {{$t('scoreboard.overall.dialog.tabs.summary.statistics.tickets')}}
+                                            </v-card-title>
                                             <v-card-text class="text-h4 white--text">
                                                 {{getTotalSuccessfulTickets(selectedGame.players)}}
                                             </v-card-text>
@@ -297,14 +317,16 @@
                                 </v-row> -->
                                 <v-row v-if="computedHasLongest">
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Bonuses</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.player.bonuses.title')}}
+                                        </span>
                                     </v-col>
                                 </v-row>
                                 <v-row v-if="computedHasLongest">
                                     <v-col cols="12">
                                         <v-card outlined :disabled="(selectedGame.players[i-1].longestBonus || 0)==0">
                                             <v-toolbar class="text-caption font-weight-bold text--secondary" flat dense color="primaryLight">
-                                                Longest path
+                                                {{$t('scoreboard.overall.dialog.tabs.player.bonuses.longest')}}
                                             </v-toolbar>
                                             <v-container>
                                                 <v-row justify="space-around">
@@ -317,9 +339,12 @@
                                         </v-card>
                                     </v-col>
                                 </v-row>
+                                <!--Tickets-->
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Tickets</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.player.tickets.title')}}
+                                        </span>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -336,15 +361,18 @@
                                                     {{item.cities[0].name}}
                                                 </template>
                                                 <template v-slot:no-data>
-                                                    No tickets yet
+                                                    {{$t('scoreboard.overall.dialog.tabs.player.tickets.no-data')}}
                                                 </template>
                                             </v-data-table>
                                         </v-card>
                                     </v-col>
                                 </v-row>
+                                <!--Harbors-->
                                 <v-row v-if="computedHasHarbors">
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Harbors</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.player.harbors.title')}}
+                                        </span>
                                     </v-col>
                                 </v-row>
                                 <v-row v-if="computedHasHarbors">
@@ -353,15 +381,18 @@
                                             <v-data-table :headers="harborsHeaders" :items="selectedGame.players[i-1].harbors"
                                             :footer-props="{'items-per-page-options': [-1] }">
                                                 <template v-slot:no-data>
-                                                    No harbors yet
+                                                    {{$t('scoreboard.overall.dialog.tabs.player.harbors.no-data')}}
                                                 </template>
                                             </v-data-table>
                                         </v-card>
                                     </v-col>
                                 </v-row>
+                                <!--Train stations-->
                                 <v-row v-if="computedHasTrainStations">
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Train stations</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.player.stations.title')}}
+                                        </span>
                                     </v-col>
                                 </v-row>
                                 <v-row v-if="computedHasTrainStations">
@@ -371,7 +402,9 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="primaryLight darkenBlack--text text-left">Score</th>
+                                                            <th class="primaryLight darkenBlack--text text-left">
+                                                                {{$t('scoreboard.overall.dialog.tabs.player.stations.score')}}
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].trainStations">
@@ -381,7 +414,9 @@
                                                     </tbody>
                                                     <tbody v-show="!selectedGame.players[i-1].trainStations">
                                                         <tr>
-                                                            <td colspan="2">No stations yet</td>
+                                                            <td colspan="2">
+                                                                {{$t('scoreboard.overall.dialog.tabs.player.stations.no-data')}}
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </template>
@@ -389,9 +424,12 @@
                                         </v-card>
                                     </v-col>
                                 </v-row>
+                                <!--Units-->
                                 <v-row>
                                     <v-col cols="12">
-                                        <span class="text-h6 tertiary--text">Units</span>
+                                        <span class="text-h6 tertiary--text">
+                                            {{$t('scoreboard.overall.dialog.tabs.player.units.title')}}
+                                        </span>
                                     </v-col>
                                 </v-row>
                                 <v-row>
@@ -401,8 +439,12 @@
                                                 <template v-slot:default>
                                                     <thead>
                                                         <tr>
-                                                            <th class="primaryLight darkenBlack--text text-left">Routes</th>
-                                                            <th class="primaryLight darkenBlack--text text-left">Number</th>
+                                                            <th class="primaryLight darkenBlack--text text-left">
+                                                                {{$t('scoreboard.overall.dialog.tabs.player.units.routes')}}
+                                                            </th>
+                                                            <th class="primaryLight darkenBlack--text text-left">
+                                                                {{$t('scoreboard.overall.dialog.tabs.player.units.number')}}
+                                                            </th>
                                                         </tr>
                                                     </thead>
                                                     <tbody v-show="selectedGame.players[i-1].units">
@@ -413,7 +455,9 @@
                                                     </tbody>
                                                     <tbody v-show="!selectedGame.players[i-1].units">
                                                         <tr>
-                                                            <td colspan="2">No units yet</td>
+                                                            <td colspan="2">
+                                                                {{$t('scoreboard.overall.dialog.tabs.player.units.no-data')}}
+                                                            </td>
                                                         </tr>
                                                     </tbody>
                                                 </template>
@@ -440,24 +484,9 @@ export default {
     components: { Indicators },
     data(){
         return {
-            headers: [
-                {text:"Version", align:"start", value:"version", sortable: true},
-                {text:"Date", align:"start", value:"date", sortable: true},
-                {text:"Players", align:"start", value:"players", sortable: true},
-                {text:"Winner", align:"start", value:"winner", sortable: true},
-                {text:"Score", align:"start", value:"score", sortable: true},
-                {text:"Details", align:"center", value:"details", sortable: false},
-                {text:"Actions", align:"center", value:"actions", sortable: false}
-            ],
-            ticketHeaders:[
-                {text:"From", align:"start", value:"from", sortable: true, class:"primaryLight darkenBlack--text"},
-                {text:"To", align:"start", value:"to", sortable: true, class:"primaryLight darkenBlack--text"},
-                {text:"Status", align:"start", value:"status", sortable: true, class:"primaryLight darkenBlack--text"},
-            ],
-            harborsHeaders:[
-                {text: "City", align:"start", value:"city", sortable: false, class:"primaryLight darkenBlack--text"},
-                {text: "Points", align:"start", value:"score", sortable: false, class:"primaryLight darkenBlack--text"}
-            ],
+            //headers: ,
+            //ticketHeaders: ,
+            //harborsHeaders: ,
             games: [],
             //games: jsonGames,
             selectedGame: null,
@@ -466,12 +495,7 @@ export default {
             loadingData: false,
             unsubscribe: null,
             scoreUnitsRule: {1:1, 2:2, 3:4, 4:7, 5:10, 6: 15, 7: 18, 8:21, 9:27},
-            potentialPlayers: [
-                { text: "2 players", value: 2 },
-                { text: "3 players", value: 3 },
-                { text: "4 players", value: 4 },
-                { text: "5 players", value: 5 }
-            ],
+            //potentialPlayers: ,
             optionsPointsChartPerPlayer: {
                 chart: {
                     type: 'bar',
@@ -518,13 +542,7 @@ export default {
             },
             //Insights data
             searchInsightsTicketsVersion: "",
-            headersTicketsVersion: [
-                {text:"From", align:"start", value:"cities[0].name", sortable: true},
-                {text:"To", align:"start", value:"cities", sortable: true},
-                {text:"Appeared", align:"start", value:"occurrences", sortable: true},
-                {text:"Win rate", align:"start", value:"winRate", sortable: true},
-                {text:"Completion", align:"start", value:"completionRate", sortable: true}
-            ],
+            //headersTicketsVersion: ,
             insightsVersion: null,
             insightsFromVersion: null,
             insightsPlayer: null,
@@ -601,6 +619,57 @@ export default {
         }
     },
     computed:{
+        headers: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.version'), align:"start", value:"version", sortable: true},
+                    {text: this.$t('main.tables.headers.date'), align:"start", value:"date", sortable: true},
+                    {text: this.$t('main.tables.headers.players'), align:"start", value:"players", sortable: true},
+                    {text: this.$t('main.tables.headers.winner'), align:"start", value:"winner", sortable: true},
+                    {text: this.$t('main.tables.headers.score'), align:"start", value:"score", sortable: true},
+                    {text: this.$t('main.tables.headers.details'), align:"center", value:"details", sortable: false},
+                    {text: this.$t('main.tables.headers.join'), align:"center", value:"actions", sortable: false}
+                ]
+            }
+        },
+        ticketHeaders: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.from'), align:"start", value:"from", sortable: true, class:"primaryLight darkenBlack--text"},
+                    {text: this.$t('main.tables.headers.to'), align:"start", value:"to", sortable: true, class:"primaryLight darkenBlack--text"},
+                    {text: this.$t('main.tables.headers.status'), align:"start", value:"status", sortable: true, class:"primaryLight darkenBlack--text"},
+                ]
+            }
+        },
+        harborsHeaders: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.city'), align:"start", value:"city", sortable: false, class:"primaryLight darkenBlack--text"},
+                    {text: this.$t('main.tables.headers.points'), align:"start", value:"score", sortable: false, class:"primaryLight darkenBlack--text"}
+                ]
+            }
+        },
+        headersTicketsVersion: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.from'), align:"start", value:"cities[0].name", sortable: true},
+                    {text: this.$t('main.tables.headers.to'), align:"start", value:"cities", sortable: true},
+                    {text: this.$t('main.tables.headers.appeared'), align:"start", value:"occurrences", sortable: true},
+                    {text: this.$t('main.tables.headers.win-rate'), align:"start", value:"winRate", sortable: true},
+                    {text: this.$t('main.tables.headers.completion-rate'), align:"start", value:"completionRate", sortable: true}
+                ]
+            }
+        },
+        potentialPlayers: {
+            get(){
+                return [
+                    { text: this.$t('scoreboard.insights.player.additional.filter.players-value', {n: 2}), value: 2 },
+                    { text: this.$t('scoreboard.insights.player.additional.filter.players-value', {n: 3}), value: 3 },
+                    { text: this.$t('scoreboard.insights.player.additional.filter.players-value', {n: 4}), value: 4 },
+                    { text: this.$t('scoreboard.insights.player.additional.filter.players-value', {n: 5}), value: 5 }
+                ]
+            }
+        },
         computedLoading:{
             get(){
                 // Returns true if loading
@@ -697,7 +766,9 @@ export default {
                 }
                 return {score: score, totalFailed: fail};
             }
-            if(this.gamesAndRules.findIndex(game=>game.name==item.version)==-1) return this.popUp("This game version is not supported","error")
+            if(this.gamesAndRules.findIndex(game=>game.name==item.version)==-1){
+                return this.popUp(this.$t('main.snackbar.error.version-unsupported'),"error")
+            }
             this.selectedVersion = Object.assign({},this.gamesAndRules.find(game=>game.name==item.version));
             let obj = {
                 date: item.date,
@@ -760,6 +831,7 @@ export default {
             }
             return true
         },
+        /*
         computePointsGraph(player){
             let serie = [
                 {name: "Tickets", data: [100*player.computedTickets.score/player.score]},
@@ -767,17 +839,24 @@ export default {
                 {name: "Units", data: [100*player.computedUnits.score/player.score]},
             ];
             return serie;
-        },
+        },*/
         computePlayerInsightsPerGameOptions(dark){
             this.insightsPerGameOptions = Object.assign({}, {
                 chart: { type: "pie", background: (dark) ? this.$vuetify.theme.themes.dark.background : this.$vuetify.theme.themes.light.background },
-                labels: ["2 players","3 players","4 players","5 players"],
+                labels: [
+                    this.$t('scoreboard.insights.player.charts.players-number.label', {n:2}),
+                    this.$t('scoreboard.insights.player.charts.players-number.label', {n:3}),
+                    this.$t('scoreboard.insights.player.charts.players-number.label', {n:4}),
+                    this.$t('scoreboard.insights.player.charts.players-number.label', {n:5})
+                ],
                 theme: {
                     mode: (dark) ? 'dark' : 'light',
                     monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.primary : this.$vuetify.theme.themes.light.primary }
                 },
                 legend: { position: "bottom" },
-                title: { text: "Number of players" }
+                title: { 
+                    text: this.$t('scoreboard.insights.player.charts.players-number.title')
+                }
             })
         },
         computeInsightsPlayerVersionOptions(dark){
@@ -789,7 +868,9 @@ export default {
                     monochrome: { enabled: true, color: (dark) ? this.$vuetify.theme.themes.dark.secondary : this.$vuetify.theme.themes.light.secondary }
                 },
                 legend: { position: "bottom" },
-                title: { text: "Version" }
+                title: {
+                    text: this.$t('scoreboard.insights.player.charts.version.title')
+                }
             })
         },
         computeUnitsToPoints(units, exchanges){

@@ -1,0 +1,326 @@
+{
+    "main": {
+        "btn": {
+            "close": "CLOSE",
+            "cancel": "CANCEL",
+            "create": "CREATE",
+            "proceed": "PROCEED",
+            "ok": "OK",
+            "save": "SAVE",
+            "share": "SHARE THIS ID",
+            "reset": "RESET",
+            "add-ticket": "ADD TICKET",
+            "add-harbor": "ADD A HARBOR"
+        },
+        "tables": {
+            "search": "Search",
+            "headers": {
+                "from": "From",
+                "to": "To",
+                "steps": "Steps",
+                "points": "Points",
+                "status": "Status",
+                "actions": "Actions",
+                "delete": "Delete",
+                "version": "Version",
+                "date": "Date",
+                "players": "Players",
+                "winner": "Winner",
+                "score": "Score",
+                "details": "Details",
+                "join": "Join",
+                "city": "City",
+                "appeared": "Appeared",
+                "win-rate": "Win rate",
+                "completion-rate": "Completion"
+            }
+        },
+        "status": {
+            "done": "Done",
+            "fail": "Fail",
+            "unordered": "Unordered"
+        },
+        "snackbar":{
+            "success":{
+                "save": "Your game was saved!",
+                "share": "Sharing successful!"
+            },
+            "warning": {
+                "last-units": "You now have {n} or less units left"
+            },
+            "error": {
+                "open-save": "Unable to retrieve the players' name. Try again.",
+                "toggle-status": "Oups, ticket wasn't found",
+                "save": "Someting went wrong. Try again.",
+                "share": "Impossible to share the ID",
+                "delete": "Oups, ticket wasn't found",
+                "version-unsupported": "This game version is not supported"
+            }
+        }
+    },
+    "app":{
+        "settings": "Settings",
+        "theme": "Dark theme",
+        "on": "On",
+        "off": "Off",
+        "lang": "Language",
+        "tabs": {
+            "current": "Current Game",
+            "scoreboard": "Scoreboard",
+            "help": "Help"
+        },
+        "new":{
+            "title": "New game",
+            "type": "Type of game",
+            "version": "Game Version",
+            "players": "Number of players",
+            "names": "Players name",
+            "player-label": "Player {id}",
+            "date": "Date",
+            "date-choice": "Choose a date",
+            "form":{
+                "version": "Version is required",
+                "player": "Player name is required",
+                "invalid-player": "Player name must be valid"
+            }
+        },
+        "warning": {
+            "title": "Be careful !",
+            "line-1-a": "You have just joined a game that",
+            "line-1-bold": " does not ",
+            "line-1-b": "correspond to the tickets you have.",
+            "line-2": "Please reset your current game and try joining this one again afterwards."
+        },
+        "error": {
+            "reset-game-session": "An error occured while resetting game variables"
+        }
+    },
+    "current": {
+        "game": {
+            "title": "Your game",
+            "version": "Game version",
+            "version-label": "Select the game",
+            "score": "Total score",
+            "save": "Save your game",
+            "save-placeholder": "Enter 20-character ID here",
+            "save-label": "Game ID",
+            "reset": "Reset everything"
+        },
+        "tickets": {
+            "title": "Your tickets",
+            "indicators": {
+                "left": "nb of tickets",
+                "center": "nb completed",
+                "right": "current score"
+            },
+            "routes": {
+                "title": "Routes"
+            }
+        },
+        "harbors": {
+            "title": "Your harbors",
+            "indicators": {
+                "left": "nb of cities",
+                "center": "nb of harbors",
+                "right": "current score"
+            },
+            "subtitle": "Built harbors",
+            "card": {
+                "title": "Harbor #{id}",
+                "no-city": "Unknown"
+            },
+            "tables": {
+                "column-1": "City",
+                "column-2": "Number",
+                "potential": {
+                    "title": "Top potential cities",
+                    "no-data": "No cities yet"
+                },
+                "successful": {
+                    "title": "Top successful cities",
+                    "no-data": "No successful cities yet"
+                }
+            }
+        },
+        "stations": {
+            "title": "Your train stations",
+            "indicators": {
+                "left": "nb of train stations",
+                "right": "current score"
+            },
+            "subtitle": "Built train stations",
+            "card": {
+                "title": "Station #{id}"
+            }
+        },
+        "bonuses": {
+            "title": "Your bonuses",
+            "indicators": {
+                "left": "nb of bonuses",
+                "right": "current score"
+            },
+            "longest-path": "Longest continous path"
+        },
+        "units": {
+            "title": "Your units",
+            "indicators": {
+                "left": "nb of units",
+                "center": "nb of exchanges",
+                "right": "current score"
+            },
+            "subtitle-1": "Claimed routes",
+            "subtitle-2": "Exchanges"
+        },
+        "dialog": {
+            "add-ticket": {
+                "title": "New Ticket",
+                "subtitle": "Cities",
+                "label": {
+                    "from": "From",
+                    "to": "To"
+                },
+                "selection": {
+                    "title": "Select your ticket"
+                },
+                "message": "1 match found | {n} matches found",
+                "error": "This ticket has already been added"
+            },
+            "add-harbor": {
+                "title": "New Harbor",
+                "subtitle": "Cities",
+                "label": "Choose a city",
+                "error": "This city already has a harbor"
+            },
+            "reset": {
+                "types": {
+                    "tickets":"Reset tickets",
+                    "units": "Reset units",
+                    "harbors": "Reset harbors",
+                    "stations": "Reset train stations",
+                    "bonuses": "Reset bonuses",
+                    "all": "Reset all"
+                },
+                "subtitle": "Are you sure you want to reset?"
+            },
+            "save": {
+                "title": "Player selection",
+                "subtitle": "Choose which player you are",
+                "label": "Select your name",
+                "error": {
+                    "id": "The ID you entered is not assigned",
+                    "unexpected": "Oups, something wrong happened. Contact the website admin."
+                }
+            }
+        }
+    },
+    "scoreboard": {
+        "overall": {
+            "title": "Overall Scoreboard",
+            "dialog": {
+                "title": "Game details",
+                "tabs": {
+                    "summary": {
+                        "title": "Summary",
+                        "info": {
+                            "title": "Info",
+                            "date": "Date",
+                            "version": "Version"
+                        },
+                        "rankings": {
+                            "title": "Rankings",
+                            "name": "Name",
+                            "score": "Score",
+                            "no-data": "No players yet"
+                        },
+                        "statistics": {
+                            "title": "Statistics",
+                            "units": "Total of units",
+                            "tickets": "Total of successful tickets"
+                        }
+                    },
+                    "player": {
+                        "bonuses": {
+                            "title": "Bonuses",
+                            "longest": "Longest path"
+                        },
+                        "tickets": {
+                            "title": "Tickets",
+                            "no-data": "No tickets yet"
+                        },
+                        "harbors": {
+                            "title":"Harbors",
+                            "no-data": "No harbors yet"
+                        },
+                        "stations": {
+                            "title": "Train stations",
+                            "score": "Score",
+                            "no-data":"No stations yet"
+                        },
+                        "units": {
+                            "title": "Units",
+                            "routes": "Routes",
+                            "number": "Number",
+                            "no-data": "No units yet"
+                        }
+                    }
+                }
+            }
+        },
+        "insights": {
+            "title": "Games insights",
+            "indicators": {
+                "left": "nb of games",
+                "center": "points scored",
+                "right": "nb of successful tickets"
+            },
+            "player": {
+                "title": "Per player",
+                "select": {
+                    "title": "Select player",
+                    "label": "Player"
+                },
+                "data": {
+                    "title": "Data",
+                    "indicators": {
+                        "left": "wins",
+                        "center": "draws",
+                        "right": "losses"
+                    }
+                },
+                "additional": {
+                    "title": "Additional data",
+                    "filter": {
+                        "version": "Filter by version",
+                        "players": "Filter by player",
+                        "players-value": "{n} players"
+                    },
+                    "indicators": {
+                        "left": "games",
+                        "center": "wins",
+                        "right": "win rate"
+                    },
+                    "subtitle": "Favorite tickets"
+                },
+                "charts": {
+                    "players-number": {
+                        "label": "{n} players",
+                        "title": "Number of players"
+                    },
+                    "version": {
+                        "title": "Version"
+                    }
+                }
+            },
+            "version": {
+                "title": "Per version",
+                "select": {
+                    "title": "Select version",
+                    "label": "Version"
+                },
+                "data": {
+                    "title": "Data"
+                }
+            }
+        }
+    }
+}

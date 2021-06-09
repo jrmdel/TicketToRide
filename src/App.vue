@@ -7,7 +7,7 @@
             </div>
             <v-spacer></v-spacer>
             <v-btn text @click="openCreate">
-                <span class="mr-2">New game</span>
+                <span class="mr-2">{{$t('app.new.title')}}</span>
                 <v-icon>mdi-checkerboard-plus</v-icon>
             </v-btn>
             <v-divider vertical inset></v-divider>
@@ -19,15 +19,21 @@
                 </template>
                 <v-card min-width="250">
                     <v-toolbar flat color="primaryLight">
-                        <v-toolbar-title class="darkenBlack--text">Settings</v-toolbar-title>
+                        <v-toolbar-title class="darkenBlack--text">{{ $t('app.settings') }}</v-toolbar-title>
                     </v-toolbar>
                     <v-card-text>
                         <v-container>
                             <v-row align="center">
-                                <v-switch v-model="computedTheme" class="pt-0 mt-0" label="Dark theme :" inset color="accent"
+                                <v-switch v-model="computedTheme" class="pt-0 mt-0" :label="$t('app.theme')+' :'" inset color="accent"
                                 hide-details>
                                 </v-switch>
-                                <div class="text-subtitle-1 ml-1">{{(computedTheme) ? 'On' : 'Off'}}</div>
+                                <div class="text-subtitle-1 ml-1">{{(computedTheme) ? $t('app.on') : $t('app.off')}}</div>
+                            </v-row>
+                            <v-row align="center">
+                                <v-switch v-model="computedLang" :label="$t('app.lang')+' :'" inset color="accent"
+                                hide-details>
+                                </v-switch>
+                                <div class="text-subtitle-1 ml-1 mt-4 pt-1">{{(computedLang) ? 'Français' : 'English'}}</div>
                             </v-row>
                         </v-container>
                     </v-card-text>
@@ -37,9 +43,9 @@
             <template v-slot:extension>
                 <v-tabs v-model="tab" mobile-breakpoint="0">
                 <v-tabs-slider color="secondary"></v-tabs-slider>
-                <v-tab>Current game</v-tab>
-                <v-tab>Scoreboard</v-tab>
-                <v-tab>Help</v-tab>
+                <v-tab>{{$t('app.tabs.current')}}</v-tab>
+                <v-tab>{{$t('app.tabs.scoreboard')}}</v-tab>
+                <v-tab>{{$t('app.tabs.help')}}</v-tab>
                 </v-tabs>
             </template>
         </v-app-bar>
@@ -66,36 +72,36 @@
         <v-dialog v-model="dialogCreate" max-width="800" @click:outside="closeCreate">
             <v-card>
                 <v-toolbar flat color="primary" dark>
-                    <v-toolbar-title>New Game</v-toolbar-title>
+                    <v-toolbar-title>{{$t('app.new.title')}}</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text>
                     <v-form v-model="newGameForm" ref="newGameForm">
                         <v-container fluid>
                             <v-row align="center">
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Type of game</span>
+                                    <span class="text-h6 tertiary--text">{{$t('app.new.type')}}</span>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-select v-model="version" solo :rules="newVersionRules" color="secondary" hide-details label="Game Version" :items="(gamesAndRules.length>0) ? gamesAndRules : []" item-text="name" return-object></v-select>
+                                    <v-select v-model="version" solo :rules="[ruleNewVersion]" color="secondary" :label="$t('app.new.version')" :items="(gamesAndRules.length>0) ? gamesAndRules : []" item-text="name" return-object></v-select>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <v-subheader>Number of players</v-subheader>
+                                    <v-subheader> {{$t('app.new.players')}} </v-subheader>
                                     <v-slider v-model="players" min=2 max=5 color="secondary" ticks="always" tick-size="3" :tick-labels="['2','3','4','5']" track-color="grey-lighten2"></v-slider>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Players name</span>
+                                    <span class="text-h6 tertiary--text"> {{$t('app.new.names')}} </span>
                                 </v-col>
                                 <v-col cols="12" md="6" v-for="player in players" :key="player">
-                                    <v-text-field required :rules="newPlayerRules" color="secondary" v-model="names[player]" :label="computeLabel(player)" clearable></v-text-field>
+                                    <v-text-field required :rules="[ruleNewPlayer]" color="secondary" v-model="names[player]" :label="computeLabel(player)" clearable></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Date</span>
+                                    <span class="text-h6 tertiary--text"> {{$t('app.new.date')}} </span>
                                 </v-col>
                                 <v-col cols="12" md="6">
                                     <v-menu v-model="menu" :close-on-content-click="false" :nudge-right="40" transition="scale-transition"
                                     offset-y min-width="290px">
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-text-field v-model="date" label="Choose a date" prepend-icon="mdi-calendar"
+                                            <v-text-field v-model="date" :label="$t('app.new.date-choice')" prepend-icon="mdi-calendar"
                                             readonly v-bind="attrs" v-on="on"></v-text-field>
                                         </template>
                                         <v-date-picker
@@ -110,33 +116,47 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn large text color="accent" @click="closeCreate">CLOSE</v-btn>
-                    <v-btn large :disabled="!newGameForm" :loading="loadingCreate" text color="secondary" @click="createGame">CREATE</v-btn>
+                    <v-btn large text color="accent" @click="closeCreate"> {{$t('main.btn.close')}} </v-btn>
+                    <v-btn large :disabled="!newGameForm" :loading="loadingCreate" text color="secondary" @click="createGame">{{$t('main.btn.create')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <v-dialog v-model="dialogWrongTickets" max-width="500">
             <v-card>
                 <v-toolbar flat color="secondary" dark>
-                    <v-toolbar-title>Be careful !</v-toolbar-title>
+                    <v-toolbar-title>{{$t('app.warning.title')}}</v-toolbar-title>
                 </v-toolbar>
                 <v-card-text class="text-body-1 tertiary--text">
                     <v-container>
                         <v-row>
+                            <!--
                             <v-col>
                                 <div>You have just joined a game that <span class="font-weight-bold">does not</span> correspond to the tickets you have.</div>
+                            </v-col>
+                            <v-col>
+                                <i18n path="app.warning.line-1" tag="div">
+                                    <template v-slot:bold>
+                                        <span>{{ $t('app.warning.bold-1') }}</span>
+                                    </template>
+                                </i18n>
+                            </v-col>
+                            -->
+                            <v-col>
+                                <span>{{ $t('app.warning.line-1-a') }}</span>
+                                <span class="font-weight-bold">{{ $t('app.warning.line-1-bold') }}</span>
+                                <span>{{ $t('app.warning.line-1-b') }}</span>
                             </v-col>
                         </v-row>
                         <v-row>
                             <v-col>
-                                <div>Please reset your current game and try joining this one again afterwards.</div>
+                                <div>{{ $t('app.warning.line-2') }}</div>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="secondary" text @click="dialogWrongTickets=false">OK</v-btn>
+                    <v-btn color="secondary" text @click="dialogWrongTickets=false">{{ $t('main.btn.ok') }}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -163,8 +183,7 @@ export default {
     data: () => ({
         players: 3,
         version: null,
-        newVersionRules: [v => !!v || "Version is required"],
-        newPlayerRules: [v => !!v || "Player name is required", v => v.length>1 && !(/\d/.test(v)) || "Player name must be valid"],
+        //newPlayerRules: [v => !!v || "Player name is required", v => v.length>1 && !(/\d/.test(v)) || "Player name must be valid"],
         names: {1: "", 2:"", 3:"", 4:"", 5:""},
         defaultNames: {1: "", 2:"", 3:"", 4:"", 5:""},
         date: new Date().toISOString().substr(0,10),
@@ -185,11 +204,6 @@ export default {
         snackMsg: ""
     }),
     watch:{
-        currentGameVersion: {
-            handler(value){
-                console.log(`Version changed to ${value.name}`);
-            }
-        },
         gamesAndRules: {
             immediate: true,
             handler(value){
@@ -207,6 +221,15 @@ export default {
             set(value){
                 this.$vuetify.theme.dark = value;
                 localStorage.setItem("dark-theme", value);
+            }
+        },
+        computedLang:{
+            get(){
+                return this.$i18n.locale=="fr"
+            },
+            set(value){
+                this.$i18n.locale = (value) ? "fr" : "en";
+                localStorage.setItem("lang", this.$i18n.locale);
             }
         }
     },
@@ -238,6 +261,18 @@ export default {
             }
             this.tab = 0;
         },
+        ruleNewVersion(value){
+            if(value == null){
+                return this.$t('app.new.form.version')
+            } else return true 
+        },
+        ruleNewPlayer(value){
+            if(value == null || value?.length < 1) return this.$t('app.new.form.player')
+            else {
+                if(value.length>1 && !(/\d/.test(value))) return true
+                return this.$t('app.new.form.invalid-player')
+            }
+        },
         resetGameSession(){
             return new Promise((resolve, reject)=>{
                 try {
@@ -246,24 +281,26 @@ export default {
                     this.currentGamePlayers = new Array();
                     resolve();
                 } catch (error) {
-                    reject("An error occured while resetting game variables");
+                    reject(this.$t('app.error.reset-game-session'));
                 }
             })
         },
         findVersion(event){
             this.currentGameVersion = this.gamesAndRules.find(game=>game.name==event.version);
-            console.log(`Event sent from child: currentGameVerison = ${this.currentGameVersion}`)
         },
         async createGame(){
             this.loadingCreate = true;
             this.$refs.currentGame.resetAll();
-            await this.resetGameSession();
+            try {
+                await this.resetGameSession();
+            } catch (error) {
+                this.popUp({color:"error", msg:error});
+            }
             let doc = {date: this.date, players: this.players, version: this.version.name}
             for(let i=0;i<this.players; i++){
                 let n = `player${i+1}`
                 doc[n] = {name: this.names[i+1], score:this.version.initialScore, tickets:[]}
             }
-            console.log(doc)
             let d = await db.collection('Games').add(doc)
             this.currentGameId = d.id;
             // Sets the currentGame variables
@@ -278,18 +315,25 @@ export default {
             this.snack = true;
         },
         computeLabel(number){
-            return `Player ${number}`
+            return this.$t('app.new.player-label', {id: number})
         },
         toggleTheme(){
             this.$vuetify.theme.dark = !this.$vuetify.theme.dark
         }
     },
-    mounted(){
+    beforeMount(){
         if(localStorage.getItem("dark-theme")){
             try {
                 this.$vuetify.theme.dark = (localStorage.getItem("dark-theme")=='true');
             } catch (error) {
                 localStorage.removeItem('dark-theme');
+            }
+        }
+        if(localStorage.getItem("lang")){
+            try {
+                this.$i18n.locale = localStorage.getItem("lang") || this.computedLang
+            } catch (error) {
+                localStorage.removeItem('lang');
             }
         }
     }

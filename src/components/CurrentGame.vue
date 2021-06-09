@@ -5,7 +5,7 @@
                 <!--Your Game-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your game</v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.game.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-map-legend</v-icon>
                     </v-toolbar>
@@ -14,12 +14,12 @@
                             <v-row>
                                 <v-col cols="12" sm="6">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Game version</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.game.version')}}</span>
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
                                             <v-select class="mx-2" solo v-model="selectVersion" hide-details
-                                            color="secondary" label="Select the game" :items="gamesAndRules"
+                                            color="secondary" :label="$t('current.game.version-label')" :items="gamesAndRules"
                                             item-text="name" return-object>
                                             </v-select>
                                         </v-col>
@@ -27,7 +27,7 @@
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Total score</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.game.score')}}</span>
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
@@ -41,37 +41,37 @@
                             <v-row>
                                 <v-col cols="12" sm="6">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Save your game</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.game.save')}}</span>
                                     </v-row>
                                     <v-row align="center" justify="center" justify-sm="start">
                                         <v-col cols="auto">
-                                            <v-text-field class="ma-2" solo hide-details label="Game ID" v-model="gameId" placeholder="Enter 20-character ID here"></v-text-field>
+                                            <v-text-field class="ma-2" solo hide-details :label="$t('current.game.save-label')" v-model="gameId" :placeholder="$t('current.game.save-placeholder')"></v-text-field>
                                         </v-col>
                                     </v-row>
                                     <v-row align="center" justify="center" justify-sm="start" no-gutters>
                                         <v-col cols="auto">
                                             <v-btn class="ma-2" :disabled="gameId.length!=20" large color="primary" @click="openSaveGame">
                                                 <v-icon>mdi-content-save-outline</v-icon>
-                                                <span class="ml-3 mr-1">SAVE</span>
+                                                <span class="ml-3 mr-1">{{$t('main.btn.save')}}</span>
                                             </v-btn>
                                         </v-col>
                                         <v-col cols="auto">
                                             <v-btn class="ma-2" :disabled="gameId.length!=20" large color="secondary" @click="shareGameId">
                                                 <v-icon>mdi-share-variant</v-icon>
-                                                <span class="ml-3 mr-1">SHARE THIS ID</span>
+                                                <span class="ml-3 mr-1">{{$t('main.btn.share')}}</span>
                                             </v-btn>
                                         </v-col>
                                     </v-row>
                                 </v-col>
                                 <v-col cols="12" sm="6">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Reset everything</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.game.reset')}}</span>
                                     </v-row>
                                     <v-row justify="center" justify-sm="start">
                                         <v-col cols="auto">
                                             <v-btn x-large class="ml-sm-8" color="accent" @click="openReset('all')">
                                                 <v-icon>mdi-restore</v-icon>
-                                                <span class="ml-3 mr-1">RESET</span>
+                                                <span class="ml-3 mr-1">{{$t('main.btn.reset')}}</span>
                                             </v-btn>
                                         </v-col>
                                     </v-row>
@@ -85,28 +85,28 @@
                 <!--Your tickets-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your tickets</v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.tickets.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-ticket-confirmation-outline</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        leftText="nb of tickets" :leftIndicator="routes.length" 
-                        centerText="nb completed" :centerIndicator="computedCompletion"
-                        rightText="current score" :rightIndicator="computedTicketScore"/>
+                        :leftText="$t('current.tickets.indicators.left')" :leftIndicator="routes.length" 
+                        :centerText="$t('current.tickets.indicators.center')" :centerIndicator="computedCompletion"
+                        :rightText="$t('current.tickets.indicators.right')" :rightIndicator="computedTicketScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
                             <TwoButtons
-                            leftColor="primary" leftIcon="mdi-card-plus-outline" leftText="ADD A TICKET" @clickLeft="openAddTicket"
-                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('tickets')"/>
+                            leftColor="primary" leftIcon="mdi-card-plus-outline" :leftText="$t('main.btn.add-ticket')" @clickLeft="openAddTicket"
+                            rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="openReset('tickets')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-card outlined flat color="primaryLight">
                                         <v-card-title class="text-h4 font-weight-light">
-                                            <span class="darkenBlack--text">Routes</span>
+                                            <span class="darkenBlack--text">{{$t('current.tickets.routes.title')}}</span>
                                             <v-spacer></v-spacer>
-                                            <v-text-field v-model="searchRoutes" append-icon="mdi-magnify" label="Search" single-line
+                                            <v-text-field v-model="searchRoutes" append-icon="mdi-magnify" :label="$t('main.tables.search')" single-line
                                             clearable hide-details light></v-text-field>
                                         </v-card-title>
                                         <v-data-table class="py-6" :headers="headersRoutes" 
@@ -128,7 +128,7 @@
                                                 </div>
                                             </template>
                                             <template v-slot:[`item.status`]="{ item }">
-                                                <v-chip :color="getStatusColor(item.status)" dark>{{ item.status }}</v-chip>
+                                                <v-chip :color="getStatusColor(item.status)" dark>{{ getStatusText(item.status) }}</v-chip>
                                             </template>
                                         </v-data-table>
                                     </v-card>
@@ -142,31 +142,31 @@
                 <!--Your harbors-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your harbors</v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.harbors.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-anchor</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        leftText="nb of cities" :leftIndicator="computedTopCities.length" 
-                        centerText="nb of harbors" :centerIndicator="harbors.length"
-                        rightText="current score" :rightIndicator="computedHarborsScore"/>
+                        :leftText="$t('current.harbors.indicators.left')" :leftIndicator="computedTopCities.length" 
+                        :centerText="$t('current.harbors.indicators.center')" :centerIndicator="harbors.length"
+                        :rightText="$t('current.harbors.indicators.right')" :rightIndicator="computedHarborsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
                             <TwoButtons
-                            :leftDisabledCondition="harbors.length>2" leftColor="primary" leftIcon="mdi-ship-wheel" leftText="ADD A HARBOR" @clickLeft="openAddHarbor"
-                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('harbors')"/>
+                            :leftDisabledCondition="harbors.length>2" leftColor="primary" leftIcon="mdi-ship-wheel" :leftText="$t('main.btn.add-harbor')" @clickLeft="openAddHarbor"
+                            rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="openReset('harbors')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Built harbors</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.harbors.subtitle')}}</span>
                                     </v-row>
                                     <v-row>
                                         <v-col v-for="i in 3" :key="i" cols="12" md="4">
                                             <v-card outlined :disabled="harbors.length<i">
                                                 <v-card-title>
-                                                    <span>Harbor #{{i}}</span>
+                                                    <span>{{$t('current.harbors.card.title', {id:i})}}</span>
                                                     <v-spacer></v-spacer>
                                                     <v-icon v-if="!(harbors.length<i)" large color="red" @click="deleteHarbor(i)">mdi-close</v-icon>
                                                 </v-card-title>
@@ -176,7 +176,7 @@
                                                             <v-col cols="12">
                                                                 <v-icon :color="(harbors.length<i) ? undefined : 'primary'" class="mx-4">mdi-city-variant</v-icon>
                                                                 <span v-if="harbors.length>i-1">{{harbors[i-1]}}</span>
-                                                                <span v-else>Unknown</span>
+                                                                <span v-else>{{$t('current.harbors.card.no-city')}}</span>
                                                             </v-col>
                                                         </v-row>
                                                         <v-row class="text-body-1" align="center">
@@ -193,10 +193,18 @@
                                     </v-row>
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <SimpleTable title="Top potential cities" leftColumn="City" rightColumn="Number" :data="computedTopCities" emptyText="No cities yet" />
+                                    <SimpleTable :data="computedTopCities"
+                                    :title="$t('current.harbors.tables.potential.title')"
+                                    :leftColumn="$t('current.harbors.tables.column-1')"
+                                    :rightColumn="$t('current.harbors.tables.column-2')"
+                                    :emptyText="$t('current.harbors.tables.potential.no-data')" />
                                 </v-col>
                                 <v-col cols="12" md="6">
-                                    <SimpleTable title="Top successful cities" leftColumn="City" rightColumn="Number" :data="computedTopSuccessfulCities" emptyText="No successful cities yet"/>
+                                    <SimpleTable :data="computedTopSuccessfulCities"
+                                    :title="$t('current.harbors.tables.successful.title')"
+                                    :leftColumn="$t('current.harbors.tables.column-1')"
+                                    :rightColumn="$t('current.harbors.tables.column-2')"
+                                    :emptyText="$t('current.harbors.tables.successful.no-data')"/>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -207,31 +215,31 @@
                 <!--Your train stations-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your train stations</v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.stations.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-railroad-light</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        leftText="nb of train stations" :leftIndicator="trainStations" 
+                        :leftText="$t('current.stations.indicators.left')" :leftIndicator="trainStations" 
                         :centerCondition="false"
-                        rightText="current score" :rightIndicator="computedTrainStationsScore"/>
+                        :rightText="$t('current.stations.indicators.right')" :rightIndicator="computedTrainStationsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
                             <TwoButtons
                             :leftActive="false"
-                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('train stations')"/>
+                            rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="openReset('train stations')"/>
                             <v-row>
                                 <v-col cols="12">
                                     <v-row>
-                                        <span class="text-h6 tertiary--text">Built train stations</span>
+                                        <span class="text-h6 tertiary--text">{{$t('current.stations.subtitle')}}</span>
                                     </v-row>
                                     <v-row>
                                         <v-col v-for="i in 3" :key="i" cols="12" md="4">
                                             <v-card outlined>
                                                 <v-card-title>
-                                                    <span>Station #{{i}}</span>
+                                                    <span>{{$t('current.stations.card.title', {id: i})}}</span>
                                                     <v-spacer></v-spacer>
                                                     <v-icon v-if="!(trainStations<i)" large color="red" @click="trainStations--">mdi-close</v-icon>
                                                     <v-icon v-else large color="green" @click="trainStations++">mdi-plus</v-icon>
@@ -260,24 +268,24 @@
                 <!--Your bonuses-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your bonuses</v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.bonuses.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-trophy-award</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        leftText="nb of bonuses" :leftIndicator="longestBonus" 
+                        :leftText="$t('current.bonuses.indicators.left')" :leftIndicator="longestBonus" 
                         :centerCondition="false"
-                        rightText="score" :rightIndicator="computedBonusScore"/>
+                        :rightText="$t('current.bonuses.indicators.right')" :rightIndicator="computedBonusScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
                             <TwoButtons
                             :leftActive="false"
-                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('bonuses')"/>
+                            rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="openReset('bonuses')"/>
                             <v-row v-show="computedVersionHasLongest">
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Longest continous path</span>
+                                    <span class="text-h6 tertiary--text">{{$t('current.bonuses.longest-path')}}</span>
                                 </v-col>
                             </v-row>
                             <v-row v-show="computedVersionHasLongest" class="ml-sm-4" align="center" justify="center" justify-sm="start">
@@ -298,30 +306,30 @@
                 <!--Your units-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
-                        <v-toolbar-title>Your trains <span v-show="computedVersionHasBoats">and boats</span></v-toolbar-title>
+                        <v-toolbar-title>{{$t('current.units.title')}}</v-toolbar-title>
                         <v-spacer></v-spacer>
                         <v-icon large>mdi-train</v-icon>
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        leftText="nb of units" :leftIndicator="computedNumberUnits" 
-                        centerText="nb of exchanges" :centerIndicator="exchanges" :centerCondition="computedVersionHasExchanges"
-                        rightText="current score" :rightIndicator="computedTrainsBoatsScore"/>
+                        :leftText="$t('current.units.indicators.left')" :leftIndicator="computedNumberUnits" 
+                        :centerText="$t('current.units.indicators.center')" :centerIndicator="exchanges" :centerCondition="computedVersionHasExchanges"
+                        :rightText="$t('current.units.indicators.right')" :rightIndicator="computedTrainsBoatsScore"/>
                     </v-card-subtitle>
                     <v-card-text>
                         <v-container fluid>
                             <TwoButtons
                             :leftActive="false"
-                            rightColor="accent" rightIcon="mdi-restore" rightText="RESET" @clickRight="openReset('units')"/>
+                            rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="openReset('units')"/>
                             <v-row>
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Claimed routes</span>
+                                    <span class="text-h6 tertiary--text">{{$t('current.units.subtitle-1')}}</span>
                                 </v-col>
                             </v-row>
                             <Units v-for="i in computedKeysUnits" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" :hasBoats="computedVersionHasBoats" @update-value="updateTrainsAndBoats($event)"/>
                             <v-row v-show="computedVersionHasExchanges">
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Exchanges</span>
+                                    <span class="text-h6 tertiary--text">{{$t('current.units.subtitle-2')}}</span>
                                 </v-col>
                             </v-row>
                             <v-row v-show="computedVersionHasExchanges" class="ml-sm-4" align="center" justify="center" justify-sm="start">
@@ -343,7 +351,7 @@
         <v-dialog v-model="dialogTicket" max-width="660" @click:outside="closeAddTicket">
             <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
-                    <v-toolbar-title>New Ticket</v-toolbar-title>
+                    <v-toolbar-title>{{$t('current.dialog.add-ticket.title')}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click="closeAddTicket">
                         <v-icon>mdi-close</v-icon>
@@ -353,25 +361,26 @@
                     <v-container fluid>
                         <v-row align="center">
                             <v-col cols="12">
-                                <span class="text-h6 tertiary--text">Cities</span>
+                                <span class="text-h6 tertiary--text">{{$t('current.dialog.add-ticket.subtitle')}}</span>
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="fromTicket" solo clearable color="secondary" label="From" :items="computedFromCities"></v-select>
+                                <v-select v-model="fromTicket" solo clearable color="secondary" :label="$t('current.dialog.add-ticket.label.from')" :items="computedFromCities"></v-select>
                             </v-col>
                             <v-col cols="12" md="6">
                                 <v-select v-model="toTicket"
                                 :disabled="!fromTicket"
-                                :error-messages="(selectedTicket.length == 1) ? (routes.map(route=>route.id).includes(selectedTicket[0].id) ? 'This ticket has already been added' : '') : ''"
-                                :messages="(foundTickets.length == 1) ? '1 match found' : (foundTickets.length > 1) ? `${foundTickets.length} matches found` : null "
+                                :error-messages="(selectedTicket.length == 1) ? (routes.map(route=>route.id).includes(selectedTicket[0].id) ? $t('current.dialog.add-ticket.error') : '') : ''"
+                                
+                                :messages="(foundTickets.length == 0) ? null : $tc('current.dialog.add-ticket.message', foundTickets.length)"
                                 solo
                                 clearable
                                 color="secondary"
-                                label="To"
+                                :label="$t('current.dialog.add-ticket.label.to')"
                                 :items="toCities">
                                 </v-select>
                             </v-col>
                             <v-col cols="12" v-if="foundTickets.length>1">
-                                <span>Select your ticket</span>
+                                <span>{{$t('current.dialog.add-ticket.selection.title')}}</span>
                                 <v-card flat outlined>
                                     <v-data-table v-model="selectedTicket" class="py-6" :headers="headersAddTicket" :items="foundTickets" item-key='id'
                                     hide-default-footer single-select show-select>
@@ -389,8 +398,8 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn large text color="accent" @click="closeAddTicket">CLOSE</v-btn>
-                    <v-btn large :disabled="selectedTicket.length==0 || routes.map(route=>route.id).includes(selectedTicket[0].id)" text color="secondary" @click="addTicket">ADD TICKET</v-btn>
+                    <v-btn large text color="accent" @click="closeAddTicket">{{$t('main.btn.close')}}</v-btn>
+                    <v-btn large :disabled="selectedTicket.length==0 || routes.map(route=>route.id).includes(selectedTicket[0].id)" text color="secondary" @click="addTicket">{{$t('main.btn.add-ticket')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -398,7 +407,7 @@
         <v-dialog v-model="dialogHarbor" max-width="660" @click:outside="closeAddHarbor">
             <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
-                    <v-toolbar-title>New Harbor</v-toolbar-title>
+                    <v-toolbar-title>{{$t('current.dialog.add-harbor.title')}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click="closeAddHarbor">
                         <v-icon>mdi-close</v-icon>
@@ -409,10 +418,12 @@
                         <v-container fluid>
                             <v-row align="center">
                                 <v-col cols="12">
-                                    <span class="text-h6 tertiary--text">Cities</span>
+                                    <span class="text-h6 tertiary--text">{{$t('current.dialog.add-harbor.subtitle')}}</span>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-select v-model="newHarbor" :error-messages="(harbors.includes(newHarbor) ? 'This city already has a harbor' : '')" :items="computedAnchorCities" :rules="simpleRule" solo label="Choose a city"></v-select>
+                                    <v-select v-model="newHarbor" :items="computedAnchorCities" :rules="simpleRule" solo
+                                    :label="$t('current.dialog.add-harbor.label')"
+                                    :error-messages="(harbors.includes(newHarbor) ? $t('current.dialog.add-harbor.error') : '')"></v-select>
                                 </v-col>
                             </v-row>
                         </v-container>
@@ -420,23 +431,23 @@
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn large text color="accent" @click="closeAddHarbor">CLOSE</v-btn>
-                    <v-btn large :disabled="!harborForm || harbors.includes(newHarbor)" text color="secondary" @click="addHarbor">ADD HARBOR</v-btn>
+                    <v-btn large text color="accent" @click="closeAddHarbor">{{$t('main.btn.close')}}</v-btn>
+                    <v-btn large :disabled="!harborForm || harbors.includes(newHarbor)" text color="secondary" @click="addHarbor">{{$t('main.btn.add-harbor')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
 
         <v-dialog v-model="dialogReset" max-width="400">
             <v-card color="background">
-                <v-card-title><span class="text-h5">Reset {{resetType}}</span></v-card-title>
+                <v-card-title><span class="text-h5">{{getResetTitle(resetType)}}</span></v-card-title>
 
                 <v-card-text>
-                    Are you sure you want to reset?
+                    {{$t('current.dialog.reset.subtitle')}}
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="accent" text @click="dialogReset = false">Cancel</v-btn>
-                    <v-btn color="secondary" text @click="resetTypeOf()">Proceed</v-btn>
+                    <v-btn color="accent" text @click="dialogReset = false">{{$t('main.btn.cancel')}}</v-btn>
+                    <v-btn color="secondary" text @click="resetTypeOf()">{{$t('main.btn.proceed')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -444,7 +455,7 @@
         <v-dialog v-model="dialogSaveGame" max-width="500">
             <v-card color="background">
                 <v-toolbar flat color="quaternary" dark>
-                    <v-toolbar-title>Player selection</v-toolbar-title>
+                    <v-toolbar-title>{{$t('current.dialog.save.title')}}</v-toolbar-title>
                     <v-spacer></v-spacer>
                     <v-btn icon @click="closeSaveGame">
                         <v-icon>mdi-close</v-icon>
@@ -454,18 +465,18 @@
                     <v-container fluid>
                         <v-row>
                             <v-col cols="12">
-                                <span class="text-h6 tertiary--text">Choose which player you are</span>
+                                <span class="text-h6 tertiary--text">{{$t('current.dialog.save.subtitle')}}</span>
                             </v-col>
                             <v-col cols="auto">
-                                <v-select solo v-model="selectedPlayer" :loading="loadingOpenSaveGame" :error-messages="saveGameSelectErrorMessage" color="secondary" label="Select your name" :items="selectPlayer"></v-select>
+                                <v-select solo v-model="selectedPlayer" :loading="loadingOpenSaveGame" :error-messages="saveGameSelectErrorMessage" color="secondary" :label="$t('current.dialog.save.label')" :items="selectPlayer"></v-select>
                             </v-col>
                         </v-row>
                     </v-container>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="accent" text @click="closeSaveGame">Cancel</v-btn>
-                    <v-btn color="secondary" :loading="loadingSave" :disabled="selectedPlayer==null" text @click="saveGame">Save</v-btn>
+                    <v-btn color="accent" text @click="closeSaveGame">{{$t('main.btn.cancel')}}</v-btn>
+                    <v-btn color="secondary" :loading="loadingSave" :disabled="selectedPlayer==null" text @click="saveGame">{{$t('main.btn.save')}}</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -500,21 +511,9 @@ export default {
         toTicket:null,
         foundTickets: [],
         selectedTicket: [],
-        headersAddTicket:[
-            {text:"From", align:"start", value:"from", sortable: true},
-            {text:"To", align:"start", value:"to", sortable: true},
-            {text:"Steps", align:"start", value:"cities.length", sortable: true},
-            {text:"Points", align:"start", value:"points", sortable: true},
-        ],
+        //headersAddTicket:,
         tickets: [],
-        headersRoutes:[
-            {text:"From", align:"start", value:"from", sortable: true},
-            {text:"To", align:"start", value:"to", sortable: true},
-            {text:"Points", align:"start", value:"points", sortable: true},
-            {text:"Status", align:"start", value:"status", sortable: true},
-            {text:"Actions", align:"center", value:"actions", sortable: false},
-            {text:"Delete", align:"center", value:"delete", sortable: true},
-        ],
+        //headersRoutes:,
         searchRoutes: "",
         routes: [],
         selectVersion: null,
@@ -556,6 +555,28 @@ export default {
         }
     },
     computed:{
+        headersRoutes: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.from'), align:"start", value:"from", sortable: true},
+                    {text: this.$t('main.tables.headers.to'), align:"start", value:"to", sortable: true},
+                    {text: this.$t('main.tables.headers.points'), align:"start", value:"points", sortable: true},
+                    {text: this.$t('main.tables.headers.status'), align:"start", value:"status", sortable: true},
+                    {text: this.$t('main.tables.headers.actions'), align:"center", value:"actions", sortable: false},
+                    {text: this.$t('main.tables.headers.delete'), align:"center", value:"delete", sortable: true},
+                ]
+            }
+        },
+        headersAddTicket: {
+            get(){
+                return [
+                    {text: this.$t('main.tables.headers.from'), align:"start", value:"from", sortable: true},
+                    {text: this.$t('main.tables.headers.to'), align:"start", value:"to", sortable: true},
+                    {text: this.$t('main.tables.headers.steps'), align:"start", value:"cities.length", sortable: true},
+                    {text: this.$t('main.tables.headers.points'), align:"start", value:"points", sortable: true},
+                ]
+            }
+        },
         computedRoutesForHeaders: {
             get(){
                 return this.routes.map(route=> { return {...route, "from":route.cities[0].name, "to":route.cities.slice(-1)[0].name} })
@@ -777,8 +798,8 @@ export default {
         computedLastNUnits:{
             handler(value){
                 if(value){
-                    let message = `You now have ${this.selectVersion.threshold} or less units left`
-                    this.notifySnack(message, "warning")
+                    let message = this.$t('main.snackbar.warning.last-units', {n: this.selectVersion.threshold});
+                    this.notifySnack(message, "warning");
                 }
             }
         },
@@ -792,13 +813,18 @@ export default {
     methods:{
         deleteItem(item){
             let id = this.routes.findIndex(route=>route.id==item.id);
-            if(id < 0) this.notifySnack("Oups, ticket wasn't found", "error")
+            if(id < 0) this.notifySnack(this.$t('main.snackbar.error.delete'), "error")
             else this.routes.splice(id,1);
         },
         getStatusColor(status){
             if(status == "Fail") return "red"
             else if(status == "Done") return "green"
             else return "amber"
+        },
+        getStatusText(status){
+            if(status == "Fail") return this.$t('main.status.fail')
+            else if(status == "Done") return this.$t('main.status.done')
+            else return this.$t('main.status.unordered')
         },
         async openSaveGame(){
             this.dialogSaveGame = true;
@@ -822,12 +848,12 @@ export default {
                         this.selectPlayer = names
                     } else {
                         // No game found with this ID
-                        this.saveGameSelectErrorMessage = "The ID you entered is not assigned"
+                        this.saveGameSelectErrorMessage = this.$t('current.dialog.save.error.id')
                     }
                 } catch (error) {
-                    this.saveGameSelectErrorMessage = "Oups, something wrong happened. Contact the website admin."
+                    this.saveGameSelectErrorMessage = this.$t('current.dialog.save.error.unexpected')
                     console.error("When computing names from firebase document : "+error);
-                    this.notifySnack("Unable to retrieve the players' name. Try again.","error")
+                    this.notifySnack(this.$t('main.snackbar.error.open-save'),"error")
                 } finally {
                     this.loadingOpenSaveGame = false;
                 }
@@ -854,10 +880,10 @@ export default {
             if(this.computedVersionHasLongest) update["longestBonus"] = this.computedBonusScore;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
-                this.notifySnack("Your game was saved!","success")
+                this.notifySnack(this.$t('main.snackbar.success.save'),"success")
             } catch (error) {
                 console.warn("Oups something went terribly wrong : "+error)
-                this.notifySnack("Someting went wrong. Try again.", "error");
+                this.notifySnack(this.$t('main.snackbar.error.save'), "error");
             } finally {
                 this.closeSaveGame();
                 this.loadingSave = false;
@@ -865,6 +891,7 @@ export default {
         },
         async shareGameId(){
             this.loadingShare = true;
+            let isError = false;
             let shareData = {
                 title: 'Let\'s play!',
                 text: this.gameId,
@@ -873,8 +900,10 @@ export default {
             try {
                 await navigator.share(shareData);
             } catch (error) {
+                isError = true;
                 console.warn("Impossible to share the ID : "+error)
             } finally {
+                isError ? this.notifySnack(this.$t('main.snackbar.error.share'),"error") : this.notifySnack(this.$t('main.snackbar.success.share'),"success")
                 this.loadingShare = false;
             }
         },
@@ -931,6 +960,14 @@ export default {
             this.resetType = type;
             this.dialogReset = true;
         },
+        getResetTitle(resetType){
+            if(resetType == "tickets") return this.$t('current.dialog.reset.types.tickets');
+            else if(resetType == "units") return this.$t('current.dialog.reset.types.units');
+            else if(resetType == "harbors") return this.$t('current.dialog.reset.types.harbors')
+            else if(resetType == "train stations") return this.$t('current.dialog.reset.types.stations')
+            else if(resetType == "bonuses") return this.$t('current.dialog.reset.types.bonuses')
+            else return this.$t('current.dialog.reset.types.all')
+        },
         resetTypeOf(){
             if(this.resetType == "tickets") this.resetTickets();
             else if(this.resetType == "units") this.resetTrainsAndBoats();
@@ -972,7 +1009,7 @@ export default {
         toggleTo(item,status){
             let id = this.routes.findIndex(route=>route.id==item.id);
             if(id == -1){
-                this.notifySnack("Oups, ticket wasn't found", "error")
+                this.notifySnack(this.$t('main.snackbar.error.toggle-status'), "error")
             } else {
                 this.routes[id].status = status;
                 localStorage.setItem("routes", JSON.stringify(this.routes));
