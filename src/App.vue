@@ -225,7 +225,7 @@ export default {
         },
         computedLang:{
             get(){
-                return this.$i18n.locale=="fr"
+                return (this.$i18n.locale?.match(/^fr/ig)) ? this.$i18n.locale.match(/^fr/ig)[0].toString().toLowerCase() == "fr" : false
             },
             set(value){
                 this.$i18n.locale = (value) ? "fr" : "en";
