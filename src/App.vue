@@ -319,6 +319,13 @@ export default {
         },
         toggleTheme(){
             this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+        },
+        getNavigatorLanguage(){
+            if (navigator.languages && navigator.languages.length) {
+                return navigator.languages[0];
+            } else {
+                return navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en';
+            }
         }
     },
     beforeMount(){
@@ -331,11 +338,11 @@ export default {
         }
         if(localStorage.getItem("lang")){
             try {
-                this.$i18n.locale = localStorage.getItem("lang") || this.computedLang
+                this.$i18n.locale = localStorage.getItem("lang") || this.getNavigatorLanguage()
             } catch (error) {
                 localStorage.removeItem('lang');
             }
-        }
+        } else { this.$i18n.locale = this.getNavigatorLanguage() }
     }
 };
 </script>
