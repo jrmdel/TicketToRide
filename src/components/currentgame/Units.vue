@@ -4,7 +4,7 @@
             <v-icon color="red">mdi-minus</v-icon>
         </v-btn>
         <span class="text-h6">{{currentTotal}}</span>
-        <v-btn large icon @click="updateValue(1)">
+        <v-btn large icon @click="updateValue(1)" :disabled="availableUnits<numberOfUnits">
             <v-icon color="green">mdi-plus</v-icon>
         </v-btn>
         <span class="ml-4 text-h6">{{numberOfUnits}}x</span>
@@ -27,6 +27,9 @@ export default {
         },
         hasBoats: {
             type: Boolean
+        },
+        availableUnits: {
+            type: Number
         }
     },
     methods:{

@@ -326,7 +326,11 @@
                                     <span class="text-h6 tertiary--text">{{$t('current.units.subtitle-1')}}</span>
                                 </v-col>
                             </v-row>
-                            <Units v-for="i in computedKeysUnits" :key="i" :numberOfUnits="i" :currentTotal="trainsAndBoats[i]" :hasBoats="computedVersionHasBoats" @update-value="updateTrainsAndBoats($event)"/>
+                            <Units v-for="i in computedKeysUnits" :key="i"
+                            :numberOfUnits="i" :currentTotal="trainsAndBoats[i]"
+                            :hasBoats="computedVersionHasBoats"
+                            :availableUnits="computedAvailableUnits"
+                            @update-value="updateTrainsAndBoats($event)"/>
                             <v-row v-show="computedVersionHasExchanges">
                                 <v-col cols="12">
                                     <span class="text-h6 tertiary--text">{{$t('current.units.subtitle-2')}}</span>
@@ -711,6 +715,12 @@ export default {
                 if(this.selectVersion){
                     return (this.selectVersion.units-this.selectVersion.threshold)<=this.computedNumberUnits
                 } else return false
+            }
+        },
+        computedAvailableUnits:{
+            get(){
+                if(this.selectVersion) return this.selectVersion.units-this.computedNumberUnits
+                else return 0
             }
         },
         computedKeysUnits:{
