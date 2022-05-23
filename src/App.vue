@@ -268,10 +268,9 @@ export default {
         },
         ruleNewPlayer(value){
             if(value == null || value?.length < 1) return this.$t('app.new.form.player')
-            else {
-                if(value.length>1 && !(/\d/.test(value))) return true
-                return this.$t('app.new.form.invalid-player')
-            }
+            if((value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "") != value) return this.$t('app.new.form.accent')
+            if(value.length>1 && !(/\d/.test(value))) return true
+            return this.$t('app.new.form.invalid-player')
         },
         resetGameSession(){
             return new Promise((resolve, reject)=>{
@@ -297,17 +296,31 @@ export default {
                 this.popUp({color:"error", msg:error});
             }
             let doc = {date: this.date, players: this.players, version: this.version.name}
-            for(let i=0;i<this.players; i++){
-                let n = `player${i+1}`
-                doc[n] = {name: this.names[i+1], score:this.version.initialScore, tickets:[]}
+            for(let i=1;i<=this.players; i++){
+                this.names[i] = this.cleanName(this.names[i]);
+                let n = `player${i}`;
+                doc[n] = {
+                    name: this.names[i],
+                    score:this.version.initialScore,
+                    tickets:[]
+                };
             }
-            let d = await db.collection('Games').add(doc)
+            let d = await db.collection('Games').add(doc);
             this.currentGameId = d.id;
             // Sets the currentGame variables
             this.currentGameVersion = Object.assign({},this.version);
-            this.currentGamePlayers = Object.values(this.names).splice(0,this.players)
+            this.currentGamePlayers = Object.values(this.names).splice(0,this.players);
             // Create then close
             this.closeCreate();
+        },
+        cleanName(name = ""){
+            // Capitalize first letter of each words
+            let r = name.toLowerCase().split(" ").filter(o=>o).map(this.capitalizeFirstLetter).join(" ");
+            // Case of hyphenated words
+            return r.split("-").filter(o=>o).map(this.capitalizeFirstLetter).join("-");
+        },
+        capitalizeFirstLetter(str = ""){
+            return str?.charAt(0).toUpperCase() + str?.slice(1);
         },
         popUp(event){
             this.snackColor = event.color;

@@ -81,7 +81,8 @@
             "form":{
                 "version": "Version is required",
                 "player": "Player name is required",
-                "invalid-player": "Player name must be valid"
+                "invalid-player": "Player name must be valid",
+                "accent": "Accented characters are not supported"
             }
         },
         "warning": {

@@ -81,7 +81,8 @@
             "form":{
                 "version": "Version requise",
                 "player": "Nom requis",
-                "invalid-player": "Le nom doit être valide"
+                "invalid-player": "Le nom doit être valide",
+                "accent": "Les caractères accentués ne sont pas supportés"
             }
         },
         "warning": {
