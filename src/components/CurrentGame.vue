@@ -264,7 +264,7 @@
                     </v-card-text>
                 </v-card>
             </v-col>
-            <v-col cols="12" v-show="computedVersionHasLongest">
+            <v-col cols="12" v-show="computedVersionHasBonuses">
                 <!--Your bonuses-->
                 <v-card color="background">
                     <v-toolbar flat color="primary" dark>
@@ -274,7 +274,7 @@
                     </v-toolbar>
                     <v-card-subtitle>
                         <Indicators
-                        :leftText="$t('current.bonuses.indicators.left')" :leftIndicator="longestBonus" 
+                        :leftText="$t('current.bonuses.indicators.left')" :leftIndicator="computedNumberOfBonuses" 
                         :centerCondition="false"
                         :rightText="$t('current.bonuses.indicators.right')" :rightIndicator="computedBonusScore"/>
                     </v-card-subtitle>
@@ -297,6 +297,21 @@
                                     <v-icon color="green">mdi-plus</v-icon>
                                 </v-btn>
                                 <v-icon class="ml-4">mdi-transit-connection-variant</v-icon>
+                            </v-row>
+                            <v-row v-show="computedVersionHasGlobeTrotterBonus">
+                                <v-col cols="12">
+                                    <span class="text-h6 tertiary--text">{{$t('current.bonuses.globe-trotter')}}</span>
+                                </v-col>
+                            </v-row>
+                            <v-row v-show="computedVersionHasGlobeTrotterBonus" class="ml-sm-4" align="center" justify="center" justify-sm="start">
+                                <v-btn large icon :disabled="globeTrotterBonus==0" @click="globeTrotterBonus-=1">
+                                    <v-icon color="red">mdi-minus</v-icon>
+                                </v-btn>
+                                <span class="text-h6">{{globeTrotterBonus}}</span>
+                                <v-btn large icon :disabled="globeTrotterBonus==1" @click="globeTrotterBonus+=1">
+                                    <v-icon color="green">mdi-plus</v-icon>
+                                </v-btn>
+                                <v-icon class="ml-4">mdi-earth-plus</v-icon>
                             </v-row>
                         </v-container>
                     </v-card-text>
@@ -526,6 +541,7 @@ export default {
         lockSelect: true,
         trainStations: 0,
         longestBonus: 0,
+        globeTrotterBonus: 0,
         harbors: [],
         newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
@@ -666,10 +682,31 @@ export default {
                 } else return 0
             }
         },
+        computedNumberOfBonuses: {
+            get() {
+                if(this.computedVersionHasBonuses){
+                    return this.longestBonus + this.globeTrotterBonus;
+                } else return 0
+            },
+        },
+        computedGlobeTrotterBonus: {
+            get() {
+                if(this.computedVersionHasGlobeTrotterBonus) {
+                    return this.selectVersion.bonusGlobeTrotter * this.bonusGlobeTrotter;
+                } else return 0;
+            }
+        },
+        computedLongestBonus: {
+            get() {
+                if(this.computedVersionHasLongest) {
+                    return this.selectVersion.longestPoints * this.longestBonus;
+                } else return 0;
+            }
+        },
         computedBonusScore:{
             get(){
-                if(this.computedVersionHasLongest){
-                    return this.selectVersion.longestPoints*this.longestBonus
+                if(this.computedVersionHasBonuses){
+                    return this.computedLongestBonus + this.computedGlobeTrotterBonus;
                 } else return 0
             }
         },
@@ -705,9 +742,19 @@ export default {
                 return (this.selectVersion) ? this.selectVersion.hasExchanges : false
             }
         },
+        computedVersionHasBonuses: {
+            get() {
+                return this.computedVersionHasLongest || this.computedVersionHasGlobeTrotterBonus;
+            },
+        },
         computedVersionHasLongest:{
             get(){
                 return (this.selectVersion) ? this.selectVersion.hasLongest : false
+            }
+        },
+        computedVersionHasGlobeTrotterBonus:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasBonusGlobeTrotter : false
             }
         },
         computedLastNUnits:{
@@ -887,7 +934,8 @@ export default {
             if(this.computedVersionHasHarbors) update["harbors"] = this.harbors.map(x => { return {city:x, score:this.getHarborScore(x)}});
             if(this.computedVersionHasExchanges) update["exchanges"] = this.exchanges;
             if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore;
-            if(this.computedVersionHasLongest) update["longestBonus"] = this.computedBonusScore;
+            if(this.computedVersionHasLongest) update["longestBonus"] = this.computedLongestBonus;
+            if(this.computedVersionHasGlobeTrotterBonus) update["globeTrotterBonus"] = this.computedGlobeTrotterBonus;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
                 this.notifySnack(this.$t('main.snackbar.success.save'),"success")
@@ -1010,7 +1058,9 @@ export default {
         },
         resetBonuses(){
             this.longestBonus = 0;
-            if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus")
+            this.globeTrotterBonus = 0;
+            if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus");
+            if(localStorage.getItem("globeTrotterBonus")) localStorage.removeItem("globeTrotterBonus");
         },
         updateTrainsAndBoats(event){
             this.trainsAndBoats[event.units]+=event.update;
@@ -1071,6 +1121,13 @@ export default {
                     this.longestBonus = parseInt(localStorage.getItem("longestBonus"));
                 } catch (error) {
                     localStorage.removeItem("longestBonus");
+                }
+            }
+            if(localStorage.getItem("globeTrotterBonus")){
+                try {
+                    this.globeTrotterBonus = parseInt(localStorage.getItem("globeTrotterBonus"));
+                } catch (error) {
+                    localStorage.removeItem("globeTrotterBonus");
                 }
             }
             if(localStorage.getItem("trainStations")){
