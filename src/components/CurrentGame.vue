@@ -692,7 +692,7 @@ export default {
         computedGlobeTrotterBonus: {
             get() {
                 if(this.computedVersionHasGlobeTrotterBonus) {
-                    return this.selectVersion.bonusGlobeTrotter * this.bonusGlobeTrotter;
+                    return this.selectVersion.bonusGlobeTrotter * this.globeTrotterBonus;
                 } else return 0;
             }
         },
@@ -845,6 +845,11 @@ export default {
         longestBonus:{
             handler(value){
                 if(value!=null) localStorage.setItem("longestBonus",value);
+            }
+        },
+        globeTrotterBonus:{
+            handler(value){
+                if(value!=null) localStorage.setItem("globeTrotterBonus",value);
             }
         },
         trainStations:{

@@ -315,7 +315,7 @@
                                         <apexchart type="bar" height="160" :options="optionsPointsChartPerPlayer" :series="computePointsGraph(selectedGame.players[i-1])"></apexchart>
                                     </v-col>
                                 </v-row> -->
-                                <v-row v-if="computedHasLongest">
+                                <v-row v-if="computedHasBonuses">
                                     <v-col cols="12">
                                         <span class="text-h6 tertiary--text">
                                             {{$t('scoreboard.overall.dialog.tabs.player.bonuses.title')}}
@@ -334,6 +334,23 @@
                                                         {{((selectedGame.players[i-1].longestBonus || 0)!=0) ? "mdi-star" : "mdi-star-off-outline"}}
                                                     </v-icon>
                                                     <span class="text-h6 font-weight-regular tertiary--text"> {{selectedGame.players[i-1].longestBonus || 0}} </span>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+                                <v-row v-if="computedHasGlobeTrotter">
+                                    <v-col cols="12">
+                                        <v-card outlined :disabled="(selectedGame.players[i-1].globeTrotterBonus || 0)==0">
+                                            <v-toolbar class="text-caption font-weight-bold text--secondary" flat dense color="primaryLight">
+                                                {{$t('scoreboard.overall.dialog.tabs.player.bonuses.globe-trotter')}}
+                                            </v-toolbar>
+                                            <v-container>
+                                                <v-row justify="space-around">
+                                                    <v-icon :color="((selectedGame.players[i-1].globeTrotterBonus || 0)!=0) ? 'accent' : 'primary'">
+                                                        {{((selectedGame.players[i-1].globeTrotterBonus || 0)!=0) ? "mdi-star" : "mdi-star-off-outline"}}
+                                                    </v-icon>
+                                                    <span class="text-h6 font-weight-regular tertiary--text"> {{selectedGame.players[i-1].globeTrotterBonus || 0}} </span>
                                                 </v-row>
                                             </v-container>
                                         </v-card>
@@ -681,9 +698,19 @@ export default {
                 return this.selectedVersion && this.selectedVersion.hasHarbors
             }
         },
+        computedHasBonuses:{
+            get(){
+                return this.computedHasLongest && this.computedHasGlobeTrotter;
+            }
+        },
         computedHasLongest:{
             get(){
-                return this.selectedVersion && this.selectedVersion.hasLongest
+                return this.selectedVersion && this.selectedVersion.hasLongest;
+            }
+        },
+        computedHasGlobeTrotter:{
+            get(){
+                return this.selectedVersion && this.selectedVersion.hasBonusGlobeTrotter;
             }
         },
         computedHasTrainStations:{

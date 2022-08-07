@@ -160,7 +160,8 @@
                 "left": "nb of bonuses",
                 "right": "current score"
             },
-            "longest-path": "Longest continous path"
+            "longest-path": "Longest continous path",
+            "globe-trotter": "Globe trotter"
         },
         "units": {
             "title": "Your units",
@@ -242,7 +243,8 @@
                     "player": {
                         "bonuses": {
                             "title": "Bonuses",
-                            "longest": "Longest path"
+                            "longest": "Longest path",
+                            "globe-trotter": "Globe trotter"
                         },
                         "tickets": {
                             "title": "Tickets",

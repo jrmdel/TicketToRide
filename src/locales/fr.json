@@ -160,7 +160,8 @@
                 "left": "nb de bonus",
                 "right": "score actuel"
             },
-            "longest-path": "Chemin le plus long"
+            "longest-path": "Chemin le plus long",
+            "globe-trotter": "Globe trotter"
         },
         "units": {
             "title": "Vos unités",
@@ -242,7 +243,8 @@
                     "player": {
                         "bonuses": {
                             "title": "Bonus",
-                            "longest": "Chemin le plus long"
+                            "longest": "Chemin le plus long",
+                            "globe-trotter": "Globe trotter"
                         },
                         "tickets": {
                             "title": "Tickets",
