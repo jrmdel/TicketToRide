@@ -3,12 +3,14 @@ import { WorldCities } from "./world-cities"
 import { GreatLakesCities } from "./great-lakes-cities"
 import { EuropeCities } from "./europe-cities"
 import { FranceCities } from "./france-cities"
+import { OldWestCities } from "./old-west-cities"
 
 var Games = {
     WORLD: "Around The World",
     GREAT_LAKES: "Great Lakes",
     EUROPE: "Europe",
-    FRANCE: "France"
+    FRANCE: "France",
+    OLD_WEST: "Old West"
 }
 
 let world = [
@@ -247,10 +249,63 @@ let france = [
     {id:58, game:Games.FRANCE, cities:[FranceCities.ALLEMAGNE, FranceCities.ESPAGNE], points: 18}, 
 ]
 
+let oldwest = [
+    {id:1, game:Games.OLD_WEST, cities:[OldWestCities.SAN_FRANCISCO, OldWestCities.LOS_ANGELES], points: 4}, 
+    {id:2, game:Games.OLD_WEST, cities:[OldWestCities.SALT_LAKE_CITY, OldWestCities.CHEYENNE], points: 5}, 
+    {id:3, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.ASHLAND], points: 5}, 
+    {id:4, game:Games.OLD_WEST, cities:[OldWestCities.LAS_VEGAS, OldWestCities.TUCSON], points: 5}, 
+    {id:5, game:Games.OLD_WEST, cities:[OldWestCities.HELENA, OldWestCities.SALT_LAKE_CITY], points: 6}, 
+    {id:6, game:Games.OLD_WEST, cities:[OldWestCities.SAN_DIEGO, OldWestCities.FLAGSTAFF], points: 6}, 
+    {id:7, game:Games.OLD_WEST, cities:[OldWestCities.PORTLAND, OldWestCities.SACRAMENTO], points: 6}, 
+    {id:8, game:Games.OLD_WEST, cities:[OldWestCities.EUGENE, OldWestCities.SAN_FRANCISCO], points: 6}, 
+    {id:9, game:Games.OLD_WEST, cities:[OldWestCities.SAN_FRANCISCO, OldWestCities.BOISE], points: 7}, 
+    {id:10, game:Games.OLD_WEST, cities:[OldWestCities.SALT_LAKE_CITY, OldWestCities.PHOENIX], points: 7}, 
+    {id:11, game:Games.OLD_WEST, cities:[OldWestCities.ST_GEORGE, OldWestCities.GILLETTE], points: 8}, 
+    {id:12, game:Games.OLD_WEST, cities:[OldWestCities.WINNEMUCCA, OldWestCities.CASPER], points: 8}, 
+    {id:13, game:Games.OLD_WEST, cities:[OldWestCities.IDAHO_FALLS, OldWestCities.LAS_VEGAS], points: 8}, 
+    {id:14, game:Games.OLD_WEST, cities:[OldWestCities.PHOENIX, OldWestCities.PUEBLO], points: 8}, 
+    {id:15, game:Games.OLD_WEST, cities:[OldWestCities.BOISE, OldWestCities.GRAND_JUNCTION], points: 8}, 
+    {id:16, game:Games.OLD_WEST, cities:[OldWestCities.FRESNO, OldWestCities.PHOENIX], points: 8}, 
+    {id:17, game:Games.OLD_WEST, cities:[OldWestCities.CASPER, OldWestCities.ALBUQUERQUE], points: 8}, 
+    {id:18, game:Games.OLD_WEST, cities:[OldWestCities.BEND, OldWestCities.LOS_ANGELES], points: 9}, 
+    {id:19, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.GREAT_FALLS], points: 9}, 
+    {id:20, game:Games.OLD_WEST, cities:[OldWestCities.GREEN_RIVER, OldWestCities.SANTA_FE], points: 9}, 
+    {id:21, game:Games.OLD_WEST, cities:[OldWestCities.LAS_VEGAS, OldWestCities.DENVER], points: 9}, 
+    {id:22, game:Games.OLD_WEST, cities:[OldWestCities.LOS_ANGELES, OldWestCities.SALT_LAKE_CITY], points: 9}, 
+    {id:23, game:Games.OLD_WEST, cities:[OldWestCities.BOZEMAN, OldWestCities.DENVER], points: 9}, 
+    {id:24, game:Games.OLD_WEST, cities:[OldWestCities.EUGENE, OldWestCities.MISSOULA], points: 9}, 
+    {id:25, game:Games.OLD_WEST, cities:[OldWestCities.BOISE, OldWestCities.SAN_DIEGO], points: 10}, 
+    {id:26, game:Games.OLD_WEST, cities:[OldWestCities.SPOKANE, OldWestCities.REDDING], points: 10}, 
+    {id:27, game:Games.OLD_WEST, cities:[OldWestCities.DENVER, OldWestCities.TUCSON], points: 10}, 
+    {id:28, game:Games.OLD_WEST, cities:[OldWestCities.BEND, OldWestCities.LAS_VEGAS], points: 10}, 
+    {id:29, game:Games.OLD_WEST, cities:[OldWestCities.SAN_DIEGO, OldWestCities.ALBUQUERQUE], points: 10}, 
+    {id:30, game:Games.OLD_WEST, cities:[OldWestCities.PORTLAND, OldWestCities.SALT_LAKE_CITY], points: 10}, 
+    {id:31, game:Games.OLD_WEST, cities:[OldWestCities.MISSOULA, OldWestCities.CHEYENNE], points: 10}, 
+    {id:32, game:Games.OLD_WEST, cities:[OldWestCities.BILLINGS, OldWestCities.DURANGO], points: 11}, 
+    {id:33, game:Games.OLD_WEST, cities:[OldWestCities.IDAHO_FALLS, OldWestCities.BAKERSFIELD], points: 11}, 
+    {id:34, game:Games.OLD_WEST, cities:[OldWestCities.LOS_ANGELES, OldWestCities.SANTA_FE], points: 11}, 
+    {id:35, game:Games.OLD_WEST, cities:[OldWestCities.BOISE, OldWestCities.WOLF_POINT], points: 11}, 
+    {id:36, game:Games.OLD_WEST, cities:[OldWestCities.BILLINGS, OldWestCities.ALBUQUERQUE], points: 12}, 
+    {id:37, game:Games.OLD_WEST, cities:[OldWestCities.LOS_ANGELES, OldWestCities.DENVER], points: 12}, 
+    {id:38, game:Games.OLD_WEST, cities:[OldWestCities.SAN_FRANCISCO, OldWestCities.HELENA], points: 12}, 
+    {id:39, game:Games.OLD_WEST, cities:[OldWestCities.CARSON_CITY, OldWestCities.ALBUQUERQUE], points: 12}, 
+    {id:40, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.LOS_ANGELES], points: 12}, 
+    {id:41, game:Games.OLD_WEST, cities:[OldWestCities.GREAT_FALLS, OldWestCities.PHOENIX], points: 14}, 
+    {id:42, game:Games.OLD_WEST, cities:[OldWestCities.SAN_FRANCISCO, OldWestCities.DENVER], points: 15}, 
+    {id:43, game:Games.OLD_WEST, cities:[OldWestCities.HELENA, OldWestCities.LAS_CRUCES], points: 15}, 
+    {id:44, game:Games.OLD_WEST, cities:[OldWestCities.SACRAMENTO, OldWestCities.LAS_CRUCES], points: 15}, 
+    {id:45, game:Games.OLD_WEST, cities:[OldWestCities.SPOKANE, OldWestCities.PHOENIX], points: 16}, 
+    {id:46, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.FLAGSTAFF], points: 16}, 
+    {id:47, game:Games.OLD_WEST, cities:[OldWestCities.LOS_ANGELES, OldWestCities.BILLINGS], points: 16}, 
+    {id:48, game:Games.OLD_WEST, cities:[OldWestCities.SPOKANE, OldWestCities.ALBUQUERQUE], points: 16}, 
+    {id:49, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.DENVER], points: 17}, 
+    {id:50, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.ROSWELL], points: 21}, 
+]
 
 export const Tickets = {
     World: world,
     GreatLakes: greatlakes,
     Europe: europe,
-    France: france
+    France: france,
+    OldWest: oldwest
 };
