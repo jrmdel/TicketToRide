@@ -2,11 +2,13 @@ import { Types } from "./types"
 import { WorldCities } from "./world-cities"
 import { GreatLakesCities } from "./great-lakes-cities"
 import { EuropeCities } from "./europe-cities"
+import { FranceCities } from "./france-cities"
 
 var Games = {
     WORLD: "Around The World",
     GREAT_LAKES: "Great Lakes",
-    EUROPE: "Europe"
+    EUROPE: "Europe",
+    FRANCE: "France"
 }
 
 let world = [
@@ -184,8 +186,71 @@ let europe = [
 	{id:46, game:Games.EUROPE, cities:[EuropeCities.BUDAPEST, EuropeCities.SOFIA], points: 5, long:false }
 ]
 
+let france = [
+    {id:1, game:Games.FRANCE, cities:[FranceCities.REIMS, FranceCities.ORLEANS], points: 3}, 
+    {id:2, game:Games.FRANCE, cities:[FranceCities.CHERBOURG, FranceCities.PARIS], points: 4}, 
+    {id:3, game:Games.FRANCE, cities:[FranceCities.DIJON, FranceCities.GRENOBLE], points: 5}, 
+    {id:4, game:Games.FRANCE, cities:[FranceCities.LE_HAVRE, FranceCities.BOURGES], points: 5}, 
+    {id:5, game:Games.FRANCE, cities:[FranceCities.BORDEAUX, FranceCities.CLERMONT_FERRAND], points: 6}, 
+    {id:6, game:Games.FRANCE, cities:[FranceCities.TOURS, FranceCities.DIJON], points: 6}, 
+    {id:7, game:Games.FRANCE, cities:[FranceCities.MULHOUSE, FranceCities.LYON], points: 6}, 
+    {id:8, game:Games.FRANCE, cities:[FranceCities.LYON, FranceCities.MARSEILLE], points: 6}, 
+    {id:9, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.STRASBOURG], points: 7}, 
+    {id:10, game:Games.FRANCE, cities:[FranceCities.LE_MANS, FranceCities.BORDEAUX], points: 7}, 
+    {id:11, game:Games.FRANCE, cities:[FranceCities.LA_ROCHELLE, FranceCities.TOULOUSE], points: 7}, 
+    {id:12, game:Games.FRANCE, cities:[FranceCities.LYON, FranceCities.TOULOUSE], points: 7}, 
+    {id:13, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.BRIVE_LA_GAILLARDE], points: 7}, 
+    {id:14, game:Games.FRANCE, cities:[FranceCities.NANTES, FranceCities.PAU], points: 8}, 
+    {id:15, game:Games.FRANCE, cities:[FranceCities.METZ, FranceCities.ANGERS], points: 8}, 
+    {id:16, game:Games.FRANCE, cities:[FranceCities.LILLE, FranceCities.SAINT_MALO], points: 8}, 
+    {id:17, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.LYON], points: 8}, 
+    {id:18, game:Games.FRANCE, cities:[FranceCities.TOULOUSE, FranceCities.CORSE], points: 8}, 
+    {id:19, game:Games.FRANCE, cities:[FranceCities.LILLE, FranceCities.POITIERS], points: 8}, 
+    {id:20, game:Games.FRANCE, cities:[FranceCities.CALAIS, FranceCities.NANTES], points: 9}, 
+    {id:21, game:Games.FRANCE, cities:[FranceCities.SUISSE, FranceCities.MARSEILLE], points: 9}, 
+    {id:22, game:Games.FRANCE, cities:[FranceCities.CALAIS, FranceCities.ALLEMAGNE], points: 9}, 
+    {id:23, game:Games.FRANCE, cities:[FranceCities.LILLE, FranceCities.DIJON], points: 9}, 
+    {id:24, game:Games.FRANCE, cities:[FranceCities.DIJON, FranceCities.MONTPELLIER], points: 9}, 
+    {id:25, game:Games.FRANCE, cities:[FranceCities.CHERBOURG, FranceCities.LIMOGES], points: 9}, 
+    {id:26, game:Games.FRANCE, cities:[FranceCities.BREST, FranceCities.PARIS], points: 9}, 
+    {id:27, game:Games.FRANCE, cities:[FranceCities.TOULOUSE, FranceCities.NICE], points: 9}, 
+    {id:28, game:Games.FRANCE, cities:[FranceCities.RENNES, FranceCities.BAYONNE], points: 10}, 
+    {id:29, game:Games.FRANCE, cities:[FranceCities.RENNES, FranceCities.NANCY], points: 10}, 
+    {id:30, game:Games.FRANCE, cities:[FranceCities.BORDEAUX, FranceCities.MARSEILLE], points: 10}, 
+    {id:31, game:Games.FRANCE, cities:[FranceCities.LORIENT, FranceCities.RODEZ], points: 10}, 
+    {id:32, game:Games.FRANCE, cities:[FranceCities.LE_MANS, FranceCities.SUISSE], points: 10}, 
+    {id:33, game:Games.FRANCE, cities:[FranceCities.STRASBOURG, FranceCities.AVIGNON], points: 11}, 
+    {id:34, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.BAYONNE], points: 11}, 
+    {id:35, game:Games.FRANCE, cities:[FranceCities.ROUEN, FranceCities.GRENOBLE], points: 11}, 
+    {id:36, game:Games.FRANCE, cities:[FranceCities.LA_ROCHELLE, FranceCities.MONTPELLIER], points: 11}, 
+    {id:37, game:Games.FRANCE, cities:[FranceCities.BREST, FranceCities.CLERMONT_FERRAND], points: 11}, 
+    {id:38, game:Games.FRANCE, cities:[FranceCities.RENNES, FranceCities.LYON], points: 11}, 
+    {id:39, game:Games.FRANCE, cities:[FranceCities.LORIENT, FranceCities.ESPAGNE], points: 12}, 
+    {id:40, game:Games.FRANCE, cities:[FranceCities.ALLEMAGNE, FranceCities.AVIGNON], points: 12}, 
+    {id:41, game:Games.FRANCE, cities:[FranceCities.BESANCON, FranceCities.BORDEAUX], points: 12}, 
+    {id:42, game:Games.FRANCE, cities:[FranceCities.ANGERS, FranceCities.BRIANCON], points: 12}, 
+    {id:43, game:Games.FRANCE, cities:[FranceCities.BREST, FranceCities.BELGIQUE], points: 12}, 
+    {id:44, game:Games.FRANCE, cities:[FranceCities.ESPAGNE, FranceCities.ITALIE], points: 12}, 
+    {id:45, game:Games.FRANCE, cities:[FranceCities.BELGIQUE, FranceCities.SUISSE], points: 12}, 
+    {id:46, game:Games.FRANCE, cities:[FranceCities.BELGIQUE, FranceCities.BRIVE_LA_GAILLARDE], points: 12}, 
+    {id:47, game:Games.FRANCE, cities:[FranceCities.AMIENS, FranceCities.MONTPELLIER], points: 13}, 
+    {id:48, game:Games.FRANCE, cities:[FranceCities.STRASBOURG, FranceCities.LIMOGES], points: 13}, 
+    {id:49, game:Games.FRANCE, cities:[FranceCities.STRASBOURG, FranceCities.ITALIE], points: 13}, 
+    {id:50, game:Games.FRANCE, cities:[FranceCities.REIMS, FranceCities.TOULOUSE], points: 13}, 
+    {id:51, game:Games.FRANCE, cities:[FranceCities.NANCY, FranceCities.MARSEILLE], points: 13}, 
+    {id:52, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.MARSEILLE], points: 14}, 
+    {id:53, game:Games.FRANCE, cities:[FranceCities.PARIS, FranceCities.NICE], points: 14}, 
+    {id:54, game:Games.FRANCE, cities:[FranceCities.NANTES, FranceCities.NICE], points: 15}, 
+    {id:55, game:Games.FRANCE, cities:[FranceCities.STRASBOURG, FranceCities.CORSE], points: 15}, 
+    {id:56, game:Games.FRANCE, cities:[FranceCities.METZ, FranceCities.PERPIGNAN], points: 16}, 
+    {id:57, game:Games.FRANCE, cities:[FranceCities.LE_HAVRE, FranceCities.MARSEILLE], points: 16}, 
+    {id:58, game:Games.FRANCE, cities:[FranceCities.ALLEMAGNE, FranceCities.ESPAGNE], points: 18}, 
+]
+
+
 export const Tickets = {
     World: world,
     GreatLakes: greatlakes,
-    Europe: europe
+    Europe: europe,
+    France: france
 };
