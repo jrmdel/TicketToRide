@@ -212,7 +212,8 @@
                 </v-card>
             </v-col>
             <v-col cols="12" v-show="computedVersionHasCityMarkers">
-                <YourCities></YourCities>
+                <!-- Your cities -->
+                <YourCities/>
             </v-col>
             <v-col cols="12" v-show="computedVersionHasTrainStations">
                 <!--Your train stations-->
@@ -687,11 +688,6 @@ export default {
                 } else return 0
             }
         },
-        computedVersionHasCityMarkers:{
-            get(){
-                return true;
-            }
-        },
         computedNumberOfBonuses: {
             get() {
                 if(this.computedVersionHasBonuses){
@@ -740,6 +736,11 @@ export default {
         computedVersionHasTrainStations:{
             get(){
                 return (this.selectVersion) ? this.selectVersion.hasTrainStations : false
+            }
+        },
+        computedVersionHasCityMarkers:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasCityMarkers : false;
             }
         },
         computedVersionHasBoats:{

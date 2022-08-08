@@ -174,7 +174,11 @@
             "subtitle-2": "Exchanges"
         },
         "cities":{
-            "title": "Your city markers"
+            "title": "Your city markers",
+            "indicators":{
+                "left":"nb of city markers",
+                "right":"current score"
+            }
         },
         "dialog": {
             "add-ticket": {
