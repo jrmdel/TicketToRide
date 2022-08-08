@@ -173,6 +173,9 @@
             "subtitle-1": "Claimed routes",
             "subtitle-2": "Exchanges"
         },
+        "cities":{
+            "title": "Your city markers"
+        },
         "dialog": {
             "add-ticket": {
                 "title": "New Ticket",

@@ -211,6 +211,9 @@
                     </v-card-text>
                 </v-card>
             </v-col>
+            <v-col cols="12" v-show="computedVersionHasCityMarkers">
+                <YourCities></YourCities>
+            </v-col>
             <v-col cols="12" v-show="computedVersionHasTrainStations">
                 <!--Your train stations-->
                 <v-card color="background">
@@ -508,6 +511,7 @@ import Units from './currentgame/Units';
 import Indicators from "./currentgame/Indicators";
 import SimpleTable from "./currentgame/SimpleTable";
 import TwoButtons from "./currentgame/TwoButtons";
+import YourCities from "./currentgame/YourCities"
 import { db } from '../main';
 
 export default {
@@ -515,7 +519,8 @@ export default {
         Units,
         Indicators,
         SimpleTable,
-        TwoButtons
+        TwoButtons,
+        YourCities
     },
     data: () => ({
         dialogTicket: false,
@@ -680,6 +685,11 @@ export default {
                 if(this.computedVersionHasTrainStations){
                     return this.selectVersion.pointsPerUnsetTrainStation*(this.selectVersion.numberOfTrainStationsPerPlayer-this.trainStations) + this.trainStations*this.selectVersion.trainStationRule;
                 } else return 0
+            }
+        },
+        computedVersionHasCityMarkers:{
+            get(){
+                return true;
             }
         },
         computedNumberOfBonuses: {

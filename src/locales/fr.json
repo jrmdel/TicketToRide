@@ -173,6 +173,9 @@
             "subtitle-1": "Routes posées",
             "subtitle-2": "Echanges"
         },
+        "cities":{
+            "title": "Vos cités"
+        },
         "dialog": {
             "add-ticket": {
                 "title": "Nouveau ticket",

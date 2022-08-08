@@ -22,7 +22,7 @@ function create(
     name, units, tickets, initialScore, pointsPerRoute, threshold, numberOfTurnsEnd,
     hasBoats, hasExchanges, numberOfHarbors=0, unsetHarbor=0, harborRule=null,
     numberOfTrainStations=0, unsetTrainStation=0, trainStationRule=0,
-    bonusLongestPoints=0, bonusGlobeTrotter=0){
+    bonusLongestPoints=0, bonusGlobeTrotter=0, hasCityMarkers=false, hasAlvin=false){
     return {
         "name": name,
         "units": units,
@@ -45,6 +45,8 @@ function create(
         "longestPoints": bonusLongestPoints,
         "hasBonusGlobeTrotter": (bonusGlobeTrotter != 0),
         "bonusGlobeTrotter": bonusGlobeTrotter,
+        "hasCityMarkers": hasCityMarkers,
+        "hasAlvin": hasAlvin
     }
 }
 
