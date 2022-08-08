@@ -10,7 +10,8 @@
             "share": "PARTAGER CET ID",
             "reset": "REINITIALISER",
             "add-ticket": "AJOUTER TICKET",
-            "add-harbor": "AJOUTER PORT"
+            "add-harbor": "AJOUTER PORT",
+            "add-city-marker": "AJOUTER UNE CITÉ"
         },
         "tables": {
             "search": "Recherche",
@@ -175,9 +176,14 @@
         },
         "cities":{
             "title": "Vos cités",
+            "subtitle": "Cités placées",
             "indicators":{
                 "left":"nb de cités",
                 "right":"score actuel"
+            },
+            "card": {
+                "title": "Cité #{id}",
+                "no-city": "Inconnue"
             }
         },
         "dialog": {

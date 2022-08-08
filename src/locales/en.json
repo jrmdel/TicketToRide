@@ -10,7 +10,8 @@
             "share": "SHARE THIS ID",
             "reset": "RESET",
             "add-ticket": "ADD TICKET",
-            "add-harbor": "ADD A HARBOR"
+            "add-harbor": "ADD A HARBOR",
+            "add-city-marker": "ADD A CITY"
         },
         "tables": {
             "search": "Search",
@@ -175,9 +176,14 @@
         },
         "cities":{
             "title": "Your city markers",
+            "subtitle": "Built cities",
             "indicators":{
                 "left":"nb of city markers",
                 "right":"current score"
+            },
+            "card": {
+                "title": "City #{id}",
+                "no-city": "Unknown"
             }
         },
         "dialog": {
