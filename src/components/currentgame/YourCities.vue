@@ -1,9 +1,10 @@
 <template>
+    <div>
     <v-card color="background">
         <v-toolbar flat color="primary" dark>
             <v-toolbar-title>{{ $t('current.cities.title') }}</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-icon large>mdi-city-variant</v-icon>
+            <v-icon large>mdi-city-variant-outline</v-icon>
         </v-toolbar>
         <v-card-subtitle>
             <Indicators :leftText="$t('current.cities.indicators.left')" :leftIndicator="cities.length"
@@ -13,8 +14,10 @@
         <v-card-text>
             <v-container fluid>
                 <TwoButtons
-                    :leftDisabledCondition="cities.length>2" leftColor="primary" leftIcon="mdi-domain-plus" :leftText="$t('main.btn.add-city-marker')" @clickLeft="openAddCity"
-                    rightColor="accent" rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="resetCities"/>
+                    :leftDisabledCondition="cities.length>2" leftColor="primary" 
+                    leftIcon="mdi-domain-plus" :leftText="$t('main.btn.add-city-marker')" @clickLeft="openAddCity"
+                    rightColor="accent" 
+                    rightIcon="mdi-restore" :rightText="$t('main.btn.reset')" @clickRight="resetCities"/>
                 <v-col cols="12">
                     <v-row>
                         <span class="text-h6 tertiary--text">{{$t('current.cities.subtitle')}}</span>
@@ -52,37 +55,96 @@
             </v-container>
         </v-card-text>
     </v-card>
+    <SimpleFieldDialog 
+        maxWidth="660" :isActive="dialog" :isLoading="false"
+        :items="itemsMock"
+        :title="$t('current.dialog.add-city-marker.title')"
+        :subtitle="$t('current.dialog.add-city-marker.subtitle')"
+        :selectLabel="$t('current.dialog.add-city-marker.label')"
+        :errorMessage="$t('current.dialog.add-city-marker.error')"
+        :actionLabel="$t('main.btn.add-city-marker')"
+        :hasConflict="cityAlreadySelected"
+        :validationRule="validationRule"
+        @closeDialog="dialog = false"
+        @selectedItem="checkValidItem($event)"
+        @clickBtn="addItemToList($event)"
+    />
+    </div>
 </template>
 
 <script>
 import TwoButtons from "./TwoButtons.vue";
-import Indicators from "./Indicators";
+import Indicators from "./Indicators.vue";
+import SimpleFieldDialog from "../dialogs/SimpleFieldDialog.vue"
 
 export default {
     components:{
         Indicators,
-        TwoButtons
+        TwoButtons,
+        SimpleFieldDialog
     },
-    data: () => ({
-        cities: [],
-    }),
-    props: {},
+    data: function() {
+        return {
+            cities: [],
+            dialog: false,
+            itemsMock: ["Los Angeles", "Sacramento", "Denver", "Idaho Falls"],
+            cityAlreadySelected: false,
+            unselectedMessage: this.$i18n.t('current.dialog.add-city-marker.unselected'),
+        }
+    },
+    props: {
+        items: {
+            type: Array,
+            default: () => [],
+        },
+    },
+    watch: {
+        currentLocale: {
+            handler() {
+                this.unselectedMessage = this.$i18n.t('current.dialog.add-city-marker.unselected');
+            }
+        },
+    },
     computed: {
         computedCityScore: {
             get() {
                 return 0;
             },
-        }
+        },
+        currentLocale: {
+            get() {
+                return this.$i18n.locale;
+            },
+        },
+        validationRule: {
+            // Doesn't update on change...
+            get() {
+                return [
+                    v => !!v || this.unselectedMessage,
+                ];
+            },
+        },
     },
     methods: {
         resetCities() {
             this.cities = [];
         },
         openAddCity() {
-            this.cities.push(parseInt(100*Math.random()));
+            this.dialog = true;
+        },
+        closeAddCity() {
+            this.dialog = false;
         },
         deleteCity(index) {
             this.cities.splice(index-1, 1);
+        },
+        checkValidItem(event) {
+            if(this.cities.includes(event)) {
+                this.cityAlreadySelected = true;
+            } else this.cityAlreadySelected = false;
+        },
+        addItemToList(event) {
+            this.cities.push(event);
         },
         getCityScore(city) {
             console.log(city);

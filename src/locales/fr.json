@@ -206,6 +206,13 @@
                 "label": "Choisir une ville",
                 "error": "Cette ville a déjà un port"
             },
+            "add-city-marker": {
+                "title": "Nouvelle Cité",
+                "subtitle": "Villes",
+                "label": "Choisir une ville",
+                "unselected": "Une ville doit être sélectionnée",
+                "error": "Cette ville a déjà été placée"
+            },
             "reset": {
                 "types": {
                     "tickets":"Réinitialiser tickets",

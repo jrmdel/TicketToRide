@@ -206,6 +206,13 @@
                 "label": "Choose a city",
                 "error": "This city already has a harbor"
             },
+            "add-city-marker": {
+                "title": "New City",
+                "subtitle": "Cities",
+                "label": "Choose a city",
+                "unselected": "A city must be selected",
+                "error": "This city has already been built"
+            },
             "reset": {
                 "types": {
                     "tickets":"Reset tickets",
