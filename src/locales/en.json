@@ -161,7 +161,8 @@
                 "right": "current score"
             },
             "longest-path": "Longest continous path",
-            "globe-trotter": "Globe trotter"
+            "globe-trotter": "Globe trotter",
+            "mandala": "Mandala"
         },
         "units": {
             "title": "Your units",
@@ -244,7 +245,8 @@
                         "bonuses": {
                             "title": "Bonuses",
                             "longest": "Longest path",
-                            "globe-trotter": "Globe trotter"
+                            "globe-trotter": "Globe trotter",
+                            "mandala": "Mandala"
                         },
                         "tickets": {
                             "title": "Tickets",

@@ -356,6 +356,23 @@
                                         </v-card>
                                     </v-col>
                                 </v-row>
+                                <v-row v-if="computedHasMandala">
+                                    <v-col cols="12">
+                                        <v-card outlined :disabled="!hasWonMandalaBonus(selectedGame.players[i-1])">
+                                            <v-toolbar class="text-caption font-weight-bold text--secondary" flat dense color="primaryLight">
+                                                {{$t('scoreboard.overall.dialog.tabs.player.bonuses.mandala')}}
+                                            </v-toolbar>
+                                            <v-container>
+                                                <v-row justify="space-around">
+                                                    <v-icon :color="hasWonMandalaBonus(selectedGame.players[i-1]) ? 'accent' : 'primary'">
+                                                        {{ hasWonMandalaBonus(selectedGame.players[i-1]) ? "mdi-star" : "mdi-star-off-outline"}}
+                                                    </v-icon>
+                                                    <span class="text-h6 font-weight-regular tertiary--text"> {{ getMandalaBonusScore(selectedGame.players[i-1]) }} </span>
+                                                </v-row>
+                                            </v-container>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
                                 <!--Tickets-->
                                 <v-row>
                                     <v-col cols="12">
@@ -713,6 +730,11 @@ export default {
                 return this.selectedVersion && this.selectedVersion.hasBonusGlobeTrotter;
             }
         },
+        computedHasMandala:{
+            get(){
+                return this.selectedVersion && this.selectedVersion.hasBonusMandala;
+            }
+        },
         computedHasTrainStations:{
             get(){
                 return this.selectedVersion && this.selectedVersion.hasTrainStations
@@ -823,6 +845,12 @@ export default {
             obj.players = computed;
             this.selectedGame = Object.assign({},obj);
             this.dialogDetails = true;
+        },
+        hasWonMandalaBonus(player) {
+            return player?.mandalaBonus?.count > 0;
+        },
+        getMandalaBonusScore(player) {
+            return player?.mandalaBonus?.score || 0;
         },
         async deleteItem(item){
             try {

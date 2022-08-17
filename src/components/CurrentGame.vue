@@ -313,6 +313,9 @@
                                 </v-btn>
                                 <v-icon class="ml-4">mdi-earth-plus</v-icon>
                             </v-row>
+                            <Mandala ref="mandalaBonus"
+                            :isActive="computedVersionHasMandalaBonus" :title="$t('current.bonuses.mandala')"
+                            @update-bonus="handleBonusEvent($event)"/>
                         </v-container>
                     </v-card-text>
                 </v-card>
@@ -508,6 +511,7 @@ import Units from './currentgame/Units';
 import Indicators from "./currentgame/Indicators";
 import SimpleTable from "./currentgame/SimpleTable";
 import TwoButtons from "./currentgame/TwoButtons";
+import Mandala from "./currentgame/bonuses/Mandala.vue";
 import { db } from '../main';
 
 export default {
@@ -515,7 +519,8 @@ export default {
         Units,
         Indicators,
         SimpleTable,
-        TwoButtons
+        TwoButtons,
+        Mandala
     },
     data: () => ({
         dialogTicket: false,
@@ -542,6 +547,7 @@ export default {
         trainStations: 0,
         longestBonus: 0,
         globeTrotterBonus: 0,
+        mandalaBonus: { count: 0, score: 0 },
         harbors: [],
         newHarbor: null,
         trainsAndBoats: {"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"8":0,"9":0},
@@ -685,7 +691,7 @@ export default {
         computedNumberOfBonuses: {
             get() {
                 if(this.computedVersionHasBonuses){
-                    return this.longestBonus + this.globeTrotterBonus;
+                    return this.longestBonus + this.globeTrotterBonus + (this.mandalaBonus.count > 0 ? 1 : 0);
                 } else return 0
             },
         },
@@ -703,10 +709,17 @@ export default {
                 } else return 0;
             }
         },
+        computedMandalaBonus: {
+            get() {
+                if(this.computedVersionHasMandalaBonus) {
+                    return this.mandalaBonus.score;
+                } else return 0;
+            }
+        },
         computedBonusScore:{
             get(){
                 if(this.computedVersionHasBonuses){
-                    return this.computedLongestBonus + this.computedGlobeTrotterBonus;
+                    return this.computedLongestBonus + this.computedGlobeTrotterBonus + this.computedMandalaBonus;
                 } else return 0
             }
         },
@@ -755,6 +768,11 @@ export default {
         computedVersionHasGlobeTrotterBonus:{
             get(){
                 return (this.selectVersion) ? this.selectVersion.hasBonusGlobeTrotter : false
+            }
+        },
+        computedVersionHasMandalaBonus:{
+            get(){
+                return (this.selectVersion) ? this.selectVersion.hasBonusMandala : false
             }
         },
         computedLastNUnits:{
@@ -941,6 +959,7 @@ export default {
             if(this.computedVersionHasTrainStations) update["trainStations"] = this.computedTrainStationsScore;
             if(this.computedVersionHasLongest) update["longestBonus"] = this.computedLongestBonus;
             if(this.computedVersionHasGlobeTrotterBonus) update["globeTrotterBonus"] = this.computedGlobeTrotterBonus;
+            if(this.computedVersionHasMandalaBonus) update["mandalaBonus"] = this.mandalaBonus;
             try {
                 await db.collection('Games').doc(this.gameId).update({[numPlayer]: update})
                 this.notifySnack(this.$t('main.snackbar.success.save'),"success")
@@ -1061,9 +1080,16 @@ export default {
             this.trainStations = 0;
             if(localStorage.getItem("trainStations")) localStorage.removeItem("trainStations")
         },
+        handleBonusEvent(event) {
+            let { name, ...rest } = event;
+            if (name == "mandala") {
+                this.mandalaBonus = rest;
+            }
+        },
         resetBonuses(){
             this.longestBonus = 0;
             this.globeTrotterBonus = 0;
+            this.$refs.mandalaBonus.resetBonus();
             if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus");
             if(localStorage.getItem("globeTrotterBonus")) localStorage.removeItem("globeTrotterBonus");
         },

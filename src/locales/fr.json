@@ -161,7 +161,8 @@
                 "right": "score actuel"
             },
             "longest-path": "Chemin le plus long",
-            "globe-trotter": "Globe trotter"
+            "globe-trotter": "Globe trotter",
+            "mandala": "Mandala"
         },
         "units": {
             "title": "Vos unités",
@@ -244,7 +245,8 @@
                         "bonuses": {
                             "title": "Bonus",
                             "longest": "Chemin le plus long",
-                            "globe-trotter": "Globe trotter"
+                            "globe-trotter": "Globe trotter",
+                            "mandala": "Mandala"
                         },
                         "tickets": {
                             "title": "Tickets",
