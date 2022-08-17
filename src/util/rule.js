@@ -16,13 +16,14 @@
  * @param {Number} unsetTrainStation The number of points per train station unused at the end of the game.
  * @param {Number} trainStationRule The number of points a player can earn thanks to a train station on the board.
  * @param {Number} bonusLongestPoints Number of bonus points for the longest path. 0 if this version doesn't include this bonus.
-
+ * @param {Number} bonusGlobeTrotter Number of bonus points for the most tickets completed. 0 if this version doesn't include this bonus.
+ * @param {Boolean} hasBonusMandala A truthy value if this version contains a bonus for mandala
  */
 function create(
     name, units, tickets, initialScore, pointsPerRoute, threshold, numberOfTurnsEnd,
     hasBoats, hasExchanges, numberOfHarbors=0, unsetHarbor=0, harborRule=null,
     numberOfTrainStations=0, unsetTrainStation=0, trainStationRule=0,
-    bonusLongestPoints=0, bonusGlobeTrotter=0){
+    bonusLongestPoints=0, bonusGlobeTrotter=0, hasBonusMandala=false){
     return {
         "name": name,
         "units": units,
@@ -45,6 +46,7 @@ function create(
         "longestPoints": bonusLongestPoints,
         "hasBonusGlobeTrotter": (bonusGlobeTrotter != 0),
         "bonusGlobeTrotter": bonusGlobeTrotter,
+        "hasBonusMandala": hasBonusMandala,
     }
 }
 

@@ -4,13 +4,15 @@ import { GreatLakesCities } from "./great-lakes-cities"
 import { EuropeCities } from "./europe-cities"
 import { FranceCities } from "./france-cities"
 import { OldWestCities } from "./old-west-cities"
+import { IndiaCities } from "./india-cities"
 
 var Games = {
     WORLD: "Around The World",
     GREAT_LAKES: "Great Lakes",
     EUROPE: "Europe",
     FRANCE: "France",
-    OLD_WEST: "Old West"
+    OLD_WEST: "Old West",
+    INDIA: "India"
 }
 
 let world = [
@@ -302,10 +304,72 @@ let oldwest = [
     {id:50, game:Games.OLD_WEST, cities:[OldWestCities.SEATTLE, OldWestCities.ROSWELL], points: 21}, 
 ]
 
+let india = [
+    { id: 1, game: Games.INDIA, cities: [IndiaCities.JARHAT, IndiaCities.BOMBAY], points: 13 },
+    { id: 2, game: Games.INDIA, cities: [IndiaCities.JACOBABAD, IndiaCities.RATIAM], points: 9 },
+    { id: 3, game: Games.INDIA, cities: [IndiaCities.AMBALA, IndiaCities.MORMUGAU], points: 10 },
+    { id: 4, game: Games.INDIA, cities: [IndiaCities.CALCUTTA, IndiaCities.ERODE], points: 9 },
+    { id: 5, game: Games.INDIA, cities: [IndiaCities.JODHPUR, IndiaCities.KHANDWA], points: 5 },
+    { id: 6, game: Games.INDIA, cities: [IndiaCities.BAREILLY, IndiaCities.CALCUTTA], points: 6 },
+    { id: 7, game: Games.INDIA, cities: [IndiaCities.PESHAWAR, IndiaCities.MADRAS], points: 17 },
+    { id: 8, game: Games.INDIA, cities: [IndiaCities.BAREILLY, IndiaCities.AHMADABAD], points: 5 },
+    { id: 9, game: Games.INDIA, cities: [IndiaCities.JODHPUR, IndiaCities.LUCKNOW], points: 5 },
+    { id: 10, game: Games.INDIA, cities: [IndiaCities.BHATINDA, IndiaCities.BILASPUR], points: 7 },
+    { id: 11, game: Games.INDIA, cities: [IndiaCities.RATIAM, IndiaCities.BEZWADA], points: 8 },
+    { id: 12, game: Games.INDIA, cities: [IndiaCities.ROHRI, IndiaCities.MANGALORE], points: 12 },
+    { id: 13, game: Games.INDIA, cities: [IndiaCities.RATIAM, IndiaCities.MANMAD], points: 5 },
+    { id: 14, game: Games.INDIA, cities: [IndiaCities.KATNI, IndiaCities.WALTAIN], points: 5 },
+    { id: 15, game: Games.INDIA, cities: [IndiaCities.JACOBABAD, IndiaCities.BOMBAY], points: 10 },
+    { id: 16, game: Games.INDIA, cities: [IndiaCities.MANMAD, IndiaCities.ERODE], points: 7 },
+    { id: 17, game: Games.INDIA, cities: [IndiaCities.BHATINDA, IndiaCities.BEZWADA], points: 13 },
+    { id: 18, game: Games.INDIA, cities: [IndiaCities.LAHORE, IndiaCities.DHUBRI], points: 12 },
+    { id: 19, game: Games.INDIA, cities: [IndiaCities.DELHI, IndiaCities.CHITTAGONG], points: 9 },
+    { id: 20, game: Games.INDIA, cities: [IndiaCities.LUCKNOW, IndiaCities.BOMBAY], points: 7 },
+    { id: 21, game: Games.INDIA, cities: [IndiaCities.JAIPUR, IndiaCities.RAIPUR], points: 5 },
+    { id: 22, game: Games.INDIA, cities: [IndiaCities.PATNA, IndiaCities.MORMUGAU], points: 10 },
+    { id: 23, game: Games.INDIA, cities: [IndiaCities.BOMBAY, IndiaCities.BEZWADA], points: 5 },
+    { id: 24, game: Games.INDIA, cities: [IndiaCities.AGRA, IndiaCities.JARHAT], points: 8 },
+    { id: 25, game: Games.INDIA, cities: [IndiaCities.JACOBABAD, IndiaCities.CALCUTTA], points: 13 },
+    { id: 26, game: Games.INDIA, cities: [IndiaCities.MADRAS, IndiaCities.QUILON], points: 6 },
+    { id: 27, game: Games.INDIA, cities: [IndiaCities.JAIPUR, IndiaCities.POONA], points: 5 },
+    { id: 28, game: Games.INDIA, cities: [IndiaCities.KARACHI, IndiaCities.POONA], points: 7 },
+    { id: 29, game: Games.INDIA, cities: [IndiaCities.LUCKNOW, IndiaCities.ERODE], points: 11 },
+    { id: 30, game: Games.INDIA, cities: [IndiaCities.AMBALA, IndiaCities.RATIAM], points: 5 },
+    { id: 31, game: Games.INDIA, cities: [IndiaCities.KARACHI, IndiaCities.DELHI], points: 7 },
+    { id: 32, game: Games.INDIA, cities: [IndiaCities.LAHORE, IndiaCities.DELHI], points: 5 },
+    { id: 33, game: Games.INDIA, cities: [IndiaCities.RAIPUR, IndiaCities.GUNTAKAL], points: 7 },
+    { id: 34, game: Games.INDIA, cities: [IndiaCities.AMBALA, IndiaCities.WALTAIN], points: 9 },
+    { id: 35, game: Games.INDIA, cities: [IndiaCities.JODHPUR, IndiaCities.GUNTAKAL], points: 9 },
+    { id: 36, game: Games.INDIA, cities: [IndiaCities.KATNI, IndiaCities.KHANDWA], points: 5 },
+    { id: 37, game: Games.INDIA, cities: [IndiaCities.CALCUTTA, IndiaCities.INDUR], points: 8 },
+    { id: 38, game: Games.INDIA, cities: [IndiaCities.KARACHI, IndiaCities.AHMADABAD], points: 6 },
+    { id: 39, game: Games.INDIA, cities: [IndiaCities.BOMBAY, IndiaCities.QUILON], points: 6 },
+    { id: 40, game: Games.INDIA, cities: [IndiaCities.BILASPUR, IndiaCities.CALICUT], points: 10 },
+    { id: 41, game: Games.INDIA, cities: [IndiaCities.BAREILLY, IndiaCities.GUNTAKAL], points: 10 },
+    { id: 42, game: Games.INDIA, cities: [IndiaCities.ROHRI, IndiaCities.AGRA], points: 7 },
+    { id: 43, game: Games.INDIA, cities: [IndiaCities.BHATINDA, IndiaCities.MANMAD], points: 9 },
+    { id: 44, game: Games.INDIA, cities: [IndiaCities.PATNA, IndiaCities.MADRAS], points: 9 },
+    { id: 45, game: Games.INDIA, cities: [IndiaCities.WALTAIN, IndiaCities.MANGALORE], points: 6 },
+    { id: 46, game: Games.INDIA, cities: [IndiaCities.DHUBRI, IndiaCities.MANGALORE], points: 12 },
+    { id: 47, game: Games.INDIA, cities: [IndiaCities.BILASPUR, IndiaCities.DHUBRI], points: 5 },
+    { id: 48, game: Games.INDIA, cities: [IndiaCities.AHMADABAD, IndiaCities.CALICUT], points: 7 },
+    { id: 49, game: Games.INDIA, cities: [IndiaCities.JAIPUR, IndiaCities.PATNA], points: 5 },
+    { id: 50, game: Games.INDIA, cities: [IndiaCities.DELHI, IndiaCities.INDUR], points: 9 },
+    { id: 51, game: Games.INDIA, cities: [IndiaCities.CHITTAGONG, IndiaCities.WADI], points: 11 },
+    { id: 52, game: Games.INDIA, cities: [IndiaCities.KHANDWA, IndiaCities.CHITTAGONG], points: 10 },
+    { id: 53, game: Games.INDIA, cities: [IndiaCities.PESHAWAR, IndiaCities.BHOPAL], points: 9 },
+    { id: 54, game: Games.INDIA, cities: [IndiaCities.DELHI, IndiaCities.CALICUT], points: 11 },
+    { id: 55, game: Games.INDIA, cities: [IndiaCities.KATNI, IndiaCities.WADI], points: 8 },
+    { id: 56, game: Games.INDIA, cities: [IndiaCities.BHOPAL, IndiaCities.MORMUGAU], points: 5 },
+    { id: 57, game: Games.INDIA, cities: [IndiaCities.LAHORE, IndiaCities.WADI], points: 13 },
+    { id: 58, game: Games.INDIA, cities: [IndiaCities.BHOPAL, IndiaCities.CALCUTTA], points: 6 },
+]
+
 export const Tickets = {
     World: world,
     GreatLakes: greatlakes,
     Europe: europe,
     France: france,
-    OldWest: oldwest
+    OldWest: oldwest,
+    India: india
 };
