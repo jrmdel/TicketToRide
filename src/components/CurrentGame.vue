@@ -1089,7 +1089,6 @@ export default {
         resetBonuses(){
             this.longestBonus = 0;
             this.globeTrotterBonus = 0;
-            // this.mandalaBonus = { count: 0, score: 0 };
             this.$refs.mandalaBonus.resetBonus();
             if(localStorage.getItem("longestBonus")) localStorage.removeItem("longestBonus");
             if(localStorage.getItem("globeTrotterBonus")) localStorage.removeItem("globeTrotterBonus");

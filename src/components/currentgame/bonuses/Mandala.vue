@@ -74,12 +74,6 @@ export default {
         },
     },
     methods: {
-        setBonus(value) {
-            this.bonus = value;
-        },
-        getBonus() {
-            return { count: this.bonus, score: this.computeScore };
-        },
         resetBonus() {
             this.bonus = 0;
             if(localStorage.getItem("mandalaBonus")) localStorage.removeItem("mandalaBonus");

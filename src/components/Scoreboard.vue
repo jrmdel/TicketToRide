@@ -847,11 +847,7 @@ export default {
             this.dialogDetails = true;
         },
         hasWonMandalaBonus(player) {
-            try {
-                return player.mandalaBonus.count > 0
-            } catch {
-                return false;
-            }
+            return player?.mandalaBonus?.count > 0;
         },
         getMandalaBonusScore(player) {
             return player?.mandalaBonus?.score || 0;
