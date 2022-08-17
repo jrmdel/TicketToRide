@@ -543,7 +543,6 @@ export default {
         selectVersion: null,
         selectPlayer: [],
         selectedPlayer: null,
-        lockSelect: true,
         trainStations: 0,
         longestBonus: 0,
         globeTrotterBonus: 0,
@@ -1111,9 +1110,6 @@ export default {
         },
         getRoutes(){
             return this.routes
-        },
-        toggleLockSelect(){
-            this.lockSelect = !this.lockSelect;
         },
         findVersion(version){
             let myEvent = { version: version }
