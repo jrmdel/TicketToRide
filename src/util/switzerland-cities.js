@@ -37,4 +37,4 @@ module.exports.SwitzerlandCities = {
   VADUZ: { name: 'Vaduz' },
   ST_GALLEN: { name: 'St. Gallen' },
   KREUZLINGEN: { name: 'Kreuzlingen' },
-}
+};

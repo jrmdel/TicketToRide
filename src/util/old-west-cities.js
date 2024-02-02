@@ -40,4 +40,4 @@ module.exports.OldWestCities = {
   PHOENIX: { name: 'Phoenix' },
   TUCSON: { name: 'Tucson' },
   LAS_CRUCES: { name: 'Las Cruces' },
-}
+};

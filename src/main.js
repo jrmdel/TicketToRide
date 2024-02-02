@@ -1,14 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
-import vuetify from './plugins/vuetify'
-import firebase from 'firebase/app'
-import 'firebase/firestore'
-import VueApexCharts from 'vue-apexcharts'
-import i18n from './i18n'
-Vue.use(VueApexCharts)
+import Vue from 'vue';
+import App from './App.vue';
+import vuetify from './plugins/vuetify';
+import firebase from 'firebase/app';
+import 'firebase/firestore';
+import VueApexCharts from 'vue-apexcharts';
+import i18n from './i18n';
+Vue.use(VueApexCharts);
 
-Vue.component('ApexChart', VueApexCharts)
-Vue.config.productionTip = false
+Vue.component('ApexChart', VueApexCharts);
+Vue.config.productionTip = false;
 
 firebase.initializeApp({
   apiKey: 'AIzaSyCcNwnXTiqHGQxOopRIRCrhLWKXnSygMTE',
@@ -18,12 +18,12 @@ firebase.initializeApp({
   storageBucket: 'tickettoride-13f5e.appspot.com',
   messagingSenderId: '373665950379',
   appId: '1:373665950379:web:01d627fc2327d96b48a5ee',
-})
+});
 
-export const db = firebase.firestore()
+export const db = firebase.firestore();
 
 new Vue({
   vuetify,
   i18n,
   render: (h) => h(App),
-}).$mount('#app')
+}).$mount('#app');

@@ -1,10 +1,10 @@
-import { Types } from './types'
-import { WorldCities } from './world-cities'
-import { GreatLakesCities } from './great-lakes-cities'
-import { EuropeCities } from './europe-cities'
-import { FranceCities } from './france-cities'
-import { OldWestCities } from './old-west-cities'
-import { IndiaCities } from './india-cities'
+import { Types } from './types';
+import { WorldCities } from './world-cities';
+import { GreatLakesCities } from './great-lakes-cities';
+import { EuropeCities } from './europe-cities';
+import { FranceCities } from './france-cities';
+import { OldWestCities } from './old-west-cities';
+import { IndiaCities } from './india-cities';
 
 var Games = {
   WORLD: 'Around The World',
@@ -13,7 +13,7 @@ var Games = {
   FRANCE: 'France',
   OLD_WEST: 'Old West',
   INDIA: 'India',
-}
+};
 
 let world = [
   {
@@ -524,7 +524,7 @@ let world = [
     points_unorderded: 10,
     points_failed: -21,
   },
-]
+];
 
 let greatlakes = [
   {
@@ -857,7 +857,7 @@ let greatlakes = [
     cities: [GreatLakesCities.SYRACUSE, GreatLakesCities.NEW_YORK],
     points: 5,
   },
-]
+];
 
 let europe = [
   {
@@ -1182,7 +1182,7 @@ let europe = [
     points: 5,
     long: false,
   },
-]
+];
 
 let france = [
   {
@@ -1533,7 +1533,7 @@ let france = [
     cities: [FranceCities.ALLEMAGNE, FranceCities.ESPAGNE],
     points: 18,
   },
-]
+];
 
 let oldwest = [
   {
@@ -1836,7 +1836,7 @@ let oldwest = [
     cities: [OldWestCities.SEATTLE, OldWestCities.ROSWELL],
     points: 21,
   },
-]
+];
 
 let india = [
   {
@@ -2187,7 +2187,7 @@ let india = [
     cities: [IndiaCities.BHOPAL, IndiaCities.CALCUTTA],
     points: 6,
   },
-]
+];
 
 export const Tickets = {
   World: world,
@@ -2196,4 +2196,4 @@ export const Tickets = {
   France: france,
   OldWest: oldwest,
   India: india,
-}
+};

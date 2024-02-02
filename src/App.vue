@@ -265,11 +265,11 @@
 </template>
 
 <script>
-import TabCurrentGame from './components/TabCurrentGame'
-import TabScoreboard from './components/TabScoreboard'
-import TabHelp from './components/TabHelp'
-import { Games } from './util/games'
-import { db } from './main'
+import TabCurrentGame from './components/TabCurrentGame';
+import TabScoreboard from './components/TabScoreboard';
+import TabHelp from './components/TabHelp';
+import { Games } from './util/games';
+import { db } from './main';
 
 export default {
   name: 'App',
@@ -308,7 +308,7 @@ export default {
       immediate: true,
       handler(value) {
         if (value) {
-          this.appLoaded = true
+          this.appLoaded = true;
         }
       },
     },
@@ -316,42 +316,42 @@ export default {
   computed: {
     computedTheme: {
       get() {
-        return this.$vuetify.theme.dark
+        return this.$vuetify.theme.dark;
       },
       set(value) {
-        this.$vuetify.theme.dark = value
-        localStorage.setItem('dark-theme', value)
+        this.$vuetify.theme.dark = value;
+        localStorage.setItem('dark-theme', value);
       },
     },
     computedLang: {
       get() {
         return this.$i18n.locale?.match(/^fr/gi)
           ? this.$i18n.locale.match(/^fr/gi)[0].toString().toLowerCase() == 'fr'
-          : false
+          : false;
       },
       set(value) {
-        this.$i18n.locale = value ? 'fr' : 'en'
-        localStorage.setItem('lang', this.$i18n.locale)
+        this.$i18n.locale = value ? 'fr' : 'en';
+        localStorage.setItem('lang', this.$i18n.locale);
       },
     },
   },
   methods: {
     openCreate() {
-      this.dialogCreate = true
-      this.updateTodaysDate()
+      this.dialogCreate = true;
+      this.updateTodaysDate();
     },
     closeCreate() {
-      this.dialogCreate = false
-      this.loadingCreate = false
-      this.players = 3
-      this.names = Object.assign({}, this.defaultNames)
-      this.version = null
+      this.dialogCreate = false;
+      this.loadingCreate = false;
+      this.players = 3;
+      this.names = Object.assign({}, this.defaultNames);
+      this.version = null;
       setTimeout(() => {
-        this.$refs.newGameForm.resetValidation()
-      }, 50)
+        this.$refs.newGameForm.resetValidation();
+      }, 50);
     },
     updateTodaysDate() {
-      this.date = new Date().toISOString().substr(0, 10)
+      this.date = new Date().toISOString().substr(0, 10);
     },
     async actOnJoinGame(event) {
       if (
@@ -359,81 +359,81 @@ export default {
           .getRoutes()
           .filter((x) => x.game != event.version).length > 0
       ) {
-        this.dialogWrongTickets = true
+        this.dialogWrongTickets = true;
       } else {
-        await this.resetGameSession()
-        this.currentGameId = event.id
+        await this.resetGameSession();
+        this.currentGameId = event.id;
         this.currentGameVersion = Object.assign(
           {},
           this.gamesAndRules.find((game) => game.name == event.version)
-        )
+        );
       }
-      this.tab = 0
+      this.tab = 0;
     },
     ruleNewVersion(value) {
       if (value == null) {
-        return this.$t('app.new.form.version')
-      } else return true
+        return this.$t('app.new.form.version');
+      } else return true;
     },
     ruleNewPlayer(value) {
       if (value == null || value?.length < 1)
-        return this.$t('app.new.form.player')
+        return this.$t('app.new.form.player');
       if (
         (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '') != value
       )
-        return this.$t('app.new.form.accent')
-      if (value.length > 1 && !/\d/.test(value)) return true
-      return this.$t('app.new.form.invalid-player')
+        return this.$t('app.new.form.accent');
+      if (value.length > 1 && !/\d/.test(value)) return true;
+      return this.$t('app.new.form.invalid-player');
     },
     resetGameSession() {
       return new Promise((resolve, reject) => {
         try {
-          this.currentGameId = ''
-          this.currentGameVersion = {}
-          this.currentGamePlayers = new Array()
-          resolve()
+          this.currentGameId = '';
+          this.currentGameVersion = {};
+          this.currentGamePlayers = new Array();
+          resolve();
         } catch (error) {
-          reject(this.$t('app.error.reset-game-session'))
+          reject(this.$t('app.error.reset-game-session'));
         }
-      })
+      });
     },
     findVersion(event) {
       this.currentGameVersion = this.gamesAndRules.find(
         (game) => game.name == event.version
-      )
+      );
     },
     async createGame() {
-      this.loadingCreate = true
-      this.$refs.currentGame.resetAll()
+      this.loadingCreate = true;
+      this.$refs.currentGame.resetAll();
       try {
-        await this.resetGameSession()
+        await this.resetGameSession();
       } catch (error) {
-        this.popUp({ color: 'error', msg: error })
+        this.popUp({ color: 'error', msg: error });
       }
       let doc = {
         date: this.date,
         players: this.players,
         version: this.version.name,
-      }
+      };
       for (let i = 1; i <= this.players; i++) {
-        this.names[i] = this.cleanName(this.names[i])
-        let n = `player${i}`
+        this.names[i] = this.cleanName(this.names[i]);
+        let n = `player${i}`;
         doc[n] = {
           name: this.names[i],
           score: this.version.initialScore,
           tickets: [],
-        }
+        };
       }
-      let d = await db.collection('Games').add(doc)
-      this.currentGameId = d.id
+      let d = await db.collection('Games').add(doc);
+      this.currentGameId = d.id;
       // Sets the currentGame variables
-      this.currentGameVersion = Object.assign({}, this.version)
+      this.currentGameVersion = Object.assign({}, this.version);
       this.currentGamePlayers = Object.values(this.names).splice(
         0,
         this.players
-      )
+      );
       // Create then close
-      this.closeCreate()
+      this.closeCreate();
     },
     cleanName(name = '') {
       // Capitalize first letter of each words
@@ -442,61 +442,61 @@ export default {
         .split(' ')
         .filter((o) => o)
         .map(this.capitalizeFirstLetter)
-        .join(' ')
+        .join(' ');
       // Case of hyphenated words
       return r
         .split('-')
         .filter((o) => o)
         .map(this.capitalizeFirstLetter)
-        .join('-')
+        .join('-');
     },
     capitalizeFirstLetter(str = '') {
-      return str?.charAt(0).toUpperCase() + str?.slice(1)
+      return str?.charAt(0).toUpperCase() + str?.slice(1);
     },
     popUp(event) {
-      this.snackColor = event.color
-      this.snackMsg = event.msg
-      this.snack = true
+      this.snackColor = event.color;
+      this.snackMsg = event.msg;
+      this.snack = true;
     },
     computeLabel(number) {
-      return this.$t('app.new.player-label', { id: number })
+      return this.$t('app.new.player-label', { id: number });
     },
     toggleTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
     },
     getNavigatorLanguage() {
       if (navigator.languages && navigator.languages.length) {
-        return navigator.languages[0]
+        return navigator.languages[0];
       } else {
         return (
           navigator.userLanguage ||
           navigator.language ||
           navigator.browserLanguage ||
           'en'
-        )
+        );
       }
     },
   },
   beforeMount() {
     if (localStorage.getItem('dark-theme')) {
       try {
-        this.$vuetify.theme.dark = localStorage.getItem('dark-theme') == 'true'
+        this.$vuetify.theme.dark = localStorage.getItem('dark-theme') == 'true';
       } catch (error) {
-        localStorage.removeItem('dark-theme')
+        localStorage.removeItem('dark-theme');
       }
     }
     if (localStorage.getItem('lang')) {
       try {
         this.$i18n.locale =
-          localStorage.getItem('lang') || this.getNavigatorLanguage()
+          localStorage.getItem('lang') || this.getNavigatorLanguage();
       } catch (error) {
-        localStorage.removeItem('lang')
+        localStorage.removeItem('lang');
       }
     } else {
-      this.$i18n.locale = this.getNavigatorLanguage()
+      this.$i18n.locale = this.getNavigatorLanguage();
     }
   },
-}
+};
 </script>
 
 <style>

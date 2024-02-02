@@ -46,4 +46,4 @@ module.exports.WorldCities = {
   PERTH: { name: 'Perth', anchor: true },
   CAPE_TOWN: { name: 'Cape Town', anchor: true },
   TOAMASINA: { name: 'Toamasina', anchor: true },
-}
+};

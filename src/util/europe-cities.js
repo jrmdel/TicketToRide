@@ -46,4 +46,4 @@ module.exports.EuropeCities = {
   LONDON: { name: 'London' },
   EDINBURGH: { name: 'Edinburgh' },
   BREST: { name: 'Brest' },
-}
+};

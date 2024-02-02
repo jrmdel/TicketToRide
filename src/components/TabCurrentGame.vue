@@ -886,13 +886,13 @@
 </template>
 
 <script>
-import { Types } from '../util/types'
-import UnitCounter from './currentgame/UnitCounter'
-import BaseIndicators from './currentgame/BaseIndicators'
-import SimpleTable from './currentgame/SimpleTable'
-import TwoButtons from './currentgame/TwoButtons'
-import BonusMandala from './currentgame/bonuses/BonusMandala.vue'
-import { db } from '../main'
+import { Types } from '../util/types';
+import UnitCounter from './currentgame/UnitCounter';
+import BaseIndicators from './currentgame/BaseIndicators';
+import SimpleTable from './currentgame/SimpleTable';
+import TwoButtons from './currentgame/TwoButtons';
+import BonusMandala from './currentgame/bonuses/BonusMandala.vue';
+import { db } from '../main';
 
 export default {
   components: {
@@ -1011,7 +1011,7 @@ export default {
             value: 'delete',
             sortable: true,
           },
-        ]
+        ];
       },
     },
     headersAddTicket: {
@@ -1041,7 +1041,7 @@ export default {
             value: 'points',
             sortable: true,
           },
-        ]
+        ];
       },
     },
     computedRoutesForHeaders: {
@@ -1051,8 +1051,8 @@ export default {
             ...route,
             from: route.cities[0].name,
             to: route.cities.slice(-1)[0].name,
-          }
-        })
+          };
+        });
       },
     },
     computedFromCities: {
@@ -1065,7 +1065,7 @@ export default {
                   .flat()
               ),
             ].sort()
-          : []
+          : [];
       },
     },
     computedAnchorCities: {
@@ -1082,12 +1082,12 @@ export default {
                   .flat()
               ),
             ].sort()
-          : []
+          : [];
       },
     },
     computedCompletion: {
       get() {
-        return this.routes.filter((route) => route.status == 'Done').length
+        return this.routes.filter((route) => route.status == 'Done').length;
       },
     },
     computedTicketScore: {
@@ -1098,17 +1098,17 @@ export default {
               ? item.points_failed
               : item.status == 'Done'
                 ? item.points
-                : item.points_unorderded
-          } else return item.status == 'Done' ? item.points : -1 * item.points
+                : item.points_unorderded;
+          } else return item.status == 'Done' ? item.points : -1 * item.points;
         }
         return this.routes.length > 0
           ? this.routes.map(computeScore).reduce((a, b) => a + b, 0)
-          : 0
+          : 0;
       },
     },
     computedTrainsBoatsScore: {
       get() {
-        let a = Object.values(this.trainsAndBoats)
+        let a = Object.values(this.trainsAndBoats);
         return (
           a[0] +
           2 * a[1] +
@@ -1120,59 +1120,59 @@ export default {
           21 * a[7] +
           27 * a[8] -
           this.exchanges
-        )
+        );
       },
     },
     computedTopCities: {
       get() {
-        let r = this.routes
-        let counts = {}
+        let r = this.routes;
+        let counts = {};
         for (let i = 0, l = r.length; i < l; i++) {
           let c = r[i].cities
             .filter((city) => city.anchor)
-            .map((city) => city.name)
+            .map((city) => city.name);
           for (let j = 0; j < c.length; j++) {
-            counts[c[j]] = (counts[c[j]] || 0) + 1
+            counts[c[j]] = (counts[c[j]] || 0) + 1;
           }
         }
         return Object.entries(counts)
           .map((x) => {
-            return { city: x[0], num: x[1] }
+            return { city: x[0], num: x[1] };
           })
-          .sort((a, b) => b.num - a.num)
+          .sort((a, b) => b.num - a.num);
       },
     },
     computedTopSuccessfulCities: {
       get() {
-        let r = this.routes
-        let counts = {}
+        let r = this.routes;
+        let counts = {};
         for (let i = 0, l = r.length; i < l; i++) {
           if (r[i].status != 'Fail') {
             let c = r[i].cities
               .filter((city) => city.anchor)
-              .map((city) => city.name)
+              .map((city) => city.name);
             for (let j = 0; j < c.length; j++) {
-              counts[c[j]] = (counts[c[j]] || 0) + 1
+              counts[c[j]] = (counts[c[j]] || 0) + 1;
             }
           }
         }
         return Object.entries(counts)
           .map((x) => {
-            return { city: x[0], num: x[1] }
+            return { city: x[0], num: x[1] };
           })
-          .sort((a, b) => b.num - a.num)
+          .sort((a, b) => b.num - a.num);
       },
     },
     computedHarborsScore: {
       get() {
         if (this.computedVersionHasHarbors) {
-          let res = 0
+          let res = 0;
           for (let i = 0; i < this.harbors.length; i++) {
             let found = this.computedTopSuccessfulCities.find(
               (x) => x.city == this.harbors[i]
-            )
+            );
             if (found && found.num > 0) {
-              res += this.selectVersion.harborRule[Math.min(found.num, 3) - 1]
+              res += this.selectVersion.harborRule[Math.min(found.num, 3) - 1];
             }
           }
           return (
@@ -1180,8 +1180,8 @@ export default {
             this.selectVersion.pointsPerUnsetHarbor *
               (this.selectVersion.numberOfHarborsPerPlayer -
                 this.harbors.length)
-          )
-        } else return 0
+          );
+        } else return 0;
       },
     },
     computedTrainStationsScore: {
@@ -1192,8 +1192,8 @@ export default {
               (this.selectVersion.numberOfTrainStationsPerPlayer -
                 this.trainStations) +
             this.trainStations * this.selectVersion.trainStationRule
-          )
-        } else return 0
+          );
+        } else return 0;
       },
     },
     computedNumberOfBonuses: {
@@ -1203,29 +1203,29 @@ export default {
             this.longestBonus +
             this.globeTrotterBonus +
             (this.mandalaBonus.count > 0 ? 1 : 0)
-          )
-        } else return 0
+          );
+        } else return 0;
       },
     },
     computedGlobeTrotterBonus: {
       get() {
         if (this.computedVersionHasGlobeTrotterBonus) {
-          return this.selectVersion.bonusGlobeTrotter * this.globeTrotterBonus
-        } else return 0
+          return this.selectVersion.bonusGlobeTrotter * this.globeTrotterBonus;
+        } else return 0;
       },
     },
     computedLongestBonus: {
       get() {
         if (this.computedVersionHasLongest) {
-          return this.selectVersion.longestPoints * this.longestBonus
-        } else return 0
+          return this.selectVersion.longestPoints * this.longestBonus;
+        } else return 0;
       },
     },
     computedMandalaBonus: {
       get() {
         if (this.computedVersionHasMandalaBonus) {
-          return this.mandalaBonus.score
-        } else return 0
+          return this.mandalaBonus.score;
+        } else return 0;
       },
     },
     computedBonusScore: {
@@ -1235,8 +1235,8 @@ export default {
             this.computedLongestBonus +
             this.computedGlobeTrotterBonus +
             this.computedMandalaBonus
-          )
-        } else return 0
+          );
+        } else return 0;
       },
     },
     computedTotalScore: {
@@ -1248,35 +1248,35 @@ export default {
               this.computedHarborsScore +
               this.computedTrainStationsScore +
               this.computedBonusScore
-          )
-        } else return 0
+          );
+        } else return 0;
       },
     },
     computedNumberUnits: {
       get() {
         return Object.values(this.trainsAndBoats)
           .map((x, i) => x * (i + 1))
-          .reduce((a, b) => a + b, 0)
+          .reduce((a, b) => a + b, 0);
       },
     },
     computedVersionHasHarbors: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasHarbors : false
+        return this.selectVersion ? this.selectVersion.hasHarbors : false;
       },
     },
     computedVersionHasTrainStations: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasTrainStations : false
+        return this.selectVersion ? this.selectVersion.hasTrainStations : false;
       },
     },
     computedVersionHasBoats: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasBoats : false
+        return this.selectVersion ? this.selectVersion.hasBoats : false;
       },
     },
     computedVersionHasExchanges: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasExchanges : false
+        return this.selectVersion ? this.selectVersion.hasExchanges : false;
       },
     },
     computedVersionHasBonuses: {
@@ -1284,24 +1284,24 @@ export default {
         return (
           this.computedVersionHasLongest ||
           this.computedVersionHasGlobeTrotterBonus
-        )
+        );
       },
     },
     computedVersionHasLongest: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasLongest : false
+        return this.selectVersion ? this.selectVersion.hasLongest : false;
       },
     },
     computedVersionHasGlobeTrotterBonus: {
       get() {
         return this.selectVersion
           ? this.selectVersion.hasBonusGlobeTrotter
-          : false
+          : false;
       },
     },
     computedVersionHasMandalaBonus: {
       get() {
-        return this.selectVersion ? this.selectVersion.hasBonusMandala : false
+        return this.selectVersion ? this.selectVersion.hasBonusMandala : false;
       },
     },
     computedLastNUnits: {
@@ -1310,15 +1310,15 @@ export default {
           return (
             this.selectVersion.units - this.selectVersion.threshold <=
             this.computedNumberUnits
-          )
-        } else return false
+          );
+        } else return false;
       },
     },
     computedAvailableUnits: {
       get() {
         if (this.selectVersion)
-          return this.selectVersion.units - this.computedNumberUnits
-        else return 0
+          return this.selectVersion.units - this.computedNumberUnits;
+        else return 0;
       },
     },
     computedKeysUnits: {
@@ -1326,16 +1326,16 @@ export default {
         if (this.selectVersion) {
           return Object.keys(this.selectVersion.pointsPerRoute).map((k) =>
             parseInt(k)
-          )
-        } else return []
+          );
+        } else return [];
       },
     },
   },
   watch: {
     fromTicket: {
       handler(value) {
-        this.toCities = []
-        this.toTicket = null
+        this.toCities = [];
+        this.toTicket = null;
         if (value) {
           let a = this.selectVersion.tickets
             .filter((ticket) =>
@@ -1343,14 +1343,14 @@ export default {
             )
             .map((ticket) => ticket.cities.map((city) => city.name))
             .flat()
-            .sort()
-          this.toCities = [...new Set(a)].filter((city) => city != value)
+            .sort();
+          this.toCities = [...new Set(a)].filter((city) => city != value);
         }
       },
     },
     toTicket: {
       handler(val) {
-        this.foundTickets = []
+        this.foundTickets = [];
         if (val != null) {
           this.foundTickets = this.selectVersion.tickets
             .filter((ticket) =>
@@ -1358,69 +1358,69 @@ export default {
             )
             .filter((ticket) =>
               ticket.cities.map((city) => city.name).includes(this.fromTicket)
-            )
+            );
         }
       },
     },
     foundTickets: {
       handler(value) {
-        this.selectedTicket = []
+        this.selectedTicket = [];
         if (value) {
-          if (value.length == 1) this.selectedTicket = value
+          if (value.length == 1) this.selectedTicket = value;
         }
       },
     },
     selectVersion: {
       handler(value) {
         if (value && value.name) {
-          localStorage.setItem('version', value.name)
+          localStorage.setItem('version', value.name);
         }
       },
     },
     version: {
       handler(value) {
         if (Object.keys(value).length > 0) {
-          this.selectVersion = value
+          this.selectVersion = value;
         }
       },
     },
     exchanges: {
       handler(value) {
         if (value) {
-          localStorage.setItem('exchanges', value)
+          localStorage.setItem('exchanges', value);
         } else {
           if (localStorage.getItem('exchanges'))
-            localStorage.removeItem('exchanges')
+            localStorage.removeItem('exchanges');
         }
       },
     },
     id: {
       handler(value) {
         if (value) {
-          this.gameId = value
+          this.gameId = value;
         }
       },
     },
     gameId: {
       handler(value) {
         if (value) {
-          localStorage.setItem('id', value)
+          localStorage.setItem('id', value);
         }
       },
     },
     longestBonus: {
       handler(value) {
-        if (value != null) localStorage.setItem('longestBonus', value)
+        if (value != null) localStorage.setItem('longestBonus', value);
       },
     },
     globeTrotterBonus: {
       handler(value) {
-        if (value != null) localStorage.setItem('globeTrotterBonus', value)
+        if (value != null) localStorage.setItem('globeTrotterBonus', value);
       },
     },
     trainStations: {
       handler(value) {
-        if (value != null) localStorage.setItem('trainStations', value)
+        if (value != null) localStorage.setItem('trainStations', value);
       },
     },
     computedLastNUnits: {
@@ -1428,358 +1428,359 @@ export default {
         if (value) {
           let message = this.$t('main.snackbar.warning.last-units', {
             n: this.selectVersion.threshold,
-          })
-          this.notifySnack(message, 'warning')
+          });
+          this.notifySnack(message, 'warning');
         }
       },
     },
     appLoaded: {
       immediate: true,
       handler(value) {
-        if (value) this.initialiseFromLocalStorage()
+        if (value) this.initialiseFromLocalStorage();
       },
     },
   },
   methods: {
     deleteItem(item) {
-      let id = this.routes.findIndex((route) => route.id == item.id)
+      let id = this.routes.findIndex((route) => route.id == item.id);
       if (id < 0)
-        this.notifySnack(this.$t('main.snackbar.error.delete'), 'error')
-      else this.routes.splice(id, 1)
+        this.notifySnack(this.$t('main.snackbar.error.delete'), 'error');
+      else this.routes.splice(id, 1);
     },
     getStatusColor(status) {
-      if (status == 'Fail') return 'red'
-      else if (status == 'Done') return 'green'
-      else return 'amber'
+      if (status == 'Fail') return 'red';
+      else if (status == 'Done') return 'green';
+      else return 'amber';
     },
     getStatusText(status) {
-      if (status == 'Fail') return this.$t('main.status.fail')
-      else if (status == 'Done') return this.$t('main.status.done')
-      else return this.$t('main.status.unordered')
+      if (status == 'Fail') return this.$t('main.status.fail');
+      else if (status == 'Done') return this.$t('main.status.done');
+      else return this.$t('main.status.unordered');
     },
     async openSaveGame() {
-      this.dialogSaveGame = true
-      this.loadingOpenSaveGame = true
+      this.dialogSaveGame = true;
+      this.loadingOpenSaveGame = true;
       if (this.players.length > 1) {
-        this.selectPlayer = this.players
-        this.loadingOpenSaveGame = false
+        this.selectPlayer = this.players;
+        this.loadingOpenSaveGame = false;
       } else {
         try {
           // Retrieve document to get the names
-          let doc = await db.collection('Games').doc(this.gameId).get()
-          let game = doc.data()
+          let doc = await db.collection('Games').doc(this.gameId).get();
+          let game = doc.data();
           if (game) {
-            let num = game.players
-            let names = []
+            let num = game.players;
+            let names = [];
             for (let i = 0; i < num; i++) {
-              let s = `player${i + 1}`
-              names.push(game[s].name)
+              let s = `player${i + 1}`;
+              names.push(game[s].name);
             }
-            console.log(names)
-            this.selectPlayer = names
+            console.log(names);
+            this.selectPlayer = names;
           } else {
             // No game found with this ID
             this.saveGameSelectErrorMessage = this.$t(
               'current.dialog.save.error.id'
-            )
+            );
           }
         } catch (error) {
           this.saveGameSelectErrorMessage = this.$t(
             'current.dialog.save.error.unexpected'
-          )
+          );
           console.error(
             'When computing names from firebase document : ' + error
-          )
-          this.notifySnack(this.$t('main.snackbar.error.open-save'), 'error')
+          );
+          this.notifySnack(this.$t('main.snackbar.error.open-save'), 'error');
         } finally {
-          this.loadingOpenSaveGame = false
+          this.loadingOpenSaveGame = false;
         }
       }
     },
     closeSaveGame() {
-      this.dialogSaveGame = false
-      this.selectedPlayer = null
-      this.saveGameSelectErrorMessage = null
+      this.dialogSaveGame = false;
+      this.selectedPlayer = null;
+      this.saveGameSelectErrorMessage = null;
     },
     async saveGame() {
-      this.loadingSave = true
-      let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer) + 1}`
+      this.loadingSave = true;
+      let numPlayer = `player${this.selectPlayer.indexOf(this.selectedPlayer) + 1}`;
       let routes = this.routes.map((x) => {
-        return { id: x.id, status: x.status }
-      })
+        return { id: x.id, status: x.status };
+      });
       let update = {
         name: this.selectedPlayer,
         score: this.computedTotalScore,
         tickets: routes,
         units: this.trainsAndBoats,
-      }
+      };
       if (this.computedVersionHasHarbors)
         update['harbors'] = this.harbors.map((x) => {
-          return { city: x, score: this.getHarborScore(x) }
-        })
-      if (this.computedVersionHasExchanges) update['exchanges'] = this.exchanges
+          return { city: x, score: this.getHarborScore(x) };
+        });
+      if (this.computedVersionHasExchanges)
+        update['exchanges'] = this.exchanges;
       if (this.computedVersionHasTrainStations)
-        update['trainStations'] = this.computedTrainStationsScore
+        update['trainStations'] = this.computedTrainStationsScore;
       if (this.computedVersionHasLongest)
-        update['longestBonus'] = this.computedLongestBonus
+        update['longestBonus'] = this.computedLongestBonus;
       if (this.computedVersionHasGlobeTrotterBonus)
-        update['globeTrotterBonus'] = this.computedGlobeTrotterBonus
+        update['globeTrotterBonus'] = this.computedGlobeTrotterBonus;
       if (this.computedVersionHasMandalaBonus)
-        update['mandalaBonus'] = this.mandalaBonus
+        update['mandalaBonus'] = this.mandalaBonus;
       try {
         await db
           .collection('Games')
           .doc(this.gameId)
-          .update({ [numPlayer]: update })
-        this.notifySnack(this.$t('main.snackbar.success.save'), 'success')
+          .update({ [numPlayer]: update });
+        this.notifySnack(this.$t('main.snackbar.success.save'), 'success');
       } catch (error) {
-        console.warn('Oups something went terribly wrong : ' + error)
-        this.notifySnack(this.$t('main.snackbar.error.save'), 'error')
+        console.warn('Oups something went terribly wrong : ' + error);
+        this.notifySnack(this.$t('main.snackbar.error.save'), 'error');
       } finally {
-        this.closeSaveGame()
-        this.loadingSave = false
+        this.closeSaveGame();
+        this.loadingSave = false;
       }
     },
     async shareGameId() {
-      this.loadingShare = true
-      let isError = false
+      this.loadingShare = true;
+      let isError = false;
       let shareData = {
         title: "Let's play!",
         text: this.gameId,
         url: 'https://jrmdel.github.io/TicketToRide',
-      }
+      };
       try {
-        await navigator.share(shareData)
+        await navigator.share(shareData);
       } catch (error) {
-        isError = true
-        console.warn('Impossible to share the ID : ' + error)
+        isError = true;
+        console.warn('Impossible to share the ID : ' + error);
       } finally {
         isError
           ? this.notifySnack(this.$t('main.snackbar.error.share'), 'error')
-          : this.notifySnack(this.$t('main.snackbar.success.share'), 'success')
-        this.loadingShare = false
+          : this.notifySnack(this.$t('main.snackbar.success.share'), 'success');
+        this.loadingShare = false;
       }
     },
     openAddTicket() {
-      this.dialogTicket = true
+      this.dialogTicket = true;
     },
     isTour(type) {
-      return type == Types.TOUR
+      return type == Types.TOUR;
     },
     addTicket() {
       let ticket =
         this.foundTickets.length == 1
           ? this.foundTickets[0]
-          : this.selectedTicket[0]
-      this.routes.push({ ...ticket, status: 'Fail' })
-      localStorage.setItem('routes', JSON.stringify(this.routes))
-      this.fromTicket = null
+          : this.selectedTicket[0];
+      this.routes.push({ ...ticket, status: 'Fail' });
+      localStorage.setItem('routes', JSON.stringify(this.routes));
+      this.fromTicket = null;
     },
     closeAddTicket() {
-      this.dialogTicket = false
-      this.toTicket = null
-      this.fromTicket = null
+      this.dialogTicket = false;
+      this.toTicket = null;
+      this.fromTicket = null;
     },
     openAddHarbor() {
-      this.dialogHarbor = true
+      this.dialogHarbor = true;
     },
     addHarbor() {
-      this.harbors.push(this.newHarbor)
-      localStorage.setItem('harbors', JSON.stringify(this.harbors))
-      if (this.harbors.length == 3) this.closeAddHarbor()
+      this.harbors.push(this.newHarbor);
+      localStorage.setItem('harbors', JSON.stringify(this.harbors));
+      if (this.harbors.length == 3) this.closeAddHarbor();
       else {
-        this.newHarbor = null
-        this.$refs.harborForm.resetValidation()
+        this.newHarbor = null;
+        this.$refs.harborForm.resetValidation();
       }
     },
     deleteHarbor(num) {
-      this.harbors.splice(num - 1, 1)
+      this.harbors.splice(num - 1, 1);
     },
     closeAddHarbor() {
-      this.dialogHarbor = false
-      this.newHarbor = null
+      this.dialogHarbor = false;
+      this.newHarbor = null;
       setTimeout(() => {
-        this.$refs.harborForm.resetValidation()
-      }, 50)
+        this.$refs.harborForm.resetValidation();
+      }, 50);
     },
     harborHasCity(city) {
-      return this.harbors.includes(city)
+      return this.harbors.includes(city);
     },
     getHarborScore(city) {
-      let found = this.computedTopSuccessfulCities.find((x) => x.city == city)
+      let found = this.computedTopSuccessfulCities.find((x) => x.city == city);
       if (found && found.num > 0) {
-        return this.selectVersion.harborRule[Math.min(found.num, 3) - 1]
-      } else return 0
+        return this.selectVersion.harborRule[Math.min(found.num, 3) - 1];
+      } else return 0;
     },
     openReset(type) {
-      this.resetType = type
-      this.dialogReset = true
+      this.resetType = type;
+      this.dialogReset = true;
     },
     getResetTitle(resetType) {
       if (resetType == 'tickets')
-        return this.$t('current.dialog.reset.types.tickets')
+        return this.$t('current.dialog.reset.types.tickets');
       else if (resetType == 'units')
-        return this.$t('current.dialog.reset.types.units')
+        return this.$t('current.dialog.reset.types.units');
       else if (resetType == 'harbors')
-        return this.$t('current.dialog.reset.types.harbors')
+        return this.$t('current.dialog.reset.types.harbors');
       else if (resetType == 'train stations')
-        return this.$t('current.dialog.reset.types.stations')
+        return this.$t('current.dialog.reset.types.stations');
       else if (resetType == 'bonuses')
-        return this.$t('current.dialog.reset.types.bonuses')
-      else return this.$t('current.dialog.reset.types.all')
+        return this.$t('current.dialog.reset.types.bonuses');
+      else return this.$t('current.dialog.reset.types.all');
     },
     resetTypeOf() {
-      if (this.resetType == 'tickets') this.resetTickets()
-      else if (this.resetType == 'units') this.resetTrainsAndBoats()
-      else if (this.resetType == 'harbors') this.resetHarbors()
-      else if (this.resetType == 'train stations') this.resetTrainStations()
-      else if (this.resetType == 'bonuses') this.resetBonuses()
+      if (this.resetType == 'tickets') this.resetTickets();
+      else if (this.resetType == 'units') this.resetTrainsAndBoats();
+      else if (this.resetType == 'harbors') this.resetHarbors();
+      else if (this.resetType == 'train stations') this.resetTrainStations();
+      else if (this.resetType == 'bonuses') this.resetBonuses();
       else {
-        this.resetAll()
-        this.$emit('resetGameSession')
+        this.resetAll();
+        this.$emit('resetGameSession');
       }
-      this.dialogReset = false
-      this.resetType = ''
+      this.dialogReset = false;
+      this.resetType = '';
     },
     resetTickets() {
-      this.routes = []
-      if (localStorage.getItem('routes')) localStorage.removeItem('routes')
+      this.routes = [];
+      if (localStorage.getItem('routes')) localStorage.removeItem('routes');
     },
     resetTrainsAndBoats() {
-      this.trainsAndBoats = Object.assign({}, this.defaultTrainsAndBoats)
-      this.exchanges = 0
-      if (localStorage.getItem('units')) localStorage.removeItem('units')
+      this.trainsAndBoats = Object.assign({}, this.defaultTrainsAndBoats);
+      this.exchanges = 0;
+      if (localStorage.getItem('units')) localStorage.removeItem('units');
     },
     resetHarbors() {
-      this.harbors = []
-      if (localStorage.getItem('harbors')) localStorage.removeItem('harbors')
+      this.harbors = [];
+      if (localStorage.getItem('harbors')) localStorage.removeItem('harbors');
     },
     resetTrainStations() {
-      this.trainStations = 0
+      this.trainStations = 0;
       if (localStorage.getItem('trainStations'))
-        localStorage.removeItem('trainStations')
+        localStorage.removeItem('trainStations');
     },
     handleBonusEvent(event) {
-      let { name, ...rest } = event
+      let { name, ...rest } = event;
       if (name == 'mandala') {
-        this.mandalaBonus = rest
+        this.mandalaBonus = rest;
       }
     },
     resetBonuses() {
-      this.longestBonus = 0
-      this.globeTrotterBonus = 0
-      this.$refs.mandalaBonus.resetBonus()
+      this.longestBonus = 0;
+      this.globeTrotterBonus = 0;
+      this.$refs.mandalaBonus.resetBonus();
       if (localStorage.getItem('longestBonus'))
-        localStorage.removeItem('longestBonus')
+        localStorage.removeItem('longestBonus');
       if (localStorage.getItem('globeTrotterBonus'))
-        localStorage.removeItem('globeTrotterBonus')
+        localStorage.removeItem('globeTrotterBonus');
     },
     updateTrainsAndBoats(event) {
-      this.trainsAndBoats[event.units] += event.update
-      localStorage.setItem('units', JSON.stringify(this.trainsAndBoats))
+      this.trainsAndBoats[event.units] += event.update;
+      localStorage.setItem('units', JSON.stringify(this.trainsAndBoats));
     },
     toggleTo(item, status) {
-      let id = this.routes.findIndex((route) => route.id == item.id)
+      let id = this.routes.findIndex((route) => route.id == item.id);
       if (id == -1) {
-        this.notifySnack(this.$t('main.snackbar.error.toggle-status'), 'error')
+        this.notifySnack(this.$t('main.snackbar.error.toggle-status'), 'error');
       } else {
-        this.routes[id].status = status
-        localStorage.setItem('routes', JSON.stringify(this.routes))
+        this.routes[id].status = status;
+        localStorage.setItem('routes', JSON.stringify(this.routes));
       }
     },
     notifySnack(msg, color) {
-      this.$emit('popUp', { msg, color })
+      this.$emit('popUp', { msg, color });
     },
     getRoutes() {
-      return this.routes
+      return this.routes;
     },
     toggleLockSelect() {
-      this.lockSelect = !this.lockSelect
+      this.lockSelect = !this.lockSelect;
     },
     findVersion(version) {
-      let myEvent = { version: version }
-      this.$emit('findVersion', myEvent)
+      let myEvent = { version: version };
+      this.$emit('findVersion', myEvent);
     },
     resetAll() {
-      this.resetTickets()
-      this.resetTrainsAndBoats()
-      this.resetHarbors()
-      this.resetTrainStations()
-      this.resetBonuses()
-      this.gameId = ''
-      this.selectVersion = null
-      localStorage.removeItem('version')
-      localStorage.removeItem('id')
+      this.resetTickets();
+      this.resetTrainsAndBoats();
+      this.resetHarbors();
+      this.resetTrainStations();
+      this.resetBonuses();
+      this.gameId = '';
+      this.selectVersion = null;
+      localStorage.removeItem('version');
+      localStorage.removeItem('id');
     },
     initialiseFromLocalStorage() {
       if (localStorage.getItem('version')) {
         try {
-          this.findVersion(localStorage.getItem('version'))
+          this.findVersion(localStorage.getItem('version'));
         } catch (error) {
-          localStorage.removeItem('version')
+          localStorage.removeItem('version');
         }
       } else {
-        this.selectVersion = null
+        this.selectVersion = null;
       }
       if (localStorage.getItem('id')) {
         try {
-          this.gameId = localStorage.getItem('id')
+          this.gameId = localStorage.getItem('id');
         } catch (error) {
-          localStorage.removeItem('id')
+          localStorage.removeItem('id');
         }
       }
       if (localStorage.getItem('longestBonus')) {
         try {
-          this.longestBonus = parseInt(localStorage.getItem('longestBonus'))
+          this.longestBonus = parseInt(localStorage.getItem('longestBonus'));
         } catch (error) {
-          localStorage.removeItem('longestBonus')
+          localStorage.removeItem('longestBonus');
         }
       }
       if (localStorage.getItem('globeTrotterBonus')) {
         try {
           this.globeTrotterBonus = parseInt(
             localStorage.getItem('globeTrotterBonus')
-          )
+          );
         } catch (error) {
-          localStorage.removeItem('globeTrotterBonus')
+          localStorage.removeItem('globeTrotterBonus');
         }
       }
       if (localStorage.getItem('trainStations')) {
         try {
-          this.trainStations = parseInt(localStorage.getItem('trainStations'))
+          this.trainStations = parseInt(localStorage.getItem('trainStations'));
         } catch (error) {
-          localStorage.removeItem('trainStations')
+          localStorage.removeItem('trainStations');
         }
       }
       if (localStorage.getItem('units')) {
         try {
-          this.trainsAndBoats = JSON.parse(localStorage.getItem('units'))
+          this.trainsAndBoats = JSON.parse(localStorage.getItem('units'));
         } catch (error) {
-          localStorage.removeItem('units')
+          localStorage.removeItem('units');
         }
       }
       if (localStorage.getItem('harbors')) {
         try {
-          this.harbors = JSON.parse(localStorage.getItem('harbors'))
+          this.harbors = JSON.parse(localStorage.getItem('harbors'));
         } catch (error) {
-          localStorage.removeItem('harbors')
+          localStorage.removeItem('harbors');
         }
       }
       if (localStorage.getItem('routes')) {
         try {
-          this.routes = JSON.parse(localStorage.getItem('routes'))
+          this.routes = JSON.parse(localStorage.getItem('routes'));
         } catch (error) {
-          localStorage.removeItem('routes')
+          localStorage.removeItem('routes');
         }
       }
       if (localStorage.getItem('exchanges')) {
         try {
-          this.exchanges = parseInt(localStorage.getItem('exchanges'))
+          this.exchanges = parseInt(localStorage.getItem('exchanges'));
         } catch (error) {
-          localStorage.removeItem('exchanges')
+          localStorage.removeItem('exchanges');
         }
       }
     },
   },
-}
+};
 </script>

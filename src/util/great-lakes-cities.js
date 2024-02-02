@@ -34,4 +34,4 @@ module.exports.GreatLakesCities = {
   ROUYN_NORANDA: { name: 'Rouyn-Noranda', anchor: false },
   SCRANTON: { name: 'Scranton', anchor: false },
   PARRY_SOUND: { name: 'Parry Sound', anchor: true },
-}
+};

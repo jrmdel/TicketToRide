@@ -897,7 +897,7 @@
 </template>
 
 <script>
-import { db } from '@/main'
+import { db } from '@/main';
 //import jsonGames from '../util/savedGames04-21.json'
 
 export default {
@@ -958,7 +958,7 @@ export default {
         tooltip: {
           y: {
             formatter: function (val) {
-              return Math.round(val) + '%'
+              return Math.round(val) + '%';
             },
           },
         },
@@ -982,7 +982,7 @@ export default {
       insightsPlayerFilterVersion: null,
       insightsPlayerFilterPlayers: null,
       insightsPlayerAdditional: null,
-    }
+    };
   },
   props: {
     gamesAndRules: {
@@ -997,26 +997,26 @@ export default {
   watch: {
     insightsVersion: {
       handler(value) {
-        this.insightsFromVersion = null
+        this.insightsFromVersion = null;
         if (value) {
           this.insightsFromVersion = Object.assign(
             {},
             this.computeFromVersion(value.name)
-          )
+          );
         }
       },
     },
     insightsPlayer: {
       handler(value) {
-        this.insightsFromPlayer = null
-        this.insightsPerGameOptions = null
+        this.insightsFromPlayer = null;
+        this.insightsPerGameOptions = null;
         if (value) {
-          this.computePlayerInsightsPerGameOptions(this.darkTheme)
-          this.computeInsightsPlayerVersionOptions(this.darkTheme)
+          this.computePlayerInsightsPerGameOptions(this.darkTheme);
+          this.computeInsightsPlayerVersionOptions(this.darkTheme);
           this.insightsFromPlayer = Object.assign(
             {},
             this.computeFromPlayer(value)
-          )
+          );
           if (
             this.insightsPlayerFilterVersion ||
             this.insightsPlayerFilterPlayers
@@ -1027,11 +1027,11 @@ export default {
                 this.insightsPlayerFilterPlayers,
                 this.insightsPlayerFilterVersion
               )
-            )
+            );
           }
         } else {
-          this.insightsPlayerFilterVersion = null
-          this.insightsPlayerFilterPlayers = null
+          this.insightsPlayerFilterVersion = null;
+          this.insightsPlayerFilterPlayers = null;
         }
       },
     },
@@ -1044,8 +1044,8 @@ export default {
               value,
               this.insightsPlayerFilterVersion
             )
-          )
-        } else this.insightsPlayerAdditional = null
+          );
+        } else this.insightsPlayerAdditional = null;
       },
     },
     insightsPlayerFilterVersion: {
@@ -1057,8 +1057,8 @@ export default {
               this.insightsPlayerFilterPlayers,
               value
             )
-          )
-        } else this.insightsPlayerAdditional = null
+          );
+        } else this.insightsPlayerAdditional = null;
       },
     },
     darkTheme: {
@@ -1077,7 +1077,7 @@ export default {
                 : this.$vuetify.theme.themes.light.primary,
             },
           },
-        }
+        };
         this.insightsPlayerVersionOptions = {
           chart: {
             background: value
@@ -1092,7 +1092,7 @@ export default {
                 : this.$vuetify.theme.themes.light.secondary,
             },
           },
-        }
+        };
         //this.insightsPerGameOptions = { theme: { mode: (value) ? "dark" : "light" } }
       },
     },
@@ -1143,7 +1143,7 @@ export default {
             value: 'actions',
             sortable: false,
           },
-        ]
+        ];
       },
     },
     ticketHeaders: {
@@ -1170,7 +1170,7 @@ export default {
             sortable: true,
             class: 'primaryLight darkenBlack--text',
           },
-        ]
+        ];
       },
     },
     harborsHeaders: {
@@ -1190,7 +1190,7 @@ export default {
             sortable: false,
             class: 'primaryLight darkenBlack--text',
           },
-        ]
+        ];
       },
     },
     headersTicketsVersion: {
@@ -1226,7 +1226,7 @@ export default {
             value: 'completionRate',
             sortable: true,
           },
-        ]
+        ];
       },
     },
     potentialPlayers: {
@@ -1260,48 +1260,50 @@ export default {
             ),
             value: 5,
           },
-        ]
+        ];
       },
     },
     computedLoading: {
       get() {
         // Returns true if loading
-        return Object.keys(this.computedMetadata).length == 0
+        return Object.keys(this.computedMetadata).length == 0;
       },
     },
     computedHasHarbors: {
       get() {
-        return this.selectedVersion && this.selectedVersion.hasHarbors
+        return this.selectedVersion && this.selectedVersion.hasHarbors;
       },
     },
     computedHasBonuses: {
       get() {
-        return this.computedHasLongest && this.computedHasGlobeTrotter
+        return this.computedHasLongest && this.computedHasGlobeTrotter;
       },
     },
     computedHasLongest: {
       get() {
-        return this.selectedVersion && this.selectedVersion.hasLongest
+        return this.selectedVersion && this.selectedVersion.hasLongest;
       },
     },
     computedHasGlobeTrotter: {
       get() {
-        return this.selectedVersion && this.selectedVersion.hasBonusGlobeTrotter
+        return (
+          this.selectedVersion && this.selectedVersion.hasBonusGlobeTrotter
+        );
       },
     },
     computedHasMandala: {
       get() {
-        return this.selectedVersion && this.selectedVersion.hasBonusMandala
+        return this.selectedVersion && this.selectedVersion.hasBonusMandala;
       },
     },
     computedHasTrainStations: {
       get() {
-        return this.selectedVersion && this.selectedVersion.hasTrainStations
+        return this.selectedVersion && this.selectedVersion.hasTrainStations;
       },
     },
     computedMetadata: {
       get() {
-        if (this.games.length == 0) return {}
+        if (this.games.length == 0) return {};
         else {
           let res = {
             players: new Set(),
@@ -1310,33 +1312,33 @@ export default {
             nbTickets: 0,
             nbSuccessTickets: 0,
             sharedFirst: 0,
-          }
+          };
           let doc = null,
-            p = null
+            p = null;
           for (let i = 0, l = this.games.length; i < l; i++) {
-            doc = Object.assign({}, this.games[i])
+            doc = Object.assign({}, this.games[i]);
             if (this.gameEnded(doc)) {
               try {
-                res.versions.add(doc.version)
-                if (doc.draw) res.sharedFirst += 1
+                res.versions.add(doc.version);
+                if (doc.draw) res.sharedFirst += 1;
                 for (let j = 1; j <= doc.players; j++) {
-                  p = Object.assign({}, doc[`player${j}`])
-                  res.players.add(p.name)
-                  res.points += p.score
-                  res.nbTickets += p.tickets.length
+                  p = Object.assign({}, doc[`player${j}`]);
+                  res.players.add(p.name);
+                  res.points += p.score;
+                  res.nbTickets += p.tickets.length;
                   if (p.tickets.length > 0)
                     res.nbSuccessTickets += p.tickets.filter(
                       (item) => !item.status.match(/fail/gi)
-                    ).length
+                    ).length;
                 }
               } catch (error) {
                 console.warn(
                   `Game with id ${this.games[i].id} raised an error during computation`
-                )
+                );
               }
             }
           }
-          return res
+          return res;
         }
       },
     },
@@ -1344,44 +1346,44 @@ export default {
       get() {
         return this.insightsFromVersion?.topTickets
           ? this.insightsFromVersion.topTickets
-          : []
+          : [];
       },
     },
     computedPlayers: {
       get() {
-        return Array.from(this.computedMetadata?.players || [])
+        return Array.from(this.computedMetadata?.players || []);
       },
     },
   },
   methods: {
     openDetails(item) {
       function getScoreAndNumberOfUnits(unitObject, exchanges, rules) {
-        let count = 0
-        let score = 0
+        let count = 0;
+        let score = 0;
         for (let [key, value] of Object.entries(unitObject)) {
-          count += key * value
-          score += rules[key] * value
+          count += key * value;
+          score += rules[key] * value;
         }
-        return { count: count, score: score - exchanges }
+        return { count: count, score: score - exchanges };
       }
       function getHarborsScore(arr) {
-        let n = (3 - arr.length) * -4
+        let n = (3 - arr.length) * -4;
         return arr.length > 0
           ? arr.map((x) => x.score).reduce((a, b) => a + b) + n
-          : n
+          : n;
       }
       function getTicketData(tickets) {
-        let score = 0
-        let fail = 0
+        let score = 0;
+        let fail = 0;
         for (let i = 0; i < tickets.length; i++) {
-          let o = tickets[i]
-          if (o.status == 'Done') score += o.points
+          let o = tickets[i];
+          if (o.status == 'Done') score += o.points;
           else if (o.status == 'Fail') {
-            score += o.points_failed ? o.points_failed : -1 * o.points
-            fail += 1
-          } else score += o.points_unorderded
+            score += o.points_failed ? o.points_failed : -1 * o.points;
+            fail += 1;
+          } else score += o.points_unorderded;
         }
-        return { score: score, totalFailed: fail }
+        return { score: score, totalFailed: fail };
       }
       if (
         this.gamesAndRules.findIndex((game) => game.name == item.version) == -1
@@ -1389,32 +1391,32 @@ export default {
         return this.popUp(
           this.$t('main.snackbar.error.version-unsupported'),
           'error'
-        )
+        );
       }
       this.selectedVersion = Object.assign(
         {},
         this.gamesAndRules.find((game) => game.name == item.version)
-      )
+      );
       let obj = {
         date: item.date,
         version: item.version,
         winner: item.winner,
         score: item.score,
         rankings: item.rankings,
-      }
-      let computed = []
-      let p = ''
-      let doc = {}
+      };
+      let computed = [];
+      let p = '';
+      let doc = {};
       for (let i = 0; i < item.players; i++) {
-        p = `player${i + 1}`
-        if (item[p]) doc = Object.assign({}, item[p])
+        p = `player${i + 1}`;
+        if (item[p]) doc = Object.assign({}, item[p]);
         if (doc.tickets)
           doc.tickets = doc.tickets.map((x) => {
             return {
               ...x,
               ...this.selectedVersion.tickets.find((o) => x.id == o.id),
-            }
-          })
+            };
+          });
         computed.push({
           ...doc,
           computedUnits: getScoreAndNumberOfUnits(
@@ -1428,53 +1430,53 @@ export default {
           computedLongest: this.selectedVersion.hasLongest
             ? this.selectedVersion.longestPoints * (doc.longestBonus || 0)
             : 0,
-        })
+        });
       }
-      obj.players = computed
-      this.selectedGame = Object.assign({}, obj)
-      this.dialogDetails = true
+      obj.players = computed;
+      this.selectedGame = Object.assign({}, obj);
+      this.dialogDetails = true;
     },
     hasWonMandalaBonus(player) {
-      return player?.mandalaBonus?.count > 0
+      return player?.mandalaBonus?.count > 0;
     },
     getMandalaBonusScore(player) {
-      return player?.mandalaBonus?.score || 0
+      return player?.mandalaBonus?.score || 0;
     },
     async deleteItem(item) {
       try {
         let ok = window.confirm(
           'You are about to delete this game. Are you sure ?'
-        )
+        );
         if (ok) {
-          await db.collection('Games').doc(item.id).delete()
-          console.log('Game deleted successfully')
+          await db.collection('Games').doc(item.id).delete();
+          console.log('Game deleted successfully');
         }
       } catch (error) {
-        console.warn('An error occured while deleting game : ' + error)
+        console.warn('An error occured while deleting game : ' + error);
       }
     },
     getTotalUnits(playersArr) {
-      let nb = 0
+      let nb = 0;
       for (let i = 0; i < playersArr.length; i++) {
-        let p = playersArr[i]
-        nb += p.computedUnits.count
+        let p = playersArr[i];
+        nb += p.computedUnits.count;
       }
-      return nb
+      return nb;
     },
     getTotalSuccessfulTickets(playersArr) {
-      let nb = 0
+      let nb = 0;
       for (let i = 0; i < playersArr.length; i++) {
-        let p = playersArr[i]
-        nb += (p.tickets?.length || 0) - p.computedTickets.totalFailed
+        let p = playersArr[i];
+        nb += (p.tickets?.length || 0) - p.computedTickets.totalFailed;
       }
-      return nb
+      return nb;
     },
     gameEnded(game) {
-      let p = game?.players || 0
+      let p = game?.players || 0;
       for (let i = 1; i <= p; i++) {
-        if ((game[`player${i}`]?.tickets?.length || 0) == 0) return false
+        if ((game[`player${i}`]?.tickets?.length || 0) == 0) return false;
       }
-      return true
+      return true;
     },
     /*
         computePointsGraph(player){
@@ -1525,7 +1527,7 @@ export default {
             ),
           },
         }
-      )
+      );
     },
     computeInsightsPlayerVersionOptions(dark) {
       this.insightsPlayerVersionOptions = Object.assign(
@@ -1552,21 +1554,21 @@ export default {
             text: this.$t('scoreboard.insights.player.charts.version.title'),
           },
         }
-      )
+      );
     },
     computeUnitsToPoints(units, exchanges) {
       // TODO Rules
-      let rules = [1, 2, 4, 7, 10, 15, 18, 21, 27]
+      let rules = [1, 2, 4, 7, 10, 15, 18, 21, 27];
       return (
         Object.values(units)
           .map((val, i) => val * rules[i])
           .reduce((a, b) => a + b) - exchanges
-      )
+      );
     },
     computeFromVersion(version) {
-      if (this.games.length == 0) return {}
+      if (this.games.length == 0) return {};
       else {
-        let t = this.insightsVersion.tickets
+        let t = this.insightsVersion.tickets;
         let res = {
           topTickets: t.map((doc) => {
             return {
@@ -1580,7 +1582,7 @@ export default {
               resultLossDone: 0,
               resultLossFail: 0,
               resultLossUnordered: 0,
-            }
+            };
           }),
           totalPoints: 0,
           firstPlayerWins: 0,
@@ -1591,59 +1593,61 @@ export default {
           pointsTrainStations: 0,
           pointsUnits: 0,
           pointsBonus: 0,
-        }
-        let docs = this.games.filter((item) => item.version == version)
-        res.numberOfGames = docs.length
+        };
+        let docs = this.games.filter((item) => item.version == version);
+        res.numberOfGames = docs.length;
         let p = 0,
           player = null,
           index = 0,
-          winner = false
+          winner = false;
         for (let doc of docs) {
           if (this.gameEnded(doc)) {
-            p = doc.players
-            res.cumulPlayers += p
+            p = doc.players;
+            res.cumulPlayers += p;
             for (let j = 1; j <= p; j++) {
-              player = Object.assign({}, doc[`player${j}`])
+              player = Object.assign({}, doc[`player${j}`]);
               if (player.name == doc.winner) {
-                if (j == 1) res.firstPlayerWins++
-                winner = true
-              } else winner = false
-              res.totalPoints += player.score
+                if (j == 1) res.firstPlayerWins++;
+                winner = true;
+              } else winner = false;
+              res.totalPoints += player.score;
               if (player.harbors)
                 res.pointsHarbors +=
                   player.harbors
                     .map((h) => h.score)
                     .reduce((a, b) => a + b, 0) -
-                  4 * (3 - player.harbors.length)
+                  4 * (3 - player.harbors.length);
               if (player.units)
                 res.pointsUnits += this.computeUnitsToPoints(
                   player.units,
                   player.exchanges || 0
-                )
+                );
               for (let ticket of player.tickets) {
-                index = res.topTickets.findIndex((item) => item.id == ticket.id)
-                if (index == -1) console.log(doc)
+                index = res.topTickets.findIndex(
+                  (item) => item.id == ticket.id
+                );
+                if (index == -1) console.log(doc);
                 else {
-                  res.topTickets[index].occurrences++
+                  res.topTickets[index].occurrences++;
                   if (ticket.status.match(/done/i))
                     winner
                       ? res.topTickets[index].resultWinDone++
-                      : res.topTickets[index].resultLossDone++
+                      : res.topTickets[index].resultLossDone++;
                   else if (ticket.status.match(/fail/i))
                     winner
                       ? res.topTickets[index].resultWinFail++
-                      : res.topTickets[index].resultLossFail++
+                      : res.topTickets[index].resultLossFail++;
                   else
                     winner
                       ? res.topTickets[index].resultWinUnordered++
-                      : res.topTickets[index].resultLossUnordered++
+                      : res.topTickets[index].resultLossUnordered++;
                   res.topTickets[index].winRate = Number.parseFloat(
                     (100 *
                       (res.topTickets[index].resultWinDone +
                         res.topTickets[index].resultWinFail +
                         res.topTickets[index].resultWinUnordered)) /
                       res.topTickets[index].occurrences
-                  ).toFixed(1)
+                  ).toFixed(1);
                   res.topTickets[index].completionRate = Number.parseFloat(
                     (100 *
                       (res.topTickets[index].resultWinDone +
@@ -1651,17 +1655,17 @@ export default {
                         res.topTickets[index].resultWinUnordered +
                         res.topTickets[index].resultLossUnordered)) /
                       res.topTickets[index].occurrences
-                  ).toFixed(1)
+                  ).toFixed(1);
                 }
               }
             }
           }
         }
-        return res
+        return res;
       }
     },
     computeFromPlayer(player) {
-      if (this.games.length == 0) return {}
+      if (this.games.length == 0) return {};
       else {
         let res = {
           totalGames: 0,
@@ -1669,31 +1673,31 @@ export default {
           totalDraws: 0,
           playersPerGame: new Array(4).fill(0),
           versionPerGame: new Array(this.gamesAndRules.length).fill(0),
-        }
-        let docs = this.games || []
+        };
+        let docs = this.games || [];
         for (let doc of docs) {
-          let p = doc.players || 0
+          let p = doc.players || 0;
           for (let i = 1; i <= p; i++) {
             if (
               doc[`player${i}`]?.name == player &&
               (doc[`player${i}`]?.tickets?.length || 0) != 0
             ) {
-              res.totalGames++
+              res.totalGames++;
               if (
                 doc.draw &&
                 doc.score ==
                   doc.rankings.find((o) => o.name == this.insightsPlayer)?.score
               )
-                res.totalDraws++
-              if (doc.winner == player) res.totalWins++
-              res.playersPerGame[p - 2]++
+                res.totalDraws++;
+              if (doc.winner == player) res.totalWins++;
+              res.playersPerGame[p - 2]++;
               res.versionPerGame[
                 this.gamesAndRules.findIndex((item) => item.name == doc.version)
-              ]++
+              ]++;
             }
           }
         }
-        return res
+        return res;
       }
     },
     computePlayerInsightsFromFilters(players, version) {
@@ -1703,7 +1707,7 @@ export default {
           (version ? game.version == version : true) &&
           (players ? game.players == players : true) &&
           game.rankings.some((item) => item.name == this.insightsPlayer)
-      )
+      );
       let data = {
         totalGames: 0,
         totalWins: 0,
@@ -1719,30 +1723,30 @@ export default {
                   completed: 0,
                   winRate: '0.0',
                   completionRate: '0.0',
-                }
+                };
               })
           : [],
-      }
-      if (filtered.length == 0) return data
+      };
+      if (filtered.length == 0) return data;
       else {
-        data.totalGames = filtered.length
+        data.totalGames = filtered.length;
         for (let doc of filtered) {
-          let isWon = !doc.draw && doc.winner == this.insightsPlayer
-          if (isWon) data.totalWins++
+          let isWon = !doc.draw && doc.winner == this.insightsPlayer;
+          if (isWon) data.totalWins++;
           if (version) {
-            let playerData = this.getPlayerFromGame(doc, this.insightsPlayer)
+            let playerData = this.getPlayerFromGame(doc, this.insightsPlayer);
             for (let i = 0, l = playerData?.tickets?.length || 0; i < l; i++) {
               let index = data.tickets.findIndex(
                 (item) => item.id == playerData?.tickets[i]?.id
-              )
+              );
               if (index != -1) {
-                data.tickets[index].occurrences++
-                if (isWon) data.tickets[index].wins++
+                data.tickets[index].occurrences++;
+                if (isWon) data.tickets[index].wins++;
                 if (!playerData.tickets[i].status.match(/fail/i))
-                  data.tickets[index].completed++
+                  data.tickets[index].completed++;
               }
             }
-            playerData = null
+            playerData = null;
           }
         }
         data.tickets = data.tickets
@@ -1761,57 +1765,57 @@ export default {
                       100 * (ticket.completed / ticket.occurrences)
                     ).toFixed(1)
                   : ticket.completionRate,
-            }
+            };
           })
-          .sort((a, b) => b.occurrences - a.occurrences)
-        data.winRate = data.totalWins / data.totalGames
-        return data
+          .sort((a, b) => b.occurrences - a.occurrences);
+        data.winRate = data.totalWins / data.totalGames;
+        return data;
       }
     },
     getPlayerFromGame(game, name) {
       for (let i = 1, n = game?.players || 0; i <= n; i++) {
-        if (game[`player${i}`]?.name == name) return game[`player${i}`]
+        if (game[`player${i}`]?.name == name) return game[`player${i}`];
       }
-      return null
+      return null;
     },
     closeDetails() {
-      this.dialogDetails = false
-      this.selectedGame = null
-      this.selectedVersion = null
+      this.dialogDetails = false;
+      this.selectedGame = null;
+      this.selectedVersion = null;
     },
     getStatusColor(status) {
-      if (status == 'Done') return 'green'
-      else if (status == 'Fail') return 'red'
-      else return 'amber'
+      if (status == 'Done') return 'green';
+      else if (status == 'Fail') return 'red';
+      else return 'amber';
     },
     dateInRange(date) {
-      let d = new Date(Date.parse(date))
-      let today = new Date()
+      let d = new Date(Date.parse(date));
+      let today = new Date();
       if (d > new Date(today.setDate(today.getDate() - 2))) {
-        return true
-      } else return false
+        return true;
+      } else return false;
     },
     joinGame(item) {
       // Will change the tab and send the ID + version
-      let myEvent = { id: item.id, version: item.version }
-      this.$emit('joinGame', myEvent)
+      let myEvent = { id: item.id, version: item.version };
+      this.$emit('joinGame', myEvent);
     },
     popUp(msg, color) {
-      this.$emit('popUp', { msg, color })
+      this.$emit('popUp', { msg, color });
     },
     computeObjectFromFirebase(doc) {
-      let docData = doc.data()
-      let p = []
+      let docData = doc.data();
+      let p = [];
       for (let i = 0; i < docData.players; i++) {
-        let w = docData[`player${i + 1}`]
-        p.push({ name: w.name, score: w.score })
+        let w = docData[`player${i + 1}`];
+        p.push({ name: w.name, score: w.score });
       }
-      p.sort((a, b) => b.score - a.score)
-      let top = p[0].score
-      let res = p.filter((x) => x.score == top)
-      let winner = ''
+      p.sort((a, b) => b.score - a.score);
+      let top = p[0].score;
+      let res = p.filter((x) => x.score == top);
+      let winner = '';
       for (let j = 0; j < res.length; j++) {
-        j == 0 ? (winner += res[j].name) : (winner += `, ${res[j].name}`)
+        j == 0 ? (winner += res[j].name) : (winner += `, ${res[j].name}`);
       }
       return {
         id: doc.id,
@@ -1820,20 +1824,20 @@ export default {
         score: top,
         rankings: p,
         draw: res.length != 1,
-      }
+      };
     },
     async getFirebaseData() {
-      this.loadingData = true
-      let snapshot = await db.collection('Games').get()
-      let games = []
+      this.loadingData = true;
+      let snapshot = await db.collection('Games').get();
+      let games = [];
       snapshot.forEach((doc) => {
-        games.push(this.computeObjectFromFirebase(doc))
-      })
-      this.games = games
-      this.loadingData = false
+        games.push(this.computeObjectFromFirebase(doc));
+      });
+      this.games = games;
+      this.loadingData = false;
     },
     async getRealTimeData() {
-      this.loadingData = true
+      this.loadingData = true;
       let unsubscribe = await db
         .collection('Games')
         .orderBy('date')
@@ -1844,31 +1848,31 @@ export default {
                 this.games.splice(
                   this.games.findIndex((el) => el.id == change.doc.id),
                   1
-                )
+                );
               else {
-                let doc = this.computeObjectFromFirebase(change.doc)
-                if (change.type == 'added') this.games.unshift(doc)
+                let doc = this.computeObjectFromFirebase(change.doc);
+                if (change.type == 'added') this.games.unshift(doc);
                 else if (change.type == 'modified')
                   this.games.splice(
                     this.games.findIndex((el) => el.id == change.doc.id),
                     1,
                     doc
-                  )
+                  );
               }
-            })
+            });
           },
           (error) => {
-            console.warn('Firebase query failed : ' + error)
+            console.warn('Firebase query failed : ' + error);
           }
-        )
-      this.unsubscribe = unsubscribe
-      this.loadingData = false
+        );
+      this.unsubscribe = unsubscribe;
+      this.loadingData = false;
     },
   },
   mounted() {
     //this.getFirebaseData()
     // The one below is the good one
-    this.getRealTimeData()
+    this.getRealTimeData();
 
     // For development purposes
     /*this.loadingData = true;
@@ -1877,7 +1881,7 @@ export default {
         }, 2500)*/
   },
   beforeDestroy() {
-    this.unsubscribe()
+    this.unsubscribe();
   },
-}
+};
 </script>

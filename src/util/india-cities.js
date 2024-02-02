@@ -38,4 +38,4 @@ module.exports.IndiaCities = {
   CALICUT: { name: 'Calicut' },
   ERODE: { name: 'Erode' },
   QUILON: { name: 'Quilon' },
-}
+};

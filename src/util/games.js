@@ -1,5 +1,5 @@
-import Rule from './rule'
-import { Tickets } from './tickets'
+import Rule from './rule';
+import { Tickets } from './tickets';
 
 var world = Rule.create(
   'Around The World',
@@ -14,7 +14,7 @@ var world = Rule.create(
   3,
   -4,
   [20, 30, 40]
-)
+);
 var lakes = Rule.create(
   'Great Lakes',
   50,
@@ -28,7 +28,7 @@ var lakes = Rule.create(
   3,
   -4,
   [10, 20, 30]
-)
+);
 var europ = Rule.create(
   'Europe',
   45,
@@ -46,7 +46,7 @@ var europ = Rule.create(
   4,
   0,
   10
-)
+);
 var france = Rule.create(
   'France',
   40,
@@ -65,7 +65,7 @@ var france = Rule.create(
   0,
   10,
   15
-)
+);
 var india = Rule.create(
   'India',
   45,
@@ -85,6 +85,6 @@ var india = Rule.create(
   10,
   0,
   true
-)
+);
 
-export const Games = [world, lakes, europ, france, india]
+export const Games = [world, lakes, europ, france, india];

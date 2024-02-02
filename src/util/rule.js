@@ -62,7 +62,7 @@ function create(
     hasBonusGlobeTrotter: bonusGlobeTrotter != 0,
     bonusGlobeTrotter: bonusGlobeTrotter,
     hasBonusMandala: hasBonusMandala,
-  }
+  };
 }
 
-module.exports.create = create
+module.exports.create = create;

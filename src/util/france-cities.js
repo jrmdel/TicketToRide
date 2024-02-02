@@ -47,4 +47,4 @@ module.exports.FranceCities = {
   MARSEILLE: { name: 'Marseille' },
   PARIS: { name: 'Paris' },
   BREST: { name: 'Brest' },
-}
+};

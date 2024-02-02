@@ -46,5 +46,5 @@ export default {
     data: { type: Array, default: () => [] },
     emptyText: { type: String, default: 'No data' },
   },
-}
+};
 </script>

@@ -36,8 +36,8 @@ export default {
   },
   methods: {
     notify(event) {
-      this.$emit(event)
+      this.$emit(event);
     },
   },
-}
+};
 </script>

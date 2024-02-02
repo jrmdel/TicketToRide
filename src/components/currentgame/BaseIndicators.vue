@@ -48,5 +48,5 @@ export default {
     rightCondition: { type: Boolean, default: true },
     rightIsPercentage: { type: Boolean, default: false },
   },
-}
+};
 </script>
