@@ -20,34 +20,49 @@
  * @param {Boolean} hasBonusMandala A truthy value if this version contains a bonus for mandala
  */
 function create(
-    name, units, tickets, initialScore, pointsPerRoute, threshold, numberOfTurnsEnd,
-    hasBoats, hasExchanges, numberOfHarbors=0, unsetHarbor=0, harborRule=null,
-    numberOfTrainStations=0, unsetTrainStation=0, trainStationRule=0,
-    bonusLongestPoints=0, bonusGlobeTrotter=0, hasBonusMandala=false){
-    return {
-        "name": name,
-        "units": units,
-        "tickets": tickets,
-        "initialScore": initialScore,
-        "pointsPerRoute": pointsPerRoute,
-        "threshold": threshold,
-        "numberOfTurnsEnd": numberOfTurnsEnd,
-        "hasBoats": hasBoats,
-        "hasExchanges": hasExchanges,
-        "hasHarbors": (numberOfHarbors!=0),
-        "numberOfHarborsPerPlayer": numberOfHarbors,
-        "pointsPerUnsetHarbor": unsetHarbor,
-        "harborRule": harborRule,
-        "hasTrainStations": (numberOfTrainStations!=0),
-        "numberOfTrainStationsPerPlayer": numberOfTrainStations,
-        "pointsPerUnsetTrainStation": unsetTrainStation,
-        "trainStationRule": trainStationRule,
-        "hasLongest": (bonusLongestPoints!=0),
-        "longestPoints": bonusLongestPoints,
-        "hasBonusGlobeTrotter": (bonusGlobeTrotter != 0),
-        "bonusGlobeTrotter": bonusGlobeTrotter,
-        "hasBonusMandala": hasBonusMandala,
-    }
+  name,
+  units,
+  tickets,
+  initialScore,
+  pointsPerRoute,
+  threshold,
+  numberOfTurnsEnd,
+  hasBoats,
+  hasExchanges,
+  numberOfHarbors = 0,
+  unsetHarbor = 0,
+  harborRule = null,
+  numberOfTrainStations = 0,
+  unsetTrainStation = 0,
+  trainStationRule = 0,
+  bonusLongestPoints = 0,
+  bonusGlobeTrotter = 0,
+  hasBonusMandala = false
+) {
+  return {
+    name: name,
+    units: units,
+    tickets: tickets,
+    initialScore: initialScore,
+    pointsPerRoute: pointsPerRoute,
+    threshold: threshold,
+    numberOfTurnsEnd: numberOfTurnsEnd,
+    hasBoats: hasBoats,
+    hasExchanges: hasExchanges,
+    hasHarbors: numberOfHarbors != 0,
+    numberOfHarborsPerPlayer: numberOfHarbors,
+    pointsPerUnsetHarbor: unsetHarbor,
+    harborRule: harborRule,
+    hasTrainStations: numberOfTrainStations != 0,
+    numberOfTrainStationsPerPlayer: numberOfTrainStations,
+    pointsPerUnsetTrainStation: unsetTrainStation,
+    trainStationRule: trainStationRule,
+    hasLongest: bonusLongestPoints != 0,
+    longestPoints: bonusLongestPoints,
+    hasBonusGlobeTrotter: bonusGlobeTrotter != 0,
+    bonusGlobeTrotter: bonusGlobeTrotter,
+    hasBonusMandala: hasBonusMandala,
+  }
 }
 
-module.exports.create = create;
+module.exports.create = create
