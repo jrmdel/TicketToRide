@@ -42,7 +42,9 @@ export default {
     bonus: {
       handler(value) {
         this.sendEvent(value);
-        if (value != null) localStorage.setItem('mandalaBonus', value);
+        if (value != null) {
+          localStorage.setItem('mandalaBonus', value);
+        }
       },
     },
   },
@@ -77,8 +79,9 @@ export default {
   methods: {
     resetBonus() {
       this.bonus = 0;
-      if (localStorage.getItem('mandalaBonus'))
+      if (localStorage.getItem('mandalaBonus')) {
         localStorage.removeItem('mandalaBonus');
+      }
     },
     sendEvent(value) {
       this.$emit('update-bonus', {

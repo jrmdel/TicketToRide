@@ -1045,7 +1045,9 @@ export default {
               this.insightsPlayerFilterVersion
             )
           );
-        } else this.insightsPlayerAdditional = null;
+        } else {
+          this.insightsPlayerAdditional = null;
+        }
       },
     },
     insightsPlayerFilterVersion: {
@@ -1058,7 +1060,9 @@ export default {
               value
             )
           );
-        } else this.insightsPlayerAdditional = null;
+        } else {
+          this.insightsPlayerAdditional = null;
+        }
       },
     },
     darkTheme: {
@@ -1303,9 +1307,10 @@ export default {
     },
     computedMetadata: {
       get() {
-        if (this.games.length == 0) return {};
-        else {
-          let res = {
+        if (this.games.length == 0) {
+          return {};
+        } else {
+          const res = {
             players: new Set(),
             versions: new Set(),
             points: 0,
@@ -1320,16 +1325,19 @@ export default {
             if (this.gameEnded(doc)) {
               try {
                 res.versions.add(doc.version);
-                if (doc.draw) res.sharedFirst += 1;
+                if (doc.draw) {
+                  res.sharedFirst += 1;
+                }
                 for (let j = 1; j <= doc.players; j++) {
                   p = Object.assign({}, doc[`player${j}`]);
                   res.players.add(p.name);
                   res.points += p.score;
                   res.nbTickets += p.tickets.length;
-                  if (p.tickets.length > 0)
+                  if (p.tickets.length > 0) {
                     res.nbSuccessTickets += p.tickets.filter(
                       (item) => !item.status.match(/fail/gi)
                     ).length;
+                  }
                 }
               } catch (error) {
                 console.warn(
@@ -1360,14 +1368,14 @@ export default {
       function getScoreAndNumberOfUnits(unitObject, exchanges, rules) {
         let count = 0;
         let score = 0;
-        for (let [key, value] of Object.entries(unitObject)) {
+        for (const [key, value] of Object.entries(unitObject)) {
           count += key * value;
           score += rules[key] * value;
         }
         return { count: count, score: score - exchanges };
       }
       function getHarborsScore(arr) {
-        let n = (3 - arr.length) * -4;
+        const n = (3 - arr.length) * -4;
         return arr.length > 0
           ? arr.map((x) => x.score).reduce((a, b) => a + b) + n
           : n;
@@ -1376,12 +1384,15 @@ export default {
         let score = 0;
         let fail = 0;
         for (let i = 0; i < tickets.length; i++) {
-          let o = tickets[i];
-          if (o.status == 'Done') score += o.points;
-          else if (o.status == 'Fail') {
+          const o = tickets[i];
+          if (o.status == 'Done') {
+            score += o.points;
+          } else if (o.status == 'Fail') {
             score += o.points_failed ? o.points_failed : -1 * o.points;
             fail += 1;
-          } else score += o.points_unorderded;
+          } else {
+            score += o.points_unorderded;
+          }
         }
         return { score: score, totalFailed: fail };
       }
@@ -1397,26 +1408,29 @@ export default {
         {},
         this.gamesAndRules.find((game) => game.name == item.version)
       );
-      let obj = {
+      const obj = {
         date: item.date,
         version: item.version,
         winner: item.winner,
         score: item.score,
         rankings: item.rankings,
       };
-      let computed = [];
+      const computed = [];
       let p = '';
       let doc = {};
       for (let i = 0; i < item.players; i++) {
         p = `player${i + 1}`;
-        if (item[p]) doc = Object.assign({}, item[p]);
-        if (doc.tickets)
+        if (item[p]) {
+          doc = Object.assign({}, item[p]);
+        }
+        if (doc.tickets) {
           doc.tickets = doc.tickets.map((x) => {
             return {
               ...x,
               ...this.selectedVersion.tickets.find((o) => x.id == o.id),
             };
           });
+        }
         computed.push({
           ...doc,
           computedUnits: getScoreAndNumberOfUnits(
@@ -1444,7 +1458,7 @@ export default {
     },
     async deleteItem(item) {
       try {
-        let ok = window.confirm(
+        const ok = window.confirm(
           'You are about to delete this game. Are you sure ?'
         );
         if (ok) {
@@ -1458,7 +1472,7 @@ export default {
     getTotalUnits(playersArr) {
       let nb = 0;
       for (let i = 0; i < playersArr.length; i++) {
-        let p = playersArr[i];
+        const p = playersArr[i];
         nb += p.computedUnits.count;
       }
       return nb;
@@ -1466,15 +1480,17 @@ export default {
     getTotalSuccessfulTickets(playersArr) {
       let nb = 0;
       for (let i = 0; i < playersArr.length; i++) {
-        let p = playersArr[i];
+        const p = playersArr[i];
         nb += (p.tickets?.length || 0) - p.computedTickets.totalFailed;
       }
       return nb;
     },
     gameEnded(game) {
-      let p = game?.players || 0;
+      const p = game?.players || 0;
       for (let i = 1; i <= p; i++) {
-        if ((game[`player${i}`]?.tickets?.length || 0) == 0) return false;
+        if ((game[`player${i}`]?.tickets?.length || 0) == 0) {
+          return false;
+        }
       }
       return true;
     },
@@ -1558,7 +1574,7 @@ export default {
     },
     computeUnitsToPoints(units, exchanges) {
       // TODO Rules
-      let rules = [1, 2, 4, 7, 10, 15, 18, 21, 27];
+      const rules = [1, 2, 4, 7, 10, 15, 18, 21, 27];
       return (
         Object.values(units)
           .map((val, i) => val * rules[i])
@@ -1566,10 +1582,11 @@ export default {
       );
     },
     computeFromVersion(version) {
-      if (this.games.length == 0) return {};
-      else {
-        let t = this.insightsVersion.tickets;
-        let res = {
+      if (this.games.length == 0) {
+        return {};
+      } else {
+        const t = this.insightsVersion.tickets;
+        const res = {
           topTickets: t.map((doc) => {
             return {
               ...doc,
@@ -1594,53 +1611,61 @@ export default {
           pointsUnits: 0,
           pointsBonus: 0,
         };
-        let docs = this.games.filter((item) => item.version == version);
+        const docs = this.games.filter((item) => item.version == version);
         res.numberOfGames = docs.length;
         let p = 0,
           player = null,
           index = 0,
           winner = false;
-        for (let doc of docs) {
+        for (const doc of docs) {
           if (this.gameEnded(doc)) {
             p = doc.players;
             res.cumulPlayers += p;
             for (let j = 1; j <= p; j++) {
               player = Object.assign({}, doc[`player${j}`]);
               if (player.name == doc.winner) {
-                if (j == 1) res.firstPlayerWins++;
+                if (j == 1) {
+                  res.firstPlayerWins++;
+                }
                 winner = true;
-              } else winner = false;
+              } else {
+                winner = false;
+              }
               res.totalPoints += player.score;
-              if (player.harbors)
+              if (player.harbors) {
                 res.pointsHarbors +=
                   player.harbors
                     .map((h) => h.score)
                     .reduce((a, b) => a + b, 0) -
                   4 * (3 - player.harbors.length);
-              if (player.units)
+              }
+              if (player.units) {
                 res.pointsUnits += this.computeUnitsToPoints(
                   player.units,
                   player.exchanges || 0
                 );
-              for (let ticket of player.tickets) {
+              }
+              for (const ticket of player.tickets) {
                 index = res.topTickets.findIndex(
                   (item) => item.id == ticket.id
                 );
-                if (index == -1) console.log(doc);
-                else {
+                if (index == -1) {
+                  console.log(doc);
+                } else {
                   res.topTickets[index].occurrences++;
-                  if (ticket.status.match(/done/i))
+                  if (ticket.status.match(/done/i)) {
                     winner
                       ? res.topTickets[index].resultWinDone++
                       : res.topTickets[index].resultLossDone++;
-                  else if (ticket.status.match(/fail/i))
+                  } else if (ticket.status.match(/fail/i)) {
                     winner
                       ? res.topTickets[index].resultWinFail++
                       : res.topTickets[index].resultLossFail++;
-                  else
+                  } else {
                     winner
                       ? res.topTickets[index].resultWinUnordered++
                       : res.topTickets[index].resultLossUnordered++;
+                  }
                   res.topTickets[index].winRate = Number.parseFloat(
                     (100 *
                       (res.topTickets[index].resultWinDone +
@@ -1665,18 +1690,19 @@ export default {
       }
     },
     computeFromPlayer(player) {
-      if (this.games.length == 0) return {};
-      else {
-        let res = {
+      if (this.games.length == 0) {
+        return {};
+      } else {
+        const res = {
           totalGames: 0,
           totalWins: 0,
           totalDraws: 0,
           playersPerGame: new Array(4).fill(0),
           versionPerGame: new Array(this.gamesAndRules.length).fill(0),
         };
-        let docs = this.games || [];
-        for (let doc of docs) {
-          let p = doc.players || 0;
+        const docs = this.games || [];
+        for (const doc of docs) {
+          const p = doc.players || 0;
           for (let i = 1; i <= p; i++) {
             if (
               doc[`player${i}`]?.name == player &&
@@ -1687,9 +1713,12 @@ export default {
                 doc.draw &&
                 doc.score ==
                   doc.rankings.find((o) => o.name == this.insightsPlayer)?.score
-              )
+              ) {
                 res.totalDraws++;
-              if (doc.winner == player) res.totalWins++;
+              }
+              if (doc.winner == player) {
+                res.totalWins++;
+              }
               res.playersPerGame[p - 2]++;
               res.versionPerGame[
                 this.gamesAndRules.findIndex((item) => item.name == doc.version)
@@ -1702,13 +1731,13 @@ export default {
     },
     computePlayerInsightsFromFilters(players, version) {
       // Let's filter the games
-      let filtered = this.games.filter(
+      const filtered = this.games.filter(
         (game) =>
           (version ? game.version == version : true) &&
           (players ? game.players == players : true) &&
           game.rankings.some((item) => item.name == this.insightsPlayer)
       );
-      let data = {
+      const data = {
         totalGames: 0,
         totalWins: 0,
         winRate: 0,
@@ -1727,23 +1756,29 @@ export default {
               })
           : [],
       };
-      if (filtered.length == 0) return data;
-      else {
+      if (filtered.length == 0) {
+        return data;
+      } else {
         data.totalGames = filtered.length;
-        for (let doc of filtered) {
-          let isWon = !doc.draw && doc.winner == this.insightsPlayer;
-          if (isWon) data.totalWins++;
+        for (const doc of filtered) {
+          const isWon = !doc.draw && doc.winner == this.insightsPlayer;
+          if (isWon) {
+            data.totalWins++;
+          }
           if (version) {
             let playerData = this.getPlayerFromGame(doc, this.insightsPlayer);
             for (let i = 0, l = playerData?.tickets?.length || 0; i < l; i++) {
-              let index = data.tickets.findIndex(
+              const index = data.tickets.findIndex(
                 (item) => item.id == playerData?.tickets[i]?.id
               );
               if (index != -1) {
                 data.tickets[index].occurrences++;
-                if (isWon) data.tickets[index].wins++;
-                if (!playerData.tickets[i].status.match(/fail/i))
+                if (isWon) {
+                  data.tickets[index].wins++;
+                }
+                if (!playerData.tickets[i].status.match(/fail/i)) {
                   data.tickets[index].completed++;
+                }
               }
             }
             playerData = null;
@@ -1774,7 +1809,9 @@ export default {
     },
     getPlayerFromGame(game, name) {
       for (let i = 1, n = game?.players || 0; i <= n; i++) {
-        if (game[`player${i}`]?.name == name) return game[`player${i}`];
+        if (game[`player${i}`]?.name == name) {
+          return game[`player${i}`];
+        }
       }
       return null;
     },
@@ -1784,35 +1821,41 @@ export default {
       this.selectedVersion = null;
     },
     getStatusColor(status) {
-      if (status == 'Done') return 'green';
-      else if (status == 'Fail') return 'red';
-      else return 'amber';
+      if (status == 'Done') {
+        return 'green';
+      } else if (status == 'Fail') {
+        return 'red';
+      } else {
+        return 'amber';
+      }
     },
     dateInRange(date) {
-      let d = new Date(Date.parse(date));
-      let today = new Date();
+      const d = new Date(Date.parse(date));
+      const today = new Date();
       if (d > new Date(today.setDate(today.getDate() - 2))) {
         return true;
-      } else return false;
+      } else {
+        return false;
+      }
     },
     joinGame(item) {
       // Will change the tab and send the ID + version
-      let myEvent = { id: item.id, version: item.version };
+      const myEvent = { id: item.id, version: item.version };
       this.$emit('joinGame', myEvent);
     },
     popUp(msg, color) {
       this.$emit('popUp', { msg, color });
     },
     computeObjectFromFirebase(doc) {
-      let docData = doc.data();
-      let p = [];
+      const docData = doc.data();
+      const p = [];
       for (let i = 0; i < docData.players; i++) {
-        let w = docData[`player${i + 1}`];
+        const w = docData[`player${i + 1}`];
         p.push({ name: w.name, score: w.score });
       }
       p.sort((a, b) => b.score - a.score);
-      let top = p[0].score;
-      let res = p.filter((x) => x.score == top);
+      const top = p[0].score;
+      const res = p.filter((x) => x.score == top);
       let winner = '';
       for (let j = 0; j < res.length; j++) {
         j == 0 ? (winner += res[j].name) : (winner += `, ${res[j].name}`);
@@ -1828,8 +1871,8 @@ export default {
     },
     async getFirebaseData() {
       this.loadingData = true;
-      let snapshot = await db.collection('Games').get();
-      let games = [];
+      const snapshot = await db.collection('Games').get();
+      const games = [];
       snapshot.forEach((doc) => {
         games.push(this.computeObjectFromFirebase(doc));
       });
@@ -1838,26 +1881,28 @@ export default {
     },
     async getRealTimeData() {
       this.loadingData = true;
-      let unsubscribe = await db
+      const unsubscribe = await db
         .collection('Games')
         .orderBy('date')
         .onSnapshot(
           (query) => {
             query.docChanges().forEach((change) => {
-              if (change.type == 'removed')
+              if (change.type == 'removed') {
                 this.games.splice(
                   this.games.findIndex((el) => el.id == change.doc.id),
                   1
                 );
-              else {
-                let doc = this.computeObjectFromFirebase(change.doc);
-                if (change.type == 'added') this.games.unshift(doc);
-                else if (change.type == 'modified')
+              } else {
+                const doc = this.computeObjectFromFirebase(change.doc);
+                if (change.type == 'added') {
+                  this.games.unshift(doc);
+                } else if (change.type == 'modified') {
                   this.games.splice(
                     this.games.findIndex((el) => el.id == change.doc.id),
                     1,
                     doc
                   );
+                }
               }
             });
           },

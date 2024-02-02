@@ -373,16 +373,22 @@ export default {
     ruleNewVersion(value) {
       if (value == null) {
         return this.$t('app.new.form.version');
-      } else return true;
+      } else {
+        return true;
+      }
     },
     ruleNewPlayer(value) {
-      if (value == null || value?.length < 1)
+      if (value == null || value?.length < 1) {
         return this.$t('app.new.form.player');
+      }
       if (
         (value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '') != value
-      )
+      ) {
         return this.$t('app.new.form.accent');
-      if (value.length > 1 && !/\d/.test(value)) return true;
+      }
+      if (value.length > 1 && !/\d/.test(value)) {
+        return true;
+      }
       return this.$t('app.new.form.invalid-player');
     },
     resetGameSession() {
@@ -410,21 +416,21 @@ export default {
       } catch (error) {
         this.popUp({ color: 'error', msg: error });
       }
-      let doc = {
+      const doc = {
         date: this.date,
         players: this.players,
         version: this.version.name,
       };
       for (let i = 1; i <= this.players; i++) {
         this.names[i] = this.cleanName(this.names[i]);
-        let n = `player${i}`;
+        const n = `player${i}`;
         doc[n] = {
           name: this.names[i],
           score: this.version.initialScore,
           tickets: [],
         };
       }
-      let d = await db.collection('Games').add(doc);
+      const d = await db.collection('Games').add(doc);
       this.currentGameId = d.id;
       // Sets the currentGame variables
       this.currentGameVersion = Object.assign({}, this.version);
@@ -437,7 +443,7 @@ export default {
     },
     cleanName(name = '') {
       // Capitalize first letter of each words
-      let r = name
+      const r = name
         .toLowerCase()
         .split(' ')
         .filter((o) => o)

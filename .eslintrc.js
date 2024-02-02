@@ -13,9 +13,7 @@ module.exports = {
     parser: '@babel/eslint-parser',
   },
   rules: {
-    // Add your own rules here
-    // For example, you can disable/enable certain rules:
-    // 'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    // 'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    curly: ['error', 'all'], // Enforce braces for all control statements
+    'prefer-const': 'error',
   },
-}
+};

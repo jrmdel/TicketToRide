@@ -15,7 +15,7 @@ var Games = {
   INDIA: 'India',
 };
 
-let world = [
+const world = [
   {
     id: 1,
     game: Games.WORLD,
@@ -526,7 +526,7 @@ let world = [
   },
 ];
 
-let greatlakes = [
+const greatlakes = [
   {
     id: 1,
     game: Games.GREAT_LAKES,
@@ -859,7 +859,7 @@ let greatlakes = [
   },
 ];
 
-let europe = [
+const europe = [
   {
     id: 1,
     game: Games.EUROPE,
@@ -1184,7 +1184,7 @@ let europe = [
   },
 ];
 
-let france = [
+const france = [
   {
     id: 1,
     game: Games.FRANCE,
@@ -1535,7 +1535,7 @@ let france = [
   },
 ];
 
-let oldwest = [
+const oldwest = [
   {
     id: 1,
     game: Games.OLD_WEST,
@@ -1838,7 +1838,7 @@ let oldwest = [
   },
 ];
 
-let india = [
+const india = [
   {
     id: 1,
     game: Games.INDIA,
