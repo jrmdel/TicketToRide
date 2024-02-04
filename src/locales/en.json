@@ -164,6 +164,13 @@
       "globe-trotter": "Globe trotter",
       "mandala": "Mandala"
     },
+    "stock-shares": {
+      "title": "Your stock shares",
+      "indicators": {
+        "left": "nb of stock shares",
+        "right": "current score"
+      }
+    },
     "units": {
       "title": "Your units",
       "indicators": {

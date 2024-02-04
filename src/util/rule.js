@@ -18,6 +18,8 @@
  * @param {Number} bonusLongestPoints Number of bonus points for the longest path. 0 if this version doesn't include this bonus.
  * @param {Number} bonusGlobeTrotter Number of bonus points for the most tickets completed. 0 if this version doesn't include this bonus.
  * @param {Boolean} hasBonusMandala A truthy value if this version contains a bonus for mandala
+ * @param {Boolean} hasStockShares True is this version has stock shares (ex: Pennsylvania)
+ * @param {Array} stockSharesList List of all stock shares of the version (ex: Pennsylvania)
  */
 function create(
   name,
@@ -37,7 +39,9 @@ function create(
   trainStationRule = 0,
   bonusLongestPoints = 0,
   bonusGlobeTrotter = 0,
-  hasBonusMandala = false
+  hasBonusMandala = false,
+  hasStockShares = false,
+  stockSharesList = null
 ) {
   return {
     name: name,
@@ -62,6 +66,8 @@ function create(
     hasBonusGlobeTrotter: bonusGlobeTrotter != 0,
     bonusGlobeTrotter: bonusGlobeTrotter,
     hasBonusMandala: hasBonusMandala,
+    hasStockShares: hasStockShares,
+    stockSharesList: stockSharesList,
   };
 }
 

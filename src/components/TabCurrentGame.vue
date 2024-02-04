@@ -478,6 +478,13 @@
           @updateMandalaBonus="handleBonusEvent($event)"
         />
       </v-col>
+      <v-col cols="12" v-show="computedVersionHasStockShares">
+        <!--Your bonuses-->
+        <StockSharesBlock
+          :stockSharesList="computedVersionStockSharesList"
+          @updateStockShareScore="updateStockShareScore($event)"
+        />
+      </v-col>
       <v-col cols="12" v-show="selectVersion != null">
         <!--Your units-->
         <units-block
@@ -742,6 +749,7 @@ import BaseIndicators from './currentgame/BaseIndicators';
 import SimpleTable from './currentgame/SimpleTable';
 import TwoButtons from './currentgame/TwoButtons';
 import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
+import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 
@@ -752,6 +760,7 @@ export default {
     TwoButtons,
     UnitsBlock,
     BonusesBlock,
+    StockSharesBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
@@ -780,6 +789,8 @@ export default {
     longestBonus: 0,
     globeTrotterBonus: 0,
     mandalaBonus: { count: 0, score: 0 },
+    stockSharesScore: 0,
+    scoresForAllStockShares: [],
     harbors: [],
     newHarbor: null,
     resetType: '',
@@ -1088,7 +1099,8 @@ export default {
               this.unitScore +
               this.computedHarborsScore +
               this.computedTrainStationsScore +
-              this.computedBonusScore
+              this.computedBonusScore +
+              this.stockSharesScore
           );
         } else {
           return 0;
@@ -1138,6 +1150,16 @@ export default {
     computedVersionHasMandalaBonus: {
       get() {
         return this.selectVersion ? this.selectVersion.hasBonusMandala : false;
+      },
+    },
+    computedVersionHasStockShares: {
+      get() {
+        return this.selectVersion ? this.selectVersion.hasStockShares : false;
+      },
+    },
+    computedVersionStockSharesList: {
+      get() {
+        return this.selectVersion ? this.selectVersion.stockSharesList : null;
       },
     },
   },
@@ -1285,7 +1307,6 @@ export default {
               const s = `player${i + 1}`;
               names.push(game[s].name);
             }
-            console.log(names);
             this.selectPlayer = names;
           } else {
             // No game found with this ID
@@ -1433,6 +1454,10 @@ export default {
       } else {
         return 0;
       }
+    },
+    updateStockShareScore(event) {
+      this.scoresForAllStockShares = event.scoresForAllStockShares;
+      this.stockSharesScore = event.totalScore;
     },
     openReset(type) {
       this.resetType = type;

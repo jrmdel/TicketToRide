@@ -1,3 +1,4 @@
+import { PennsylvaniaStockShares } from './pennsylvania/pennsylvania-stock-shares';
 import Rule from './rule';
 import { Tickets } from './tickets';
 
@@ -86,5 +87,27 @@ var india = Rule.create(
   0,
   true
 );
+const pennsylvania = Rule.create(
+  'Pennsylvanie',
+  45,
+  Tickets.Pennsylvania,
+  0,
+  { 1: 1, 2: 2, 3: 4, 4: 7, 5: 10, 6: 15, 7: 18 },
+  2,
+  1,
+  false,
+  false,
+  0,
+  0,
+  null,
+  0,
+  0,
+  null,
+  0,
+  15,
+  false,
+  true,
+  PennsylvaniaStockShares
+);
 
-export const Games = [world, lakes, europ, france, india];
+export const Games = [world, lakes, europ, france, india, pennsylvania];
