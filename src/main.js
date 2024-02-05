@@ -5,6 +5,7 @@ import firebase from 'firebase/app';
 import 'firebase/firestore';
 import VueApexCharts from 'vue-apexcharts';
 import i18n from './i18n';
+import LocalStorageService from './services/localStorageService';
 Vue.use(VueApexCharts);
 
 Vue.component('ApexChart', VueApexCharts);
@@ -26,4 +27,7 @@ new Vue({
   vuetify,
   i18n,
   render: (h) => h(App),
+  provide: {
+    localStorageService: LocalStorageService,
+  },
 }).$mount('#app');

@@ -45,8 +45,8 @@ export default {
   },
   methods: {
     updateValue(update) {
-      const evnt = { units: this.numberOfUnits, update: update };
-      this.$emit('update-value', evnt);
+      const event = { unit: this.numberOfUnits, update: update };
+      this.$emit('update-value', event);
     },
   },
 };

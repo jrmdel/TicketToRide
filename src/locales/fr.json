@@ -1,331 +1,331 @@
 {
-    "main": {
-        "btn": {
-            "close": "FERMER",
-            "cancel": "ANNULER",
-            "create": "CREER",
-            "proceed": "CONTINUER",
-            "ok": "OK",
-            "save": "SAUVEGARDER",
-            "share": "PARTAGER CET ID",
-            "reset": "REINITIALISER",
-            "add-ticket": "AJOUTER TICKET",
-            "add-harbor": "AJOUTER PORT"
-        },
-        "tables": {
-            "search": "Recherche",
-            "headers": {
-                "from": "De",
-                "to": "A",
-                "steps": "Etapes",
-                "points": "Points",
-                "status": "Statut",
-                "actions": "Actions",
-                "delete": "Supprimer",
-                "version": "Version",
-                "date": "Date",
-                "players": "Joueurs",
-                "winner": "Gagnant.e",
-                "score": "Score",
-                "details": "Détails",
-                "join": "Rejoindre",
-                "city": "Ville",
-                "appeared": "Occurrence",
-                "win-rate": "% victoire",
-                "completion-rate": "% réussite"
-            }
-        },
-        "status": {
-            "done": "Fait",
-            "fail": "Raté",
-            "unordered": "En désordre"
-        },
-        "snackbar":{
-            "success":{
-                "save": "Votre partie a été sauvée !",
-                "share": "Partage réussi !"
-            },
-            "warning": {
-                "last-units": "Il vous reste {n} unités ou moins"
-            },
-            "error": {
-                "open-save": "Impossible de récupérer le nom des joueurs. Réessayez",
-                "toggle-status": "Oups, ticket introuvable",
-                "save": "Une erreur a eu lieu. Réessayez",
-                "share": "Impossible de partager l'ID",
-                "delete": "Oups, ticket introuvable",
-                "version-unsupported": "Cette version n'est pas supportée"
-            }
-        }
+  "main": {
+    "btn": {
+      "close": "FERMER",
+      "cancel": "ANNULER",
+      "create": "CREER",
+      "proceed": "CONTINUER",
+      "ok": "OK",
+      "save": "SAUVEGARDER",
+      "share": "PARTAGER CET ID",
+      "reset": "REINITIALISER",
+      "add-ticket": "AJOUTER TICKET",
+      "add-harbor": "AJOUTER PORT"
     },
-    "app":{
-        "settings": "Paramètres",
-        "theme": "Thème sombre",
-        "on": "Actif",
-        "off": "Inctif",
-        "lang": "Langue",
-        "tabs": {
-            "current": "Partie en cours",
-            "scoreboard": "Scores",
-            "help": "Aide"
-        },
-        "new":{
-            "title": "Créer partie",
-            "type": "Type de jeu",
-            "version": "Version du jeu",
-            "players": "Nombre de joueurs",
-            "names": "Nom des joueurs",
-            "player-label": "Joueur {id}",
-            "date": "Date",
-            "date-choice": "Choix de date",
-            "form":{
-                "version": "Version requise",
-                "player": "Nom requis",
-                "invalid-player": "Le nom doit être valide",
-                "accent": "Les caractères accentués ne sont pas supportés"
-            }
-        },
-        "warning": {
-            "title": "Attention !",
-            "line-1-a": "Vous avez rejoint une partie qui",
-            "line-1-bold": " ne correspond pas ",
-            "line-1-b": "aux tickets que vous avez renseigné.",
-            "line-2": "Veuillez réinitialiser la partie en cours et réessayer par la suite."
-        },
-        "error": {
-            "reset-game-session": "Une erreur à eu lieu au moment de réinitialiser les variables"
-        }
+    "tables": {
+      "search": "Recherche",
+      "headers": {
+        "from": "De",
+        "to": "A",
+        "steps": "Etapes",
+        "points": "Points",
+        "status": "Statut",
+        "actions": "Actions",
+        "delete": "Supprimer",
+        "version": "Version",
+        "date": "Date",
+        "players": "Joueurs",
+        "winner": "Gagnant.e",
+        "score": "Score",
+        "details": "Détails",
+        "join": "Rejoindre",
+        "city": "Ville",
+        "appeared": "Occurrence",
+        "win-rate": "% victoire",
+        "completion-rate": "% réussite"
+      }
     },
-    "current": {
-        "game": {
-            "title": "Votre partie",
-            "version": "Version",
-            "version-label": "Choisir le jeu",
-            "score": "Score total",
-            "save": "Sauvegarder la partie",
-            "save-placeholder": "Entrez l'ID à 20 caractères",
-            "save-label": "ID de la partie",
-            "reset": "Tout réinitialiser"
-        },
-        "tickets": {
-            "title": "Vos tickets",
-            "indicators": {
-                "left": "nb de tickets",
-                "center": "nb réussis",
-                "right": "score actuel"
-            },
-            "routes": {
-                "title": "Objectifs"
-            }
-        },
-        "harbors": {
-            "title": "Vos ports",
-            "indicators": {
-                "left": "nb de villes",
-                "center": "nb de ports",
-                "right": "score actuel"
-            },
-            "subtitle": "Ports construits",
-            "card": {
-                "title": "Port #{id}",
-                "no-city": "Inconnu"
-            },
-            "tables": {
-                "column-1": "Ville",
-                "column-2": "Nombre",
-                "potential": {
-                    "title": "Classement villes potentielles",
-                    "no-data": "Aucune ville"
-                },
-                "successful": {
-                    "title": "Classement villes réussies",
-                    "no-data": "Aucune ville réussie"
-                }
-            }
-        },
-        "stations": {
-            "title": "Vos gares",
-            "indicators": {
-                "left": "nb de gares",
-                "right": "score actuel"
-            },
-            "subtitle": "Gares construites",
-            "card": {
-                "title": "Gare #{id}"
-            }
-        },
-        "bonuses": {
-            "title": "Vos bonus",
-            "indicators": {
-                "left": "nb de bonus",
-                "right": "score actuel"
-            },
-            "longest-path": "Chemin le plus long",
-            "globe-trotter": "Globe trotter",
-            "mandala": "Mandala"
-        },
-        "units": {
-            "title": "Vos unités",
-            "indicators": {
-                "left": "nb d'unités",
-                "center": "nb d'échanges",
-                "right": "score actuel"
-            },
-            "subtitle-1": "Routes posées",
-            "subtitle-2": "Echanges"
-        },
-        "dialog": {
-            "add-ticket": {
-                "title": "Nouveau ticket",
-                "subtitle": "Villes",
-                "label": {
-                    "from": "De",
-                    "to": "A"
-                },
-                "selection": {
-                    "title": "Choisir un ticket"
-                },
-                "message": "1 résultat trouvé | {n} résultats trouvés",
-                "error": "Ce ticket a déjà été ajouté"
-            },
-            "add-harbor": {
-                "title": "Nouveau port",
-                "subtitle": "Villes",
-                "label": "Choisir une ville",
-                "error": "Cette ville a déjà un port"
-            },
-            "reset": {
-                "types": {
-                    "tickets":"Réinitialiser tickets",
-                    "units": "Réinitialiser unités",
-                    "harbors": "Réinitialiser ports",
-                    "stations": "Réinitialiser gares",
-                    "bonuses": "Réinitialiser bonus",
-                    "all": "Tout réinitialiser"
-                },
-                "subtitle": "Êtes-vous sûr.e ?"
-            },
-            "save": {
-                "title": "Sélection du joueur",
-                "subtitle": "Choisissez quel joueur vous êtes",
-                "label": "Sélection du nom",
-                "error": {
-                    "id": "L'ID renseigné n'existe pas ou plus",
-                    "unexpected": "Oups, erreur innatendue. Contactez l'admin."
-                }
-            }
-        }
+    "status": {
+      "done": "Fait",
+      "fail": "Raté",
+      "unordered": "En désordre"
     },
-    "scoreboard": {
-        "overall": {
-            "title": "Tableau des scores",
-            "dialog": {
-                "title": "Détails de la partie",
-                "tabs": {
-                    "summary": {
-                        "title": "Sommaire",
-                        "info": {
-                            "title": "Info",
-                            "date": "Date",
-                            "version": "Version"
-                        },
-                        "rankings": {
-                            "title": "Classement",
-                            "name": "Nom",
-                            "score": "Score",
-                            "no-data": "Aucun joueur"
-                        },
-                        "statistics": {
-                            "title": "Statistiques",
-                            "units": "Total d'unités",
-                            "tickets": "Total de tickets réussis"
-                        }
-                    },
-                    "player": {
-                        "bonuses": {
-                            "title": "Bonus",
-                            "longest": "Chemin le plus long",
-                            "globe-trotter": "Globe trotter",
-                            "mandala": "Mandala"
-                        },
-                        "tickets": {
-                            "title": "Tickets",
-                            "no-data": "Aucun ticket"
-                        },
-                        "harbors": {
-                            "title":"Ports",
-                            "no-data": "Aucun port"
-                        },
-                        "stations": {
-                            "title": "Gares",
-                            "score": "Score",
-                            "no-data":"Aucune gare"
-                        },
-                        "units": {
-                            "title": "Unités",
-                            "routes": "Routes",
-                            "number": "Nombre",
-                            "no-data": "Aucune unité"
-                        }
-                    }
-                }
-            }
-        },
-        "insights": {
-            "title": "Tendances",
-            "indicators": {
-                "left": "nb de parties",
-                "center": "total de points",
-                "right": "nb de tickets réussis"
-            },
-            "player": {
-                "title": "Par joueur",
-                "select": {
-                    "title": "Choisir joueur",
-                    "label": "Joueur"
-                },
-                "data": {
-                    "title": "Données",
-                    "indicators": {
-                        "left": "victoires",
-                        "center": "nuls",
-                        "right": "défaites"
-                    }
-                },
-                "additional": {
-                    "title": "Données additionnelles",
-                    "filter": {
-                        "version": "Filtre par version",
-                        "players": "Filtre par joueur",
-                        "players-value": "{n} joueurs"
-                    },
-                    "indicators": {
-                        "left": "parties",
-                        "center": "victoires",
-                        "right": "% de victoire"
-                    },
-                    "subtitle": "Tickets favoris"
-                },
-                "charts": {
-                    "players-number": {
-                        "label": "{n} joueurs",
-                        "title": "Nombre de joueurs"
-                    },
-                    "version": {
-                        "title": "Version"
-                    }
-                }
-            },
-            "version": {
-                "title": "Par version",
-                "select": {
-                    "title": "Choisir version",
-                    "label": "Version"
-                },
-                "data": {
-                    "title": "Données"
-                }
-            }
-        }
+    "snackbar": {
+      "success": {
+        "save": "Votre partie a été sauvée !",
+        "share": "Partage réussi !"
+      },
+      "warning": {
+        "last-units": "Il vous reste {n} unités ou moins"
+      },
+      "error": {
+        "open-save": "Impossible de récupérer le nom des joueurs. Réessayez",
+        "toggle-status": "Oups, ticket introuvable",
+        "save": "Une erreur a eu lieu. Réessayez",
+        "share": "Impossible de partager l'ID",
+        "delete": "Oups, ticket introuvable",
+        "version-unsupported": "Cette version n'est pas supportée"
+      }
     }
+  },
+  "app": {
+    "settings": "Paramètres",
+    "theme": "Thème sombre",
+    "on": "Actif",
+    "off": "Inctif",
+    "lang": "Langue",
+    "tabs": {
+      "current": "Partie en cours",
+      "scoreboard": "Scores",
+      "help": "Aide"
+    },
+    "new": {
+      "title": "Créer partie",
+      "type": "Type de jeu",
+      "version": "Version du jeu",
+      "players": "Nombre de joueurs",
+      "names": "Nom des joueurs",
+      "player-label": "Joueur {id}",
+      "date": "Date",
+      "date-choice": "Choix de date",
+      "form": {
+        "version": "Version requise",
+        "player": "Nom requis",
+        "invalid-player": "Le nom doit être valide",
+        "accent": "Les caractères accentués ne sont pas supportés"
+      }
+    },
+    "warning": {
+      "title": "Attention !",
+      "line-1-a": "Vous avez rejoint une partie qui",
+      "line-1-bold": " ne correspond pas ",
+      "line-1-b": "aux tickets que vous avez renseigné.",
+      "line-2": "Veuillez réinitialiser la partie en cours et réessayer par la suite."
+    },
+    "error": {
+      "reset-game-session": "Une erreur à eu lieu au moment de réinitialiser les variables"
+    }
+  },
+  "current": {
+    "game": {
+      "title": "Votre partie",
+      "version": "Version",
+      "version-label": "Choisir le jeu",
+      "score": "Score total",
+      "save": "Sauvegarder la partie",
+      "save-placeholder": "Entrez l'ID à 20 caractères",
+      "save-label": "ID de la partie",
+      "reset": "Tout réinitialiser"
+    },
+    "tickets": {
+      "title": "Vos tickets",
+      "indicators": {
+        "left": "nb de tickets",
+        "center": "nb réussis",
+        "right": "score actuel"
+      },
+      "routes": {
+        "title": "Objectifs"
+      }
+    },
+    "harbors": {
+      "title": "Vos ports",
+      "indicators": {
+        "left": "nb de villes",
+        "center": "nb de ports",
+        "right": "score actuel"
+      },
+      "subtitle": "Ports construits",
+      "card": {
+        "title": "Port #{id}",
+        "no-city": "Inconnu"
+      },
+      "tables": {
+        "column-1": "Ville",
+        "column-2": "Nombre",
+        "potential": {
+          "title": "Classement villes potentielles",
+          "no-data": "Aucune ville"
+        },
+        "successful": {
+          "title": "Classement villes réussies",
+          "no-data": "Aucune ville réussie"
+        }
+      }
+    },
+    "stations": {
+      "title": "Vos gares",
+      "indicators": {
+        "left": "nb de gares",
+        "right": "score actuel"
+      },
+      "subtitle": "Gares construites",
+      "card": {
+        "title": "Gare #{id}"
+      }
+    },
+    "bonuses": {
+      "title": "Vos bonus",
+      "indicators": {
+        "left": "nb de bonus",
+        "right": "score actuel"
+      },
+      "longest-path": "Chemin le plus long",
+      "globe-trotter": "Globe trotter",
+      "mandala": "Mandala"
+    },
+    "units": {
+      "title": "Vos unités",
+      "indicators": {
+        "left": "nb posées",
+        "center": "nb restantes",
+        "right": "score actuel"
+      },
+      "subtitle-1": "Routes posées",
+      "subtitle-2": "Echanges"
+    },
+    "dialog": {
+      "add-ticket": {
+        "title": "Nouveau ticket",
+        "subtitle": "Villes",
+        "label": {
+          "from": "De",
+          "to": "A"
+        },
+        "selection": {
+          "title": "Choisir un ticket"
+        },
+        "message": "1 résultat trouvé | {n} résultats trouvés",
+        "error": "Ce ticket a déjà été ajouté"
+      },
+      "add-harbor": {
+        "title": "Nouveau port",
+        "subtitle": "Villes",
+        "label": "Choisir une ville",
+        "error": "Cette ville a déjà un port"
+      },
+      "reset": {
+        "types": {
+          "tickets": "Réinitialiser tickets",
+          "units": "Réinitialiser unités",
+          "harbors": "Réinitialiser ports",
+          "stations": "Réinitialiser gares",
+          "bonuses": "Réinitialiser bonus",
+          "all": "Tout réinitialiser"
+        },
+        "subtitle": "Êtes-vous sûr.e ?"
+      },
+      "save": {
+        "title": "Sélection du joueur",
+        "subtitle": "Choisissez quel joueur vous êtes",
+        "label": "Sélection du nom",
+        "error": {
+          "id": "L'ID renseigné n'existe pas ou plus",
+          "unexpected": "Oups, erreur innatendue. Contactez l'admin."
+        }
+      }
+    }
+  },
+  "scoreboard": {
+    "overall": {
+      "title": "Tableau des scores",
+      "dialog": {
+        "title": "Détails de la partie",
+        "tabs": {
+          "summary": {
+            "title": "Sommaire",
+            "info": {
+              "title": "Info",
+              "date": "Date",
+              "version": "Version"
+            },
+            "rankings": {
+              "title": "Classement",
+              "name": "Nom",
+              "score": "Score",
+              "no-data": "Aucun joueur"
+            },
+            "statistics": {
+              "title": "Statistiques",
+              "units": "Total d'unités",
+              "tickets": "Total de tickets réussis"
+            }
+          },
+          "player": {
+            "bonuses": {
+              "title": "Bonus",
+              "longest": "Chemin le plus long",
+              "globe-trotter": "Globe trotter",
+              "mandala": "Mandala"
+            },
+            "tickets": {
+              "title": "Tickets",
+              "no-data": "Aucun ticket"
+            },
+            "harbors": {
+              "title": "Ports",
+              "no-data": "Aucun port"
+            },
+            "stations": {
+              "title": "Gares",
+              "score": "Score",
+              "no-data": "Aucune gare"
+            },
+            "units": {
+              "title": "Unités",
+              "routes": "Routes",
+              "number": "Nombre",
+              "no-data": "Aucune unité"
+            }
+          }
+        }
+      }
+    },
+    "insights": {
+      "title": "Tendances",
+      "indicators": {
+        "left": "nb de parties",
+        "center": "total de points",
+        "right": "nb de tickets réussis"
+      },
+      "player": {
+        "title": "Par joueur",
+        "select": {
+          "title": "Choisir joueur",
+          "label": "Joueur"
+        },
+        "data": {
+          "title": "Données",
+          "indicators": {
+            "left": "victoires",
+            "center": "nuls",
+            "right": "défaites"
+          }
+        },
+        "additional": {
+          "title": "Données additionnelles",
+          "filter": {
+            "version": "Filtre par version",
+            "players": "Filtre par joueur",
+            "players-value": "{n} joueurs"
+          },
+          "indicators": {
+            "left": "parties",
+            "center": "victoires",
+            "right": "% de victoire"
+          },
+          "subtitle": "Tickets favoris"
+        },
+        "charts": {
+          "players-number": {
+            "label": "{n} joueurs",
+            "title": "Nombre de joueurs"
+          },
+          "version": {
+            "title": "Version"
+          }
+        }
+      },
+      "version": {
+        "title": "Par version",
+        "select": {
+          "title": "Choisir version",
+          "label": "Version"
+        },
+        "data": {
+          "title": "Données"
+        }
+      }
+    }
+  }
 }

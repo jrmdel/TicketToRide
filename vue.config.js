@@ -1,7 +1,7 @@
+const path = require('path');
+
 module.exports = {
-  "transpileDependencies": [
-    "vuetify"
-  ],
+  transpileDependencies: ['vuetify'],
 
   publicPath: '/TicketToRide/',
 
@@ -10,7 +10,14 @@ module.exports = {
       locale: 'en',
       fallbackLocale: 'fr',
       localeDir: 'locales',
-      enableInSFC: false
-    }
-  }
-}
+      enableInSFC: false,
+    },
+  },
+  configureWebpack: {
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
+  },
+};
