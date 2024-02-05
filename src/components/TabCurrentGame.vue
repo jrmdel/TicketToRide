@@ -566,79 +566,16 @@
       </v-col>
       <v-col cols="12" v-show="selectVersion != null">
         <!--Your units-->
-        <v-card color="background">
-          <v-toolbar flat color="primary" dark>
-            <v-toolbar-title>{{ $t('current.units.title') }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-icon large>mdi-train</v-icon>
-          </v-toolbar>
-          <v-card-subtitle>
-            <BaseIndicators
-              :leftText="$t('current.units.indicators.left')"
-              :leftIndicator="computedNumberUnits"
-              :centerText="$t('current.units.indicators.center')"
-              :centerIndicator="exchanges"
-              :centerCondition="computedVersionHasExchanges"
-              :rightText="$t('current.units.indicators.right')"
-              :rightIndicator="computedTrainsBoatsScore"
-            />
-          </v-card-subtitle>
-          <v-card-text>
-            <v-container fluid>
-              <TwoButtons
-                :leftActive="false"
-                rightColor="accent"
-                rightIcon="mdi-restore"
-                :rightText="$t('main.btn.reset')"
-                @clickRight="openReset('units')"
-              />
-              <v-row>
-                <v-col cols="12">
-                  <span class="text-h6 tertiary--text">{{
-                    $t('current.units.subtitle-1')
-                  }}</span>
-                </v-col>
-              </v-row>
-              <UnitCounter
-                v-for="i in computedKeysUnits"
-                :key="i"
-                :numberOfUnits="i"
-                :currentTotal="trainsAndBoats[i]"
-                :hasBoats="computedVersionHasBoats"
-                :availableUnits="computedAvailableUnits"
-                @update-value="updateTrainsAndBoats($event)"
-              />
-              <v-row v-show="computedVersionHasExchanges">
-                <v-col cols="12">
-                  <span class="text-h6 tertiary--text">{{
-                    $t('current.units.subtitle-2')
-                  }}</span>
-                </v-col>
-              </v-row>
-              <v-row
-                v-show="computedVersionHasExchanges"
-                class="ml-sm-4"
-                align="center"
-                justify="center"
-                justify-sm="start"
-              >
-                <v-btn
-                  large
-                  icon
-                  :disabled="exchanges == 0"
-                  @click="exchanges -= 1"
-                >
-                  <v-icon color="red">mdi-minus</v-icon>
-                </v-btn>
-                <span class="text-h6">{{ exchanges }}</span>
-                <v-btn large icon @click="exchanges += 1">
-                  <v-icon color="green">mdi-plus</v-icon>
-                </v-btn>
-                <v-icon class="ml-4">mdi-autorenew</v-icon>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
+        <units-block
+          ref="units"
+          :unitRules="selectVersion?.pointsPerRoute"
+          :hasBoats="computedVersionHasBoats"
+          :hasExchanges="computedVersionHasExchanges"
+          :availableUnitsOnStart="selectVersion?.units"
+          :threshold="selectVersion?.threshold"
+          @hasThresholdBeenReached="showThresholdWarning()"
+          @updateUnitScore="updateUnitScore($event)"
+        />
       </v-col>
     </v-row>
 
@@ -887,20 +824,20 @@
 
 <script>
 import { Types } from '../util/types';
-import UnitCounter from './currentgame/UnitCounter';
 import BaseIndicators from './currentgame/BaseIndicators';
 import SimpleTable from './currentgame/SimpleTable';
 import TwoButtons from './currentgame/TwoButtons';
 import BonusMandala from './currentgame/bonuses/BonusMandala.vue';
 import { db } from '../main';
+import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 
 export default {
   components: {
-    UnitCounter,
     BaseIndicators,
     SimpleTable,
     TwoButtons,
     BonusMandala,
+    UnitsBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
@@ -931,24 +868,15 @@ export default {
     mandalaBonus: { count: 0, score: 0 },
     harbors: [],
     newHarbor: null,
-    trainsAndBoats: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 },
-    defaultTrainsAndBoats: {
-      1: 0,
-      2: 0,
-      3: 0,
-      4: 0,
-      5: 0,
-      6: 0,
-      7: 0,
-      8: 0,
-      9: 0,
-    },
-    exchanges: 0,
     resetType: '',
     gameId: '',
     loadingOpenSaveGame: false,
     saveGameSelectErrorMessage: null,
     loadingSave: false,
+
+    // Units
+    units: {},
+    unitScore: 0,
   }),
   props: {
     id: {
@@ -1108,23 +1036,6 @@ export default {
           : 0;
       },
     },
-    computedTrainsBoatsScore: {
-      get() {
-        const a = Object.values(this.trainsAndBoats);
-        return (
-          a[0] +
-          2 * a[1] +
-          4 * a[2] +
-          7 * a[3] +
-          10 * a[4] +
-          15 * a[5] +
-          18 * a[6] +
-          21 * a[7] +
-          27 * a[8] -
-          this.exchanges
-        );
-      },
-    },
     computedTopCities: {
       get() {
         const r = this.routes;
@@ -1260,7 +1171,7 @@ export default {
         if (this.selectVersion) {
           return parseInt(
             this.computedTicketScore +
-              this.computedTrainsBoatsScore +
+              this.unitScore +
               this.computedHarborsScore +
               this.computedTrainStationsScore +
               this.computedBonusScore
@@ -1268,13 +1179,6 @@ export default {
         } else {
           return 0;
         }
-      },
-    },
-    computedNumberUnits: {
-      get() {
-        return Object.values(this.trainsAndBoats)
-          .map((x, i) => x * (i + 1))
-          .reduce((a, b) => a + b, 0);
       },
     },
     computedVersionHasHarbors: {
@@ -1320,38 +1224,6 @@ export default {
     computedVersionHasMandalaBonus: {
       get() {
         return this.selectVersion ? this.selectVersion.hasBonusMandala : false;
-      },
-    },
-    computedLastNUnits: {
-      get() {
-        if (this.selectVersion) {
-          return (
-            this.selectVersion.units - this.selectVersion.threshold <=
-            this.computedNumberUnits
-          );
-        } else {
-          return false;
-        }
-      },
-    },
-    computedAvailableUnits: {
-      get() {
-        if (this.selectVersion) {
-          return this.selectVersion.units - this.computedNumberUnits;
-        } else {
-          return 0;
-        }
-      },
-    },
-    computedKeysUnits: {
-      get() {
-        if (this.selectVersion) {
-          return Object.keys(this.selectVersion.pointsPerRoute).map((k) =>
-            parseInt(k)
-          );
-        } else {
-          return [];
-        }
       },
     },
   },
@@ -1410,17 +1282,6 @@ export default {
         }
       },
     },
-    exchanges: {
-      handler(value) {
-        if (value) {
-          localStorage.setItem('exchanges', value);
-        } else {
-          if (localStorage.getItem('exchanges')) {
-            localStorage.removeItem('exchanges');
-          }
-        }
-      },
-    },
     id: {
       handler(value) {
         if (value) {
@@ -1453,16 +1314,6 @@ export default {
       handler(value) {
         if (value != null) {
           localStorage.setItem('trainStations', value);
-        }
-      },
-    },
-    computedLastNUnits: {
-      handler(value) {
-        if (value) {
-          const message = this.$t('main.snackbar.warning.last-units', {
-            n: this.selectVersion.threshold,
-          });
-          this.notifySnack(message, 'warning');
         }
       },
     },
@@ -1552,11 +1403,12 @@ export default {
       const routes = this.routes.map((x) => {
         return { id: x.id, status: x.status };
       });
+      const units = this.$refs.units.getUnits();
       const update = {
         name: this.selectedPlayer,
         score: this.computedTotalScore,
         tickets: routes,
-        units: this.trainsAndBoats,
+        units,
       };
       if (this.computedVersionHasHarbors) {
         update['harbors'] = this.harbors.map((x) => {
@@ -1564,7 +1416,7 @@ export default {
         });
       }
       if (this.computedVersionHasExchanges) {
-        update['exchanges'] = this.exchanges;
+        update['exchanges'] = this.$refs.units.getExchanges();
       }
       if (this.computedVersionHasTrainStations) {
         update['trainStations'] = this.computedTrainStationsScore;
@@ -1712,11 +1564,7 @@ export default {
       }
     },
     resetTrainsAndBoats() {
-      this.trainsAndBoats = Object.assign({}, this.defaultTrainsAndBoats);
-      this.exchanges = 0;
-      if (localStorage.getItem('units')) {
-        localStorage.removeItem('units');
-      }
+      this.$refs.units.resetUnits();
     },
     resetHarbors() {
       this.harbors = [];
@@ -1747,10 +1595,6 @@ export default {
         localStorage.removeItem('globeTrotterBonus');
       }
     },
-    updateTrainsAndBoats(event) {
-      this.trainsAndBoats[event.units] += event.update;
-      localStorage.setItem('units', JSON.stringify(this.trainsAndBoats));
-    },
     toggleTo(item, status) {
       const id = this.routes.findIndex((route) => route.id == item.id);
       if (id == -1) {
@@ -1772,6 +1616,16 @@ export default {
     findVersion(version) {
       const myEvent = { version: version };
       this.$emit('findVersion', myEvent);
+    },
+    showThresholdWarning() {
+      const message = this.$t('main.snackbar.warning.last-units', {
+        n: this.selectVersion.threshold,
+      });
+      this.notifySnack(message, 'warning');
+    },
+    updateUnitScore({ unit, score }) {
+      this.unitScore = score;
+      this.units = unit;
     },
     resetAll() {
       this.resetTickets();
@@ -1824,13 +1678,6 @@ export default {
           localStorage.removeItem('trainStations');
         }
       }
-      if (localStorage.getItem('units')) {
-        try {
-          this.trainsAndBoats = JSON.parse(localStorage.getItem('units'));
-        } catch (error) {
-          localStorage.removeItem('units');
-        }
-      }
       if (localStorage.getItem('harbors')) {
         try {
           this.harbors = JSON.parse(localStorage.getItem('harbors'));
@@ -1843,13 +1690,6 @@ export default {
           this.routes = JSON.parse(localStorage.getItem('routes'));
         } catch (error) {
           localStorage.removeItem('routes');
-        }
-      }
-      if (localStorage.getItem('exchanges')) {
-        try {
-          this.exchanges = parseInt(localStorage.getItem('exchanges'));
-        } catch (error) {
-          localStorage.removeItem('exchanges');
         }
       }
     },
