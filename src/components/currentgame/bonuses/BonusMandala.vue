@@ -1,5 +1,5 @@
 <template>
-  <div v-if="isActive">
+  <v-container fluid v-if="isActive">
     <v-row>
       <v-col cols="12">
         <span class="text-h6 tertiary--text">{{ title }}</span>
@@ -15,12 +15,14 @@
       </v-btn>
       <v-icon class="ml-4">{{ logo }}</v-icon>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>
+import localStorageService from '@/services/localStorageService';
 export default {
   name: 'BonusMandala',
+  inject: ['localStorageService'],
   props: {
     isActive: {
       type: Boolean,
@@ -43,7 +45,7 @@ export default {
       handler(value) {
         this.sendEvent(value);
         if (value != null) {
-          localStorage.setItem('mandalaBonus', value);
+          localStorageService.setMandala(value);
         }
       },
     },
@@ -79,9 +81,7 @@ export default {
   methods: {
     resetBonus() {
       this.bonus = 0;
-      if (localStorage.getItem('mandalaBonus')) {
-        localStorage.removeItem('mandalaBonus');
-      }
+      localStorageService.setMandala(null);
     },
     sendEvent(value) {
       this.$emit('update-bonus', {
@@ -90,18 +90,9 @@ export default {
         score: this.computeScore,
       });
     },
-    getValueFromLocalStorage() {
-      if (localStorage.getItem('mandalaBonus')) {
-        try {
-          this.bonus = parseInt(localStorage.getItem('mandalaBonus'));
-        } catch (error) {
-          localStorage.removeItem('mandalaBonus');
-        }
-      }
-    },
   },
   mounted() {
-    this.getValueFromLocalStorage();
+    this.bonus = this.localStorageService?.getMandala() ?? 0;
   },
 };
 </script>
