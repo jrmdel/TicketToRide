@@ -162,7 +162,12 @@
       },
       "longest-path": "Chemin le plus long",
       "globe-trotter": "Globe trotter",
-      "mandala": "Mandala"
+      "mandala": "Mandala",
+      "uk": {
+        "double-heading": "Double motrice",
+        "risky-contracts": "Contrats risqués",
+        "equalising-beam": "Suspension améliorée"
+      }
     },
     "stock-shares": {
       "title": "Vos actions",

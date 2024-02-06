@@ -9,7 +9,7 @@
       <v-btn large icon :disabled="bonus === minCount" @click="updateValue(-1)">
         <v-icon color="red">mdi-minus</v-icon>
       </v-btn>
-      <span class="text-h6">{{ bonus }}</span>
+      <span class="text-h6 counter">{{ bonus }}</span>
       <v-btn large icon :disabled="bonus === maxCount" @click="updateValue(1)">
         <v-icon color="green">mdi-plus</v-icon>
       </v-btn>
@@ -62,3 +62,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.counter {
+  min-width: 1.5rem;
+  text-align: center;
+}
+</style>

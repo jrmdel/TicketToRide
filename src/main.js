@@ -6,9 +6,11 @@ import 'firebase/firestore';
 import VueApexCharts from 'vue-apexcharts';
 import i18n from './i18n';
 import LocalStorageService from './services/localStorageService';
+import frag from 'vue-frag';
 Vue.use(VueApexCharts);
 
 Vue.component('ApexChart', VueApexCharts);
+Vue.directive('frag', frag);
 Vue.config.productionTip = false;
 
 firebase.initializeApp({

@@ -469,12 +469,14 @@
           :numberOfBonuses="computedNumberOfBonuses"
           :bonusScore="computedBonusScore"
           :version="selectVersion"
+          :completedRoutes="computedCompletion"
           :versionHasLongest="computedVersionHasLongest"
           :versionHasGlobeTrotterBonus="computedVersionHasGlobeTrotterBonus"
           :versionHasMandalaBonus="computedVersionHasMandalaBonus"
           @updateLongestBonus="handleBonusEvent($event)"
           @updateGlobeTrotterBonus="handleBonusEvent($event)"
           @updateMandalaBonus="handleBonusEvent($event)"
+          @updateUnitedKingdomBonus="handleBonusEvent($event)"
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasStockShares">
@@ -751,6 +753,7 @@ import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
 import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
+import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
 
 export default {
   components: {
@@ -788,6 +791,7 @@ export default {
     longestBonus: 0,
     globeTrotterBonus: 0,
     mandalaBonus: { count: 0, score: 0 },
+    unitedKingdomBonus: structuredClone(DEFAULT_UK_BONUS),
     stockSharesScore: 0,
     scoresForAllStockShares: [],
     harbors: [],
@@ -1039,21 +1043,24 @@ export default {
     },
     computedNumberOfBonuses: {
       get() {
-        if (this.computedVersionHasBonuses) {
-          const bonuses = [
-            this.longestBonus,
-            this.globeTrotterBonus,
-            this.mandalaBonus.count,
-          ];
-          return bonuses.reduce((acc, val) => {
-            if (val !== 0) {
-              acc++;
-            }
-            return acc;
-          }, 0);
-        } else {
+        if (!this.computedVersionHasBonuses) {
           return 0;
         }
+        const ukBonuses = Object.values(this.unitedKingdomBonus ?? {}).map(
+          (bonus) => bonus.count
+        );
+        const bonuses = [
+          this.longestBonus,
+          this.globeTrotterBonus,
+          this.mandalaBonus.count,
+          ...ukBonuses,
+        ];
+        return bonuses.reduce((acc, val) => {
+          if (val !== 0) {
+            acc++;
+          }
+          return acc;
+        }, 0);
       },
     },
     computedGlobeTrotterBonus: {
@@ -1083,13 +1090,25 @@ export default {
         }
       },
     },
+    computedUnitedKingdomBonus: {
+      get() {
+        if (this.computedVersionHasUnitedKingdomBonus) {
+          const scores = Object.values(this.unitedKingdomBonus ?? {}).map(
+            (value) => value.score
+          );
+          return scores.reduce((acc, val) => acc + val, 0);
+        }
+        return 0;
+      },
+    },
     computedBonusScore: {
       get() {
         if (this.computedVersionHasBonuses) {
           return (
             this.computedLongestBonus +
             this.computedGlobeTrotterBonus +
-            this.computedMandalaBonus
+            this.computedMandalaBonus +
+            this.computedUnitedKingdomBonus
           );
         } else {
           return 0;
@@ -1136,8 +1155,16 @@ export default {
       get() {
         return (
           this.computedVersionHasLongest ||
-          this.computedVersionHasGlobeTrotterBonus
+          this.computedVersionHasGlobeTrotterBonus ||
+          this.computedVersionHasUnitedKingdomBonus
         );
+      },
+    },
+    computedVersionHasUnitedKingdomBonus: {
+      get() {
+        return this.selectVersion
+          ? this.selectVersion.hasUnitedKingdomBonus
+          : false;
       },
     },
     computedVersionHasLongest: {
@@ -1522,6 +1549,8 @@ export default {
         this.longestBonus = event.score;
       } else if (name === 'globeTrotter') {
         this.globeTrotterBonus = event.score;
+      } else if (name === 'uk') {
+        this.unitedKingdomBonus = { ...this.unitedKingdomBonus, ...rest };
       }
     },
     resetBonuses() {

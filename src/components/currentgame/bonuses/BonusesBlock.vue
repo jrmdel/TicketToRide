@@ -40,6 +40,13 @@
           :isActive="versionHasMandalaBonus"
           @update-bonus="updateMandalaBonus($event)"
         />
+        <bonus-united-kingdom
+          ref="unitedKingdomBonus"
+          :isActive="true"
+          :version="version"
+          :completedRoutes="completedRoutes"
+          @update-bonus="updateUnitedKingdomBonus($event)"
+        />
       </v-container>
     </v-card-text>
   </v-card>
@@ -51,6 +58,7 @@ import TwoButtons from '../TwoButtons.vue';
 import BaseIndicators from '../BaseIndicators.vue';
 import BonusLongest from './BonusLongest.vue';
 import BonusGlobeTrotter from './BonusGlobeTrotter.vue';
+import BonusUnitedKingdom from './BonusUnitedKingdom.vue';
 
 export default {
   name: 'BonusesBlock',
@@ -60,6 +68,7 @@ export default {
     BonusGlobeTrotter,
     TwoButtons,
     BaseIndicators,
+    BonusUnitedKingdom,
   },
   props: {
     numberOfBonuses: {
@@ -73,6 +82,10 @@ export default {
     version: {
       type: Object,
       default: () => {},
+    },
+    completedRoutes: {
+      type: Number,
+      default: 0,
     },
     versionHasLongest: {
       type: Boolean,
@@ -92,6 +105,7 @@ export default {
       this.$refs.mandalaBonus.resetBonus();
       this.$refs.longestBonus.resetBonus();
       this.$refs.globeTrotterBonus.resetBonus();
+      this.$refs.unitedKingdomBonus.resetBonus();
     },
     updateLongestBonus(event) {
       this.$emit('updateLongestBonus', event);
@@ -101,6 +115,9 @@ export default {
     },
     updateMandalaBonus(event) {
       this.$emit('updateMandalaBonus', event);
+    },
+    updateUnitedKingdomBonus(event) {
+      this.$emit('updateUnitedKingdomBonus', event);
     },
   },
 };
