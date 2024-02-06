@@ -468,13 +468,12 @@
           ref="bonusesBlock"
           :numberOfBonuses="computedNumberOfBonuses"
           :bonusScore="computedBonusScore"
+          :version="selectVersion"
           :versionHasLongest="computedVersionHasLongest"
           :versionHasGlobeTrotterBonus="computedVersionHasGlobeTrotterBonus"
           :versionHasMandalaBonus="computedVersionHasMandalaBonus"
-          :longestBonus="longestBonus"
-          :globeTrotterBonus="globeTrotterBonus"
-          @updateLongestBonus="updateLongestBonus($event)"
-          @updateGlobeTrotterBonus="updateGlobeTrotterBonus($event)"
+          @updateLongestBonus="handleBonusEvent($event)"
+          @updateGlobeTrotterBonus="handleBonusEvent($event)"
           @updateMandalaBonus="handleBonusEvent($event)"
         />
       </v-col>
@@ -1041,11 +1040,17 @@ export default {
     computedNumberOfBonuses: {
       get() {
         if (this.computedVersionHasBonuses) {
-          return (
-            this.longestBonus +
-            this.globeTrotterBonus +
-            (this.mandalaBonus.count > 0 ? 1 : 0)
-          );
+          const bonuses = [
+            this.longestBonus,
+            this.globeTrotterBonus,
+            this.mandalaBonus.count,
+          ];
+          return bonuses.reduce((acc, val) => {
+            if (val !== 0) {
+              acc++;
+            }
+            return acc;
+          }, 0);
         } else {
           return 0;
         }
@@ -1054,7 +1059,7 @@ export default {
     computedGlobeTrotterBonus: {
       get() {
         if (this.computedVersionHasGlobeTrotterBonus) {
-          return this.selectVersion.bonusGlobeTrotter * this.globeTrotterBonus;
+          return this.globeTrotterBonus;
         } else {
           return 0;
         }
@@ -1063,7 +1068,7 @@ export default {
     computedLongestBonus: {
       get() {
         if (this.computedVersionHasLongest) {
-          return this.selectVersion.longestPoints * this.longestBonus;
+          return this.longestBonus;
         } else {
           return 0;
         }
@@ -1229,20 +1234,6 @@ export default {
       handler(value) {
         if (value) {
           localStorage.setItem('id', value);
-        }
-      },
-    },
-    longestBonus: {
-      handler(value) {
-        if (value != null) {
-          localStorage.setItem('longestBonus', value);
-        }
-      },
-    },
-    globeTrotterBonus: {
-      handler(value) {
-        if (value != null) {
-          localStorage.setItem('globeTrotterBonus', value);
         }
       },
     },
@@ -1527,26 +1518,14 @@ export default {
       const { name, ...rest } = event;
       if (name == 'mandala') {
         this.mandalaBonus = rest;
+      } else if (name === 'longest') {
+        this.longestBonus = event.score;
+      } else if (name === 'globeTrotter') {
+        this.globeTrotterBonus = event.score;
       }
     },
     resetBonuses() {
-      this.longestBonus = 0;
-      this.globeTrotterBonus = 0;
       this.$refs.bonusesBlock.reset();
-      if (localStorage.getItem('longestBonus')) {
-        localStorage.removeItem('longestBonus');
-      }
-      if (localStorage.getItem('globeTrotterBonus')) {
-        localStorage.removeItem('globeTrotterBonus');
-      }
-    },
-    updateLongestBonus(event) {
-      localStorage.setItem('longestBonus', event.value);
-      this.longestBonus = event.value;
-    },
-    updateGlobeTrotterBonus(event) {
-      localStorage.setItem('globeTrotterBonus', event.value);
-      this.globeTrotterBonus = event.value;
     },
     toggleTo(item, status) {
       const id = this.routes.findIndex((route) => route.id == item.id);
@@ -1606,22 +1585,6 @@ export default {
           this.gameId = localStorage.getItem('id');
         } catch (error) {
           localStorage.removeItem('id');
-        }
-      }
-      if (localStorage.getItem('longestBonus')) {
-        try {
-          this.longestBonus = parseInt(localStorage.getItem('longestBonus'));
-        } catch (error) {
-          localStorage.removeItem('longestBonus');
-        }
-      }
-      if (localStorage.getItem('globeTrotterBonus')) {
-        try {
-          this.globeTrotterBonus = parseInt(
-            localStorage.getItem('globeTrotterBonus')
-          );
-        } catch (error) {
-          localStorage.removeItem('globeTrotterBonus');
         }
       }
       if (localStorage.getItem('trainStations')) {
