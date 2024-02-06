@@ -2,7 +2,7 @@ import { PennsylvaniaStockShares } from './pennsylvania/pennsylvania-stock-share
 import Rule from './rule';
 import { Tickets } from './tickets';
 
-var world = Rule.create(
+const world = Rule.create(
   'Around The World',
   60,
   Tickets.World,
@@ -16,7 +16,7 @@ var world = Rule.create(
   -4,
   [20, 30, 40]
 );
-var lakes = Rule.create(
+const lakes = Rule.create(
   'Great Lakes',
   50,
   Tickets.GreatLakes,
@@ -30,7 +30,7 @@ var lakes = Rule.create(
   -4,
   [10, 20, 30]
 );
-var europ = Rule.create(
+const europe = Rule.create(
   'Europe',
   45,
   Tickets.Europe,
@@ -48,7 +48,7 @@ var europ = Rule.create(
   0,
   10
 );
-var france = Rule.create(
+const france = Rule.create(
   'France',
   40,
   Tickets.France,
@@ -67,7 +67,7 @@ var france = Rule.create(
   10,
   15
 );
-var india = Rule.create(
+const india = Rule.create(
   'India',
   45,
   Tickets.India,
@@ -109,5 +109,36 @@ const pennsylvania = Rule.create(
   true,
   PennsylvaniaStockShares
 );
+const unitedKingdom = Rule.create(
+  'United Kingdom',
+  35,
+  Tickets.UnitedKingdom,
+  0,
+  { 1: 1, 2: 2, 3: 4, 4: 7, 5: 10, 6: 15, 10: 40 },
+  2,
+  1,
+  false,
+  false,
+  0,
+  0,
+  null,
+  0,
+  0,
+  null,
+  0,
+  0,
+  false,
+  false,
+  null,
+  true
+);
 
-export const Games = [world, lakes, europ, france, india, pennsylvania];
+export const Games = [
+  world,
+  lakes,
+  europe,
+  france,
+  india,
+  pennsylvania,
+  unitedKingdom,
+];

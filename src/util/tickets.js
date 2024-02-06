@@ -7,6 +7,7 @@ import { FranceCities } from './france-cities';
 import { OldWestCities } from './old-west-cities';
 import { IndiaCities } from './india-cities';
 import { pennsylvania } from './pennsylvania/pennsylvania-tickets';
+import { unitedKingdom } from './united-kingdom/united-kingdom-tickets';
 
 const world = [
   {
@@ -2190,4 +2191,5 @@ export const Tickets = {
   OldWest: oldwest,
   India: india,
   Pennsylvania: pennsylvania,
+  UnitedKingdom: unitedKingdom,
 };
