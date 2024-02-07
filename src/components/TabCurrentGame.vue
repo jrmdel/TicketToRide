@@ -464,105 +464,26 @@
       </v-col>
       <v-col cols="12" v-show="computedVersionHasBonuses">
         <!--Your bonuses-->
-        <v-card color="background">
-          <v-toolbar flat color="primary" dark>
-            <v-toolbar-title>{{ $t('current.bonuses.title') }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-icon large>mdi-trophy-award</v-icon>
-          </v-toolbar>
-          <v-card-subtitle>
-            <BaseIndicators
-              :leftText="$t('current.bonuses.indicators.left')"
-              :leftIndicator="computedNumberOfBonuses"
-              :centerCondition="false"
-              :rightText="$t('current.bonuses.indicators.right')"
-              :rightIndicator="computedBonusScore"
-            />
-          </v-card-subtitle>
-          <v-card-text>
-            <v-container fluid>
-              <TwoButtons
-                :leftActive="false"
-                rightColor="accent"
-                rightIcon="mdi-restore"
-                :rightText="$t('main.btn.reset')"
-                @clickRight="openReset('bonuses')"
-              />
-              <v-row v-show="computedVersionHasLongest">
-                <v-col cols="12">
-                  <span class="text-h6 tertiary--text">{{
-                    $t('current.bonuses.longest-path')
-                  }}</span>
-                </v-col>
-              </v-row>
-              <v-row
-                v-show="computedVersionHasLongest"
-                class="ml-sm-4"
-                align="center"
-                justify="center"
-                justify-sm="start"
-              >
-                <v-btn
-                  large
-                  icon
-                  :disabled="longestBonus == 0"
-                  @click="longestBonus -= 1"
-                >
-                  <v-icon color="red">mdi-minus</v-icon>
-                </v-btn>
-                <span class="text-h6">{{ longestBonus }}</span>
-                <v-btn
-                  large
-                  icon
-                  :disabled="longestBonus == 1"
-                  @click="longestBonus += 1"
-                >
-                  <v-icon color="green">mdi-plus</v-icon>
-                </v-btn>
-                <v-icon class="ml-4">mdi-transit-connection-variant</v-icon>
-              </v-row>
-              <v-row v-show="computedVersionHasGlobeTrotterBonus">
-                <v-col cols="12">
-                  <span class="text-h6 tertiary--text">{{
-                    $t('current.bonuses.globe-trotter')
-                  }}</span>
-                </v-col>
-              </v-row>
-              <v-row
-                v-show="computedVersionHasGlobeTrotterBonus"
-                class="ml-sm-4"
-                align="center"
-                justify="center"
-                justify-sm="start"
-              >
-                <v-btn
-                  large
-                  icon
-                  :disabled="globeTrotterBonus == 0"
-                  @click="globeTrotterBonus -= 1"
-                >
-                  <v-icon color="red">mdi-minus</v-icon>
-                </v-btn>
-                <span class="text-h6">{{ globeTrotterBonus }}</span>
-                <v-btn
-                  large
-                  icon
-                  :disabled="globeTrotterBonus == 1"
-                  @click="globeTrotterBonus += 1"
-                >
-                  <v-icon color="green">mdi-plus</v-icon>
-                </v-btn>
-                <v-icon class="ml-4">mdi-earth-plus</v-icon>
-              </v-row>
-              <BonusMandala
-                ref="mandalaBonus"
-                :isActive="computedVersionHasMandalaBonus"
-                :title="$t('current.bonuses.mandala')"
-                @update-bonus="handleBonusEvent($event)"
-              />
-            </v-container>
-          </v-card-text>
-        </v-card>
+        <BonusesBlock
+          ref="bonusesBlock"
+          :numberOfBonuses="computedNumberOfBonuses"
+          :bonusScore="computedBonusScore"
+          :versionHasLongest="computedVersionHasLongest"
+          :versionHasGlobeTrotterBonus="computedVersionHasGlobeTrotterBonus"
+          :versionHasMandalaBonus="computedVersionHasMandalaBonus"
+          :longestBonus="longestBonus"
+          :globeTrotterBonus="globeTrotterBonus"
+          @updateLongestBonus="updateLongestBonus($event)"
+          @updateGlobeTrotterBonus="updateGlobeTrotterBonus($event)"
+          @updateMandalaBonus="handleBonusEvent($event)"
+        />
+      </v-col>
+      <v-col cols="12" v-show="computedVersionHasStockShares">
+        <!--Your bonuses-->
+        <StockSharesBlock
+          :stockSharesList="computedVersionStockSharesList"
+          @updateStockShareScore="updateStockShareScore($event)"
+        />
       </v-col>
       <v-col cols="12" v-show="selectVersion != null">
         <!--Your units-->
@@ -827,7 +748,8 @@ import { Types } from '../util/types';
 import BaseIndicators from './currentgame/BaseIndicators';
 import SimpleTable from './currentgame/SimpleTable';
 import TwoButtons from './currentgame/TwoButtons';
-import BonusMandala from './currentgame/bonuses/BonusMandala.vue';
+import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
+import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 
@@ -836,8 +758,9 @@ export default {
     BaseIndicators,
     SimpleTable,
     TwoButtons,
-    BonusMandala,
     UnitsBlock,
+    BonusesBlock,
+    StockSharesBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
@@ -866,6 +789,8 @@ export default {
     longestBonus: 0,
     globeTrotterBonus: 0,
     mandalaBonus: { count: 0, score: 0 },
+    stockSharesScore: 0,
+    scoresForAllStockShares: [],
     harbors: [],
     newHarbor: null,
     resetType: '',
@@ -1174,7 +1099,8 @@ export default {
               this.unitScore +
               this.computedHarborsScore +
               this.computedTrainStationsScore +
-              this.computedBonusScore
+              this.computedBonusScore +
+              this.stockSharesScore
           );
         } else {
           return 0;
@@ -1224,6 +1150,16 @@ export default {
     computedVersionHasMandalaBonus: {
       get() {
         return this.selectVersion ? this.selectVersion.hasBonusMandala : false;
+      },
+    },
+    computedVersionHasStockShares: {
+      get() {
+        return this.selectVersion ? this.selectVersion.hasStockShares : false;
+      },
+    },
+    computedVersionStockSharesList: {
+      get() {
+        return this.selectVersion ? this.selectVersion.stockSharesList : null;
       },
     },
   },
@@ -1371,7 +1307,6 @@ export default {
               const s = `player${i + 1}`;
               names.push(game[s].name);
             }
-            console.log(names);
             this.selectPlayer = names;
           } else {
             // No game found with this ID
@@ -1429,6 +1364,12 @@ export default {
       }
       if (this.computedVersionHasMandalaBonus) {
         update['mandalaBonus'] = this.mandalaBonus;
+      }
+      if (this.computedVersionHasStockShares) {
+        update['stockShares'] = {
+          score: this.stockSharesScore,
+          items: this.scoresForAllStockShares,
+        };
       }
       try {
         await db
@@ -1520,6 +1461,10 @@ export default {
         return 0;
       }
     },
+    updateStockShareScore(event) {
+      this.scoresForAllStockShares = event.scoresForAllStockShares;
+      this.stockSharesScore = event.totalScore;
+    },
     openReset(type) {
       this.resetType = type;
       this.dialogReset = true;
@@ -1587,13 +1532,21 @@ export default {
     resetBonuses() {
       this.longestBonus = 0;
       this.globeTrotterBonus = 0;
-      this.$refs.mandalaBonus.resetBonus();
+      this.$refs.bonusesBlock.reset();
       if (localStorage.getItem('longestBonus')) {
         localStorage.removeItem('longestBonus');
       }
       if (localStorage.getItem('globeTrotterBonus')) {
         localStorage.removeItem('globeTrotterBonus');
       }
+    },
+    updateLongestBonus(event) {
+      localStorage.setItem('longestBonus', event.value);
+      this.longestBonus = event.value;
+    },
+    updateGlobeTrotterBonus(event) {
+      localStorage.setItem('globeTrotterBonus', event.value);
+      this.globeTrotterBonus = event.value;
     },
     toggleTo(item, status) {
       const id = this.routes.findIndex((route) => route.id == item.id);

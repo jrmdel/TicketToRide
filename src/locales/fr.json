@@ -164,6 +164,14 @@
       "globe-trotter": "Globe trotter",
       "mandala": "Mandala"
     },
+    "stock-shares": {
+      "title": "Vos actions",
+      "indicators": {
+        "left": "nb d'actions",
+        "right": "score actuel"
+      },
+      "select-label": "Score obtenu"
+    },
     "units": {
       "title": "Vos unités",
       "indicators": {
