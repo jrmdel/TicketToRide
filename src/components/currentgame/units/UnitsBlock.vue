@@ -149,6 +149,9 @@ export default {
     },
     unitRules: {
       handler(value) {
+        if (!value) {
+          return;
+        }
         this.score = Object.keys(this.units)
           .map((unit) => (value[unit] ?? 0) * this.units[unit])
           .reduce((acc, val) => acc + val, 0);

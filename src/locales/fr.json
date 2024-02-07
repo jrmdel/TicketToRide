@@ -169,7 +169,8 @@
       "indicators": {
         "left": "nb d'actions",
         "right": "score actuel"
-      }
+      },
+      "select-label": "Score obtenu"
     },
     "units": {
       "title": "Vos unités",

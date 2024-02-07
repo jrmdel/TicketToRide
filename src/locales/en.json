@@ -169,7 +169,8 @@
       "indicators": {
         "left": "nb of stock shares",
         "right": "current score"
-      }
+      },
+      "select-label": "Score"
     },
     "units": {
       "title": "Your units",

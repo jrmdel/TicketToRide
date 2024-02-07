@@ -91,6 +91,9 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.$refs.mandalaBonus.resetBonus();
+    },
     updateLongestBonus(update) {
       const evnt = { value: update };
       this.$emit('updateLongestBonus', evnt.value);

@@ -1365,6 +1365,12 @@ export default {
       if (this.computedVersionHasMandalaBonus) {
         update['mandalaBonus'] = this.mandalaBonus;
       }
+      if (this.computedVersionHasStockShares) {
+        update['stockShares'] = {
+          score: this.stockSharesScore,
+          items: this.scoresForAllStockShares,
+        };
+      }
       try {
         await db
           .collection('Games')
@@ -1526,7 +1532,7 @@ export default {
     resetBonuses() {
       this.longestBonus = 0;
       this.globeTrotterBonus = 0;
-      this.$refs.mandalaBonus.resetBonus();
+      this.$refs.bonusesBlock.reset();
       if (localStorage.getItem('longestBonus')) {
         localStorage.removeItem('longestBonus');
       }

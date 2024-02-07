@@ -16,20 +16,21 @@
     </v-card-subtitle>
     <v-card-text>
       <v-container fluid>
+        <two-buttons
+          :leftActive="false"
+          rightColor="accent"
+          rightIcon="mdi-restore"
+          :rightText="$t('main.btn.reset')"
+          @clickRight="reset()"
+        />
         <StockShare
           v-for="(item, index) in stockSharesList"
+          ref="stockShare"
           :key="index"
           :name="item.name"
           :scores="item.scores"
           @updateStockShareScore="updateStockShareScore($event)"
         />
-        <!-- <TwoButtons
-          :leftActive="false"
-          rightColor="accent"
-          rightIcon="mdi-restore"
-          :rightText="$t('main.btn.reset')"
-          @clickRight="openReset('bonuses')"
-        /> -->
       </v-container>
     </v-card-text>
   </v-card>
@@ -37,6 +38,7 @@
 
 <script>
 import BaseIndicators from '../BaseIndicators.vue';
+import TwoButtons from '../TwoButtons.vue';
 import StockShare from './StockShare.vue';
 
 export default {
@@ -44,6 +46,7 @@ export default {
   components: {
     BaseIndicators,
     StockShare,
+    TwoButtons,
   },
   props: {
     stockSharesList: {
@@ -94,6 +97,9 @@ export default {
     },
   },
   methods: {
+    reset() {
+      this.$refs.stockShare?.forEach((ref) => ref.reset());
+    },
     updateStockShareScore(event) {
       this.scoresForAllStockShares = this.scoresForAllStockShares.map((el) => {
         if (el.name === event.name) {
