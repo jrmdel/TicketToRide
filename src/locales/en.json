@@ -166,7 +166,9 @@
       "uk": {
         "double-heading": "Double Heading",
         "risky-contracts": "Risky Contracts",
-        "equalising-beam": "Equalising Beam"
+        "equalising-beam": "Equalising Beam",
+        "boiler-lagging": "Boiler Lagging",
+        "steam-turbines": "Steam Turbines"
       }
     },
     "stock-shares": {
@@ -183,6 +185,11 @@
         "left": "nb of units",
         "center": "nb of units left",
         "right": "current score"
+      },
+      "subtitle-optional": "Available bonuses",
+      "bonuses": {
+        "plus-one": "Bonus +1",
+        "plus-two": "Bonus +2"
       },
       "subtitle-1": "Claimed routes",
       "subtitle-2": "Exchanges"

@@ -24,6 +24,7 @@
           :rightText="$t('main.btn.reset')"
           @clickRight="openReset()"
         />
+        <units-bonus-selector :bonuses="['plus-one', 'plus-two']" />
         <v-row>
           <v-col cols="12">
             <span class="text-h6 tertiary--text">{{
@@ -79,10 +80,11 @@ import BaseIndicators from '../BaseIndicators.vue';
 import TwoButtons from '../TwoButtons.vue';
 import UnitCounter from '../UnitCounter.vue';
 import { DEFAULT_UNITS } from '@/util/constants/game.constants';
+import UnitsBonusSelector from './UnitsBonusSelector.vue';
 
 export default {
   name: 'UnitsBlock',
-  components: { BaseIndicators, UnitCounter, TwoButtons },
+  components: { BaseIndicators, UnitCounter, TwoButtons, UnitsBonusSelector },
   inject: ['localStorageService'],
   props: {
     unitRules: {
@@ -102,6 +104,10 @@ export default {
     hasBoats: {
       type: Boolean,
       default: false,
+    },
+    bonuses: {
+      type: Array,
+      default: () => [],
     },
   },
   data: () => ({
@@ -171,6 +177,7 @@ export default {
       this.score = 0;
       this.numberOfUnits = 0;
       this.exchanges = 0;
+      // this.selectedBonus = [];
       this.units = structuredClone(DEFAULT_UNITS);
       this.localStorageService.setUnits(null);
     },

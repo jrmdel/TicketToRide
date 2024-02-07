@@ -1389,6 +1389,9 @@ export default {
           items: this.scoresForAllStockShares,
         };
       }
+      if (this.computedVersionHasUnitedKingdomBonus) {
+        update['unitedKingdomBonus'] = this.unitedKingdomBonus;
+      }
       try {
         await db
           .collection('Games')

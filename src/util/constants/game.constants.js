@@ -15,4 +15,6 @@ export const DEFAULT_UK_BONUS = {
   doubleHeading: { count: 0, score: 0 },
   riskyContracts: { count: 0, score: 0 },
   equalisingBeam: { count: 0, score: 0 },
+  boilerLagging: { count: 0, score: 0 },
+  steamTurbines: { count: 0, score: 0 },
 };

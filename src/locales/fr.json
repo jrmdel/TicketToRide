@@ -166,7 +166,9 @@
       "uk": {
         "double-heading": "Double motrice",
         "risky-contracts": "Contrats risqués",
-        "equalising-beam": "Suspension améliorée"
+        "equalising-beam": "Suspension améliorée",
+        "boiler-lagging": "Isolation thermique",
+        "steam-turbines": "Turbines à vapeur"
       }
     },
     "stock-shares": {
@@ -183,6 +185,11 @@
         "left": "nb posées",
         "center": "nb restantes",
         "right": "score actuel"
+      },
+      "subtitle-optional": "Bonus disponibles",
+      "bonuses": {
+        "plus-one": "Bonus +1",
+        "plus-two": "Bonus +2"
       },
       "subtitle-1": "Routes posées",
       "subtitle-2": "Echanges"

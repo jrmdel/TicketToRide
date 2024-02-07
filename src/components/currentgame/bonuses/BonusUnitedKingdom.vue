@@ -27,11 +27,30 @@
       logo="mdi-transit-connection-variant"
       @value-change="updateEqualisingBeamScore($event)"
     />
+    <bonus-item-counter
+      ref="boilerLaggingItem"
+      :isActive="isActive"
+      :title="$t('current.bonuses.uk.boiler-lagging')"
+      :minCount="0"
+      :maxCount="1"
+      :logo="plusOneIcon"
+      @value-change="updateBoilerLaggingScore($event)"
+    />
+    <bonus-item-counter
+      ref="steamTurbinesItem"
+      :isActive="isActive"
+      :title="$t('current.bonuses.uk.steam-turbines')"
+      :minCount="0"
+      :maxCount="1"
+      :logo="plusTwoIcon"
+      @value-change="updateSteamTurbinesScore($event)"
+    />
   </div>
 </template>
 
 <script>
 import BonusItemCounter from './ui/BonusItemCounter.vue';
+import { PLUS_ONE_ICON, PLUS_TWO_ICON } from '@/assets/icons/icons.js';
 
 export default {
   components: { BonusItemCounter },
@@ -63,6 +82,8 @@ export default {
   },
   data: () => ({
     doubleHeadingBonus: 0,
+    plusOneIcon: PLUS_ONE_ICON,
+    plusTwoIcon: PLUS_TWO_ICON,
   }),
   methods: {
     resetBonus() {
@@ -94,6 +115,14 @@ export default {
       const score = count * 15;
 
       this.sendEvent({ equalisingBeam: { count: Math.abs(count), score } });
+    },
+    updateBoilerLaggingScore(event) {
+      const count = event.value;
+      console.log(count);
+    },
+    updateSteamTurbinesScore(event) {
+      const count = event.value;
+      console.log(count);
     },
     sendEvent(content) {
       this.$emit('update-bonus', {
