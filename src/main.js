@@ -6,9 +6,12 @@ import 'firebase/firestore';
 import VueApexCharts from 'vue-apexcharts';
 import i18n from './i18n';
 import LocalStorageService from './services/localStorageService';
+import BonusService from './services/bonusService';
+import frag from 'vue-frag';
 Vue.use(VueApexCharts);
 
 Vue.component('ApexChart', VueApexCharts);
+Vue.directive('frag', frag);
 Vue.config.productionTip = false;
 
 firebase.initializeApp({
@@ -29,5 +32,6 @@ new Vue({
   render: (h) => h(App),
   provide: {
     localStorageService: LocalStorageService,
+    bonusService: BonusService,
   },
 }).$mount('#app');

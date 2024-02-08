@@ -1,49 +1,57 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12">
-        <span class="text-h6 tertiary--text">{{
-          $t('current.bonuses.globe-trotter')
-        }}</span>
-      </v-col>
-    </v-row>
-    <v-row class="ml-sm-4" align="center" justify="center" justify-sm="start">
-      <v-btn
-        large
-        icon
-        :disabled="globeTrotterBonus == 0"
-        @click="updateGlobeTrotterBonus(0)"
-      >
-        <v-icon color="red">mdi-minus</v-icon>
-      </v-btn>
-      <span class="text-h6">{{ globeTrotterBonus }}</span>
-      <v-btn
-        large
-        icon
-        :disabled="globeTrotterBonus == 1"
-        @click="updateGlobeTrotterBonus(1)"
-      >
-        <v-icon color="green">mdi-plus</v-icon>
-      </v-btn>
-      <v-icon class="ml-4">mdi-earth-plus</v-icon>
-    </v-row>
-  </v-container>
+  <bonus-item-counter
+    ref="bonusItem"
+    :isActive="isActive"
+    :title="$t('current.bonuses.globe-trotter')"
+    :minCount="0"
+    :maxCount="1"
+    logo="mdi-earth-plus"
+    @value-change="updateCountScore($event)"
+  />
 </template>
 
 <script>
+import BonusItemCounter from './ui/BonusItemCounter.vue';
+
 export default {
+  components: { BonusItemCounter },
   name: 'BonusGlobeTrotter',
+  inject: ['localStorageService'],
   props: {
-    globeTrotterBonus: {
-      type: Number,
-      default: 0,
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    version: {
+      type: Object,
     },
   },
   methods: {
-    updateGlobeTrotterBonus(update) {
-      const evnt = { value: update };
-      this.$emit('updateGlobeTrotterBonus', evnt);
+    resetBonus() {
+      this.$refs.bonusItem.setBonus(0);
     },
+    updateCountScore(event) {
+      const count = event.value;
+      const score = this.computeScore(count);
+
+      this.sendEvent({ count, score });
+      this.localStorageService.setGlobeTrotter(count);
+    },
+    computeScore(bonus = 0) {
+      const pointsPerBonus = this.version?.bonusGlobeTrotter ?? 0;
+      const score = bonus * pointsPerBonus;
+      return isNaN(score) ? 0 : score;
+    },
+    sendEvent(content) {
+      this.$emit('update-bonus', {
+        name: 'globeTrotter',
+        ...content,
+      });
+    },
+  },
+  mounted() {
+    const bonus = this.localStorageService?.getGlobeTrotter() ?? 0;
+    this.$refs.bonusItem.setBonus(bonus);
   },
 };
 </script>

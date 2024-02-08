@@ -6,4 +6,5 @@ export const GamesList = {
   OLD_WEST: 'Old West',
   INDIA: 'India',
   PENNSYLVANIA: 'Pennsylvania',
+  UNITED_KINGDOM: 'United Kingdom',
 };

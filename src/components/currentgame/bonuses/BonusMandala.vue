@@ -1,107 +1,73 @@
 <template>
-  <div v-if="isActive">
-    <v-row>
-      <v-col cols="12">
-        <span class="text-h6 tertiary--text">{{ title }}</span>
-      </v-col>
-    </v-row>
-    <v-row class="ml-sm-4" align="center" justify="center" justify-sm="start">
-      <v-btn large icon :disabled="bonus == 0" @click="bonus -= 1">
-        <v-icon color="red">mdi-minus</v-icon>
-      </v-btn>
-      <span class="text-h6">{{ bonus }}</span>
-      <v-btn large icon :disabled="bonus == 56" @click="bonus += 1">
-        <v-icon color="green">mdi-plus</v-icon>
-      </v-btn>
-      <v-icon class="ml-4">{{ logo }}</v-icon>
-    </v-row>
-  </div>
+  <bonus-item-counter
+    ref="bonusItem"
+    :isActive="isActive"
+    :title="$t('current.bonuses.mandala')"
+    :minCount="0"
+    :maxCount="56"
+    logo="mdi-vector-circle"
+    @value-change="updateCountScore($event)"
+  />
 </template>
 
 <script>
+import BonusItemCounter from './ui/BonusItemCounter.vue';
+
 export default {
+  components: { BonusItemCounter },
   name: 'BonusMandala',
+  inject: ['localStorageService'],
   props: {
     isActive: {
       type: Boolean,
       default: false,
     },
-    logo: {
-      type: String,
-      default: 'mdi-vector-circle',
-    },
-    title: {
-      type: String,
-      default: '',
-    },
-  },
-  data: () => ({
-    bonus: 0,
-  }),
-  watch: {
-    bonus: {
-      handler(value) {
-        this.sendEvent(value);
-        if (value != null) {
-          localStorage.setItem('mandalaBonus', value);
-        }
-      },
-    },
-  },
-  computed: {
-    computeScore: {
-      get() {
-        let score = 0;
-        switch (this.bonus) {
-          case 0:
-            score = 0;
-            break;
-          case 1:
-            score = 5;
-            break;
-          case 2:
-            score = 10;
-            break;
-          case 3:
-            score = 20;
-            break;
-          case 4:
-            score = 30;
-            break;
-          default:
-            score = 40;
-            break;
-        }
-        return score;
-      },
-    },
   },
   methods: {
     resetBonus() {
-      this.bonus = 0;
-      if (localStorage.getItem('mandalaBonus')) {
-        localStorage.removeItem('mandalaBonus');
-      }
+      this.$refs.bonusItem.setBonus(0);
     },
-    sendEvent(value) {
+    updateCountScore(event) {
+      const count = event.value;
+      const score = this.computeScore(count);
+
+      this.sendEvent({ count, score });
+      this.localStorageService.setMandala(count);
+    },
+    computeScore(bonus) {
+      let score = 0;
+      switch (bonus) {
+        case 0:
+          score = 0;
+          break;
+        case 1:
+          score = 5;
+          break;
+        case 2:
+          score = 10;
+          break;
+        case 3:
+          score = 20;
+          break;
+        case 4:
+          score = 30;
+          break;
+        default:
+          score = 40;
+          break;
+      }
+      return score;
+    },
+    sendEvent(content) {
       this.$emit('update-bonus', {
         name: 'mandala',
-        count: value,
-        score: this.computeScore,
+        ...content,
       });
-    },
-    getValueFromLocalStorage() {
-      if (localStorage.getItem('mandalaBonus')) {
-        try {
-          this.bonus = parseInt(localStorage.getItem('mandalaBonus'));
-        } catch (error) {
-          localStorage.removeItem('mandalaBonus');
-        }
-      }
     },
   },
   mounted() {
-    this.getValueFromLocalStorage();
+    const bonus = this.localStorageService?.getMandala() ?? 0;
+    this.$refs.bonusItem.setBonus(bonus);
   },
 };
 </script>

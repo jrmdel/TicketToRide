@@ -20,6 +20,7 @@
  * @param {Boolean} hasBonusMandala A truthy value if this version contains a bonus for mandala
  * @param {Boolean} hasStockShares True is this version has stock shares (ex: Pennsylvania)
  * @param {Array} stockSharesList List of all stock shares of the version (ex: Pennsylvania)
+ * @param {Boolean} hasUnitedKingdomBonus True if this version has UK bonuses
  */
 function create(
   name,
@@ -41,7 +42,8 @@ function create(
   bonusGlobeTrotter = 0,
   hasBonusMandala = false,
   hasStockShares = false,
-  stockSharesList = null
+  stockSharesList = null,
+  hasUnitedKingdomBonus = false
 ) {
   return {
     name: name,
@@ -68,6 +70,7 @@ function create(
     hasBonusMandala: hasBonusMandala,
     hasStockShares: hasStockShares,
     stockSharesList: stockSharesList,
+    hasUnitedKingdomBonus: hasUnitedKingdomBonus,
   };
 }
 

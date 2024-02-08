@@ -468,14 +468,15 @@
           ref="bonusesBlock"
           :numberOfBonuses="computedNumberOfBonuses"
           :bonusScore="computedBonusScore"
+          :version="selectVersion"
+          :completedRoutes="computedCompletion"
           :versionHasLongest="computedVersionHasLongest"
           :versionHasGlobeTrotterBonus="computedVersionHasGlobeTrotterBonus"
           :versionHasMandalaBonus="computedVersionHasMandalaBonus"
-          :longestBonus="longestBonus"
-          :globeTrotterBonus="globeTrotterBonus"
-          @updateLongestBonus="updateLongestBonus($event)"
-          @updateGlobeTrotterBonus="updateGlobeTrotterBonus($event)"
+          @updateLongestBonus="handleBonusEvent($event)"
+          @updateGlobeTrotterBonus="handleBonusEvent($event)"
           @updateMandalaBonus="handleBonusEvent($event)"
+          @updateUnitedKingdomBonus="handleBonusEvent($event)"
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasStockShares">
@@ -752,6 +753,7 @@ import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
 import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
+import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
 
 export default {
   components: {
@@ -789,6 +791,7 @@ export default {
     longestBonus: 0,
     globeTrotterBonus: 0,
     mandalaBonus: { count: 0, score: 0 },
+    unitedKingdomBonus: structuredClone(DEFAULT_UK_BONUS),
     stockSharesScore: 0,
     scoresForAllStockShares: [],
     harbors: [],
@@ -1040,21 +1043,30 @@ export default {
     },
     computedNumberOfBonuses: {
       get() {
-        if (this.computedVersionHasBonuses) {
-          return (
-            this.longestBonus +
-            this.globeTrotterBonus +
-            (this.mandalaBonus.count > 0 ? 1 : 0)
-          );
-        } else {
+        if (!this.computedVersionHasBonuses) {
           return 0;
         }
+        const ukBonuses = Object.values(this.unitedKingdomBonus ?? {}).map(
+          (bonus) => bonus.count
+        );
+        const bonuses = [
+          this.longestBonus,
+          this.globeTrotterBonus,
+          this.mandalaBonus.count,
+          ...ukBonuses,
+        ];
+        return bonuses.reduce((acc, val) => {
+          if (val !== 0) {
+            acc++;
+          }
+          return acc;
+        }, 0);
       },
     },
     computedGlobeTrotterBonus: {
       get() {
         if (this.computedVersionHasGlobeTrotterBonus) {
-          return this.selectVersion.bonusGlobeTrotter * this.globeTrotterBonus;
+          return this.globeTrotterBonus;
         } else {
           return 0;
         }
@@ -1063,7 +1075,7 @@ export default {
     computedLongestBonus: {
       get() {
         if (this.computedVersionHasLongest) {
-          return this.selectVersion.longestPoints * this.longestBonus;
+          return this.longestBonus;
         } else {
           return 0;
         }
@@ -1078,13 +1090,25 @@ export default {
         }
       },
     },
+    computedUnitedKingdomBonus: {
+      get() {
+        if (this.computedVersionHasUnitedKingdomBonus) {
+          const scores = Object.values(this.unitedKingdomBonus ?? {}).map(
+            (value) => value.score
+          );
+          return scores.reduce((acc, val) => acc + val, 0);
+        }
+        return 0;
+      },
+    },
     computedBonusScore: {
       get() {
         if (this.computedVersionHasBonuses) {
           return (
             this.computedLongestBonus +
             this.computedGlobeTrotterBonus +
-            this.computedMandalaBonus
+            this.computedMandalaBonus +
+            this.computedUnitedKingdomBonus
           );
         } else {
           return 0;
@@ -1131,8 +1155,16 @@ export default {
       get() {
         return (
           this.computedVersionHasLongest ||
-          this.computedVersionHasGlobeTrotterBonus
+          this.computedVersionHasGlobeTrotterBonus ||
+          this.computedVersionHasUnitedKingdomBonus
         );
+      },
+    },
+    computedVersionHasUnitedKingdomBonus: {
+      get() {
+        return this.selectVersion
+          ? this.selectVersion.hasUnitedKingdomBonus
+          : false;
       },
     },
     computedVersionHasLongest: {
@@ -1229,20 +1261,6 @@ export default {
       handler(value) {
         if (value) {
           localStorage.setItem('id', value);
-        }
-      },
-    },
-    longestBonus: {
-      handler(value) {
-        if (value != null) {
-          localStorage.setItem('longestBonus', value);
-        }
-      },
-    },
-    globeTrotterBonus: {
-      handler(value) {
-        if (value != null) {
-          localStorage.setItem('globeTrotterBonus', value);
         }
       },
     },
@@ -1370,6 +1388,9 @@ export default {
           score: this.stockSharesScore,
           items: this.scoresForAllStockShares,
         };
+      }
+      if (this.computedVersionHasUnitedKingdomBonus) {
+        update['unitedKingdomBonus'] = this.unitedKingdomBonus;
       }
       try {
         await db
@@ -1527,26 +1548,16 @@ export default {
       const { name, ...rest } = event;
       if (name == 'mandala') {
         this.mandalaBonus = rest;
+      } else if (name === 'longest') {
+        this.longestBonus = event.score;
+      } else if (name === 'globeTrotter') {
+        this.globeTrotterBonus = event.score;
+      } else if (name === 'uk') {
+        this.unitedKingdomBonus = { ...this.unitedKingdomBonus, ...rest };
       }
     },
     resetBonuses() {
-      this.longestBonus = 0;
-      this.globeTrotterBonus = 0;
       this.$refs.bonusesBlock.reset();
-      if (localStorage.getItem('longestBonus')) {
-        localStorage.removeItem('longestBonus');
-      }
-      if (localStorage.getItem('globeTrotterBonus')) {
-        localStorage.removeItem('globeTrotterBonus');
-      }
-    },
-    updateLongestBonus(event) {
-      localStorage.setItem('longestBonus', event.value);
-      this.longestBonus = event.value;
-    },
-    updateGlobeTrotterBonus(event) {
-      localStorage.setItem('globeTrotterBonus', event.value);
-      this.globeTrotterBonus = event.value;
     },
     toggleTo(item, status) {
       const id = this.routes.findIndex((route) => route.id == item.id);
@@ -1606,22 +1617,6 @@ export default {
           this.gameId = localStorage.getItem('id');
         } catch (error) {
           localStorage.removeItem('id');
-        }
-      }
-      if (localStorage.getItem('longestBonus')) {
-        try {
-          this.longestBonus = parseInt(localStorage.getItem('longestBonus'));
-        } catch (error) {
-          localStorage.removeItem('longestBonus');
-        }
-      }
-      if (localStorage.getItem('globeTrotterBonus')) {
-        try {
-          this.globeTrotterBonus = parseInt(
-            localStorage.getItem('globeTrotterBonus')
-          );
-        } catch (error) {
-          localStorage.removeItem('globeTrotterBonus');
         }
       }
       if (localStorage.getItem('trainStations')) {

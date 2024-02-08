@@ -1,49 +1,56 @@
 <template>
-  <v-container fluid>
-    <v-row>
-      <v-col cols="12">
-        <span class="text-h6 tertiary--text">{{
-          $t('current.bonuses.longest-path')
-        }}</span>
-      </v-col>
-    </v-row>
-    <v-row class="ml-sm-4" align="center" justify="center" justify-sm="start">
-      <v-btn
-        large
-        icon
-        :disabled="longestBonus == 0"
-        @click="updateLongestBonus(0)"
-      >
-        <v-icon color="red">mdi-minus</v-icon>
-      </v-btn>
-      <span class="text-h6">{{ longestBonus }}</span>
-      <v-btn
-        large
-        icon
-        :disabled="longestBonus == 1"
-        @click="updateLongestBonus(1)"
-      >
-        <v-icon color="green">mdi-plus</v-icon>
-      </v-btn>
-      <v-icon class="ml-4">mdi-transit-connection-variant</v-icon>
-    </v-row>
-  </v-container>
+  <bonus-item-counter
+    ref="bonusItem"
+    :isActive="isActive"
+    :title="$t('current.bonuses.longest-path')"
+    :minCount="0"
+    :maxCount="1"
+    logo="mdi-transit-connection-variant"
+    @value-change="updateCountScore($event)"
+  />
 </template>
 
 <script>
+import BonusItemCounter from './ui/BonusItemCounter.vue';
 export default {
+  components: { BonusItemCounter },
   name: 'BonusLongest',
+  inject: ['localStorageService'],
   props: {
-    longestBonus: {
-      type: Number,
-      default: 0,
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
+    version: {
+      type: Object,
     },
   },
   methods: {
-    updateLongestBonus(update) {
-      const evnt = { value: update };
-      this.$emit('updateLongestBonus', evnt);
+    resetBonus() {
+      this.$refs.bonusItem.setBonus(0);
     },
+    updateCountScore(event) {
+      const count = event.value;
+      const score = this.computeScore(count);
+
+      this.sendEvent({ count, score });
+      this.localStorageService.setLongest(count);
+    },
+    computeScore(bonus = 0) {
+      const pointsPerBonus = this.version?.longestPoints ?? 0;
+      const score = bonus * pointsPerBonus;
+      return isNaN(score) ? 0 : score;
+    },
+    sendEvent(content) {
+      this.$emit('update-bonus', {
+        name: 'longest',
+        ...content,
+      });
+    },
+  },
+  mounted() {
+    const bonus = this.localStorageService?.getLongest() ?? 0;
+    this.$refs.bonusItem.setBonus(bonus);
   },
 };
 </script>

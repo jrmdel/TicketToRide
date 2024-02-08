@@ -21,23 +21,31 @@
           rightColor="accent"
           rightIcon="mdi-restore"
           :rightText="$t('main.btn.reset')"
-          @clickRight="openReset('bonuses')"
+          @clickRight="reset()"
         />
         <BonusLongest
-          v-show="versionHasLongest"
-          :longestBonus="longestBonus"
-          @updateLongestBonus="updateLongestBonus($event)"
+          ref="longestBonus"
+          :isActive="versionHasLongest"
+          :version="version"
+          @update-bonus="updateLongestBonus($event)"
         />
         <BonusGlobeTrotter
-          v-show="versionHasGlobeTrotterBonus"
-          :globeTrotterBonus="globeTrotterBonus"
-          @updateGlobeTrotterBonus="updateGlobeTrotterBonus($event)"
+          ref="globeTrotterBonus"
+          :isActive="versionHasGlobeTrotterBonus"
+          :version="version"
+          @update-bonus="updateGlobeTrotterBonus($event)"
         />
         <BonusMandala
           ref="mandalaBonus"
           :isActive="versionHasMandalaBonus"
-          :title="$t('current.bonuses.mandala')"
           @update-bonus="updateMandalaBonus($event)"
+        />
+        <bonus-united-kingdom
+          ref="unitedKingdomBonus"
+          :isActive="true"
+          :version="version"
+          :completedRoutes="completedRoutes"
+          @update-bonus="updateUnitedKingdomBonus($event)"
         />
       </v-container>
     </v-card-text>
@@ -50,6 +58,7 @@ import TwoButtons from '../TwoButtons.vue';
 import BaseIndicators from '../BaseIndicators.vue';
 import BonusLongest from './BonusLongest.vue';
 import BonusGlobeTrotter from './BonusGlobeTrotter.vue';
+import BonusUnitedKingdom from './BonusUnitedKingdom.vue';
 
 export default {
   name: 'BonusesBlock',
@@ -59,6 +68,7 @@ export default {
     BonusGlobeTrotter,
     TwoButtons,
     BaseIndicators,
+    BonusUnitedKingdom,
   },
   props: {
     numberOfBonuses: {
@@ -66,6 +76,14 @@ export default {
       default: 0,
     },
     bonusScore: {
+      type: Number,
+      default: 0,
+    },
+    version: {
+      type: Object,
+      default: () => {},
+    },
+    completedRoutes: {
       type: Number,
       default: 0,
     },
@@ -81,29 +99,25 @@ export default {
       type: Boolean,
       default: false,
     },
-    longestBonus: {
-      type: Number,
-      default: 0,
-    },
-    globeTrotterBonus: {
-      type: Number,
-      default: 0,
-    },
   },
   methods: {
     reset() {
       this.$refs.mandalaBonus.resetBonus();
+      this.$refs.longestBonus.resetBonus();
+      this.$refs.globeTrotterBonus.resetBonus();
+      this.$refs.unitedKingdomBonus.resetBonus();
     },
-    updateLongestBonus(update) {
-      const evnt = { value: update };
-      this.$emit('updateLongestBonus', evnt.value);
+    updateLongestBonus(event) {
+      this.$emit('updateLongestBonus', event);
     },
-    updateGlobeTrotterBonus(update) {
-      const evnt = { value: update };
-      this.$emit('updateGlobeTrotterBonus', evnt.value);
+    updateGlobeTrotterBonus(event) {
+      this.$emit('updateGlobeTrotterBonus', event);
     },
     updateMandalaBonus(event) {
       this.$emit('updateMandalaBonus', event);
+    },
+    updateUnitedKingdomBonus(event) {
+      this.$emit('updateUnitedKingdomBonus', event);
     },
   },
 };

@@ -51,7 +51,7 @@
       "error": {
         "open-save": "Unable to retrieve the players' name. Try again.",
         "toggle-status": "Oups, ticket wasn't found",
-        "save": "Someting went wrong. Try again.",
+        "save": "Something went wrong. Try again.",
         "share": "Impossible to share the ID",
         "delete": "Oups, ticket wasn't found",
         "version-unsupported": "This game version is not supported"
@@ -93,7 +93,7 @@
       "line-2": "Please reset your current game and try joining this one again afterwards."
     },
     "error": {
-      "reset-game-session": "An error occured while resetting game variables"
+      "reset-game-session": "An error occurred while resetting game variables"
     }
   },
   "current": {
@@ -160,9 +160,16 @@
         "left": "nb of bonuses",
         "right": "current score"
       },
-      "longest-path": "Longest continous path",
+      "longest-path": "Longest continuous path",
       "globe-trotter": "Globe trotter",
-      "mandala": "Mandala"
+      "mandala": "Mandala",
+      "uk": {
+        "double-heading": "Double Heading",
+        "risky-contracts": "Risky Contracts",
+        "equalising-beam": "Equalising Beam",
+        "boiler-lagging": "Boiler Lagging",
+        "steam-turbines": "Steam Turbines"
+      }
     },
     "stock-shares": {
       "title": "Your stock shares",
@@ -178,6 +185,11 @@
         "left": "nb of units",
         "center": "nb of units left",
         "right": "current score"
+      },
+      "subtitle-optional": "Available bonuses",
+      "bonuses": {
+        "plus-one": "Bonus +1",
+        "plus-two": "Bonus +2"
       },
       "subtitle-1": "Claimed routes",
       "subtitle-2": "Exchanges"
