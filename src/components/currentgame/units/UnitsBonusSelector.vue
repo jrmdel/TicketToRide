@@ -12,8 +12,9 @@
         >
           <v-chip
             class="drop-focus-on-click"
-            v-for="bonus in availableBonuses"
+            v-for="bonus in bonuses"
             :key="bonus"
+            :value="bonus"
             outlined
             filter
           >
@@ -31,31 +32,40 @@ export default {
   inject: ['bonusService'],
   data: () => ({
     selectedBonus: [],
-    availableBonuses: ['plus-one', 'plus-two'],
+    bonuses: [],
   }),
   computed: {
     hasActiveUnitsBonuses: {
       get() {
-        return true;
+        return this.bonuses?.length > 0;
       },
     },
   },
   watch: {
     bonuses: {
       handler(value) {
-        if (!value || value?.length === 0) {
-          this.selectedBonus = [];
-          return;
+        if (value?.length === 0) {
+          this.reset();
         }
-        this.updateSelectedBonusIndexes();
+      },
+    },
+    selectedBonus: {
+      handler(value) {
+        this.$emit('update-bonus-selection', { value: value ?? [] });
       },
     },
   },
   methods: {
-    updateSelectedBonusIndexes() {},
+    reset() {
+      this.selectedBonus = [];
+    },
   },
   mounted() {
-    // this.bonusService
+    this.bonusService
+      .getBonusesRelatedToUnitsObservable()
+      .subscribe((bonuses) => {
+        this.bonuses = bonuses ?? [];
+      });
   },
 };
 </script>

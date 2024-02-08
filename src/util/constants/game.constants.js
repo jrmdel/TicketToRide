@@ -18,3 +18,8 @@ export const DEFAULT_UK_BONUS = {
   boilerLagging: { count: 0, score: 0 },
   steamTurbines: { count: 0, score: 0 },
 };
+
+export const ENUM_UNIT_BONUS = {
+  PLUS_ONE: 'plus-one',
+  PLUS_TWO: 'plus-two',
+};

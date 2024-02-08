@@ -1,19 +1,33 @@
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 class BonusService {
-  bonusesRelatedToUnits = [];
-
   constructor() {
     this.unitsWithBonus = new Subject();
-    this.unitsWithBonus$ = this.unitsWithBonus.asObservable();
+    this.bonusesRelatedToUnits = new BehaviorSubject();
   }
 
   getUnitsWithBonusObservable() {
-    return this.unitsWithBonus$;
+    return this.unitsWithBonus.asObservable();
   }
 
   addUnitsWithBonus(value) {
     this.unitsWithBonus.next(value);
+  }
+
+  resetUnits() {
+    this.unitsWithBonus.next(null);
+  }
+
+  getBonusesRelatedToUnitsObservable() {
+    return this.bonusesRelatedToUnits.asObservable();
+  }
+
+  setBonusesRelatedToUnits(value) {
+    this.bonusesRelatedToUnits.next(value);
+  }
+
+  resetBonuses() {
+    this.bonusesRelatedToUnits.next(null);
   }
 }
 

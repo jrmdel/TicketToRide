@@ -24,7 +24,10 @@
           :rightText="$t('main.btn.reset')"
           @clickRight="openReset()"
         />
-        <units-bonus-selector :bonuses="['plus-one', 'plus-two']" />
+        <units-bonus-selector
+          ref="bonusSelector"
+          @update-bonus-selection="updateActiveBonuses($event)"
+        />
         <v-row>
           <v-col cols="12">
             <span class="text-h6 tertiary--text">{{
@@ -85,7 +88,7 @@ import UnitsBonusSelector from './UnitsBonusSelector.vue';
 export default {
   name: 'UnitsBlock',
   components: { BaseIndicators, UnitCounter, TwoButtons, UnitsBonusSelector },
-  inject: ['localStorageService'],
+  inject: ['localStorageService', 'bonusService'],
   props: {
     unitRules: {
       type: Object,
@@ -105,16 +108,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    bonuses: {
-      type: Array,
-      default: () => [],
-    },
   },
   data: () => ({
     score: 0,
     numberOfUnits: 0,
     exchanges: 0,
     units: structuredClone(DEFAULT_UNITS),
+    activeUnitBonuses: [],
   }),
   computed: {
     availableUnits: {
@@ -172,24 +172,43 @@ export default {
       // For now, update locally.
       // this.$emit('openReset');
       this.resetUnits();
+      this.resetBonus();
     },
     resetUnits() {
       this.score = 0;
       this.numberOfUnits = 0;
       this.exchanges = 0;
-      // this.selectedBonus = [];
       this.units = structuredClone(DEFAULT_UNITS);
       this.localStorageService.setUnits(null);
+    },
+    resetBonus() {
+      this.$refs.bonusSelector.reset();
+      this.bonusService.resetUnits();
     },
     updateUnitCount({ unit, update }) {
       this.units[unit] += update;
       this.numberOfUnits += parseInt(unit) * parseInt(update);
       this.score += this.unitRules[unit] * update;
       this.localStorageService.setUnits(this.units);
+
+      if (this.activeUnitBonuses?.length) {
+        this.sendBonusUpdate(update);
+      }
     },
     updateExchanges(change) {
       this.exchanges += change;
       this.score -= change;
+    },
+    updateActiveBonuses(event) {
+      this.activeUnitBonuses = event?.value ?? [];
+    },
+    sendBonusUpdate(update) {
+      this.activeUnitBonuses.forEach((name) => {
+        this.bonusService.addUnitsWithBonus({
+          name,
+          update,
+        });
+      });
     },
     getUnits() {
       return this.units;

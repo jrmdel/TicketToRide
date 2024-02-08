@@ -34,7 +34,7 @@
       :minCount="0"
       :maxCount="1"
       :logo="plusOneIcon"
-      @value-change="updateBoilerLaggingScore($event)"
+      @value-change="updateBoilerLaggingBonus($event)"
     />
     <bonus-item-counter
       ref="steamTurbinesItem"
@@ -43,7 +43,7 @@
       :minCount="0"
       :maxCount="1"
       :logo="plusTwoIcon"
-      @value-change="updateSteamTurbinesScore($event)"
+      @value-change="updateSteamTurbinesBonus($event)"
     />
   </div>
 </template>
@@ -51,10 +51,12 @@
 <script>
 import BonusItemCounter from './ui/BonusItemCounter.vue';
 import { PLUS_ONE_ICON, PLUS_TWO_ICON } from '@/assets/icons/icons.js';
+import { ENUM_UNIT_BONUS } from '@/util/constants/game.constants';
 
 export default {
   components: { BonusItemCounter },
   name: 'BonusUnitedKingdom',
+  inject: ['bonusService'],
   props: {
     isActive: {
       type: Boolean,
@@ -80,21 +82,47 @@ export default {
       },
     },
   },
+  computed: {
+    activeUnitBonuses: {
+      get() {
+        const result = [];
+        if (this.boilerLaggingBonus) {
+          result.push(ENUM_UNIT_BONUS.PLUS_ONE);
+        }
+        if (this.steamTurbinesBonus) {
+          result.push(ENUM_UNIT_BONUS.PLUS_TWO);
+        }
+        return result;
+      },
+    },
+  },
   data: () => ({
     doubleHeadingBonus: 0,
     plusOneIcon: PLUS_ONE_ICON,
     plusTwoIcon: PLUS_TWO_ICON,
+    steamTurbinesBonus: 0,
+    steamTurbinesScore: 0,
+    boilerLaggingBonus: 0,
+    boilerLaggingScore: 0,
   }),
   methods: {
     resetBonus() {
-      const bonusesRefs = [
-        'doubleHeadingItem',
-        'riskyContractsItem',
-        'equalisingBeamItem',
-      ];
-      for (const ref of bonusesRefs) {
-        this.$refs[ref].setBonus(0);
-      }
+      Object.values(this.$refs).forEach((bonusRef) => bonusRef.setBonus(0));
+      this.bonusService.resetBonuses();
+    },
+    resetUnitBonusScore() {
+      this.steamTurbinesScore = 0;
+      this.boilerLaggingScore = 0;
+      this.sendEvent({
+        steamTurbines: {
+          count: this.steamTurbinesBonus,
+          score: 0,
+        },
+        boilerLagging: {
+          count: this.boilerLaggingBonus,
+          score: 0,
+        },
+      });
     },
     updateDoubleHeadingScore(event) {
       const count = event.value;
@@ -102,7 +130,6 @@ export default {
 
       this.doubleHeadingBonus = count;
       this.sendEvent({ doubleHeading: { count, score } });
-      // this.localStorageService.setLongest(count);
     },
     updateRiskyContractsScore(event) {
       const count = event.value;
@@ -116,13 +143,51 @@ export default {
 
       this.sendEvent({ equalisingBeam: { count: Math.abs(count), score } });
     },
-    updateBoilerLaggingScore(event) {
+    updateBoilerLaggingBonus(event) {
       const count = event.value;
-      console.log(count);
+      this.boilerLaggingBonus = count;
+      if (count === 0) {
+        this.boilerLaggingScore = 0;
+      }
+      this.sendEvent({
+        boilerLagging: { count, score: this.boilerLaggingScore },
+      });
+      this.broadcastActiveUnitBonuses();
     },
-    updateSteamTurbinesScore(event) {
+    updateBoilerLaggingScore(update) {
+      if (!update) {
+        return;
+      }
+      this.boilerLaggingScore += update;
+      this.sendEvent({
+        boilerLagging: {
+          count: this.boilerLaggingBonus,
+          score: this.boilerLaggingScore,
+        },
+      });
+    },
+    updateSteamTurbinesBonus(event) {
       const count = event.value;
-      console.log(count);
+      this.steamTurbinesBonus = count;
+      if (count === 0) {
+        this.steamTurbinesScore = 0;
+      }
+      this.sendEvent({
+        steamTurbines: { count, score: this.steamTurbinesScore },
+      });
+      this.broadcastActiveUnitBonuses();
+    },
+    updateSteamTurbinesScore(update) {
+      if (!update) {
+        return;
+      }
+      this.steamTurbinesScore += 2 * update;
+      this.sendEvent({
+        steamTurbines: {
+          count: this.steamTurbinesBonus,
+          score: this.steamTurbinesScore,
+        },
+      });
     },
     sendEvent(content) {
       this.$emit('update-bonus', {
@@ -130,10 +195,22 @@ export default {
         ...content,
       });
     },
+    broadcastActiveUnitBonuses() {
+      this.bonusService.setBonusesRelatedToUnits(this.activeUnitBonuses);
+    },
   },
   mounted() {
-    // const bonus = this.localStorageService?.getLongest() ?? 0;
-    // this.$refs.bonusItem.setBonus(bonus);
+    this.bonusService.getUnitsWithBonusObservable().subscribe((bonus) => {
+      if (bonus?.name === ENUM_UNIT_BONUS.PLUS_ONE) {
+        this.updateBoilerLaggingScore(bonus?.update);
+        return;
+      }
+      if (bonus?.name === ENUM_UNIT_BONUS.PLUS_TWO) {
+        this.updateSteamTurbinesScore(bonus?.update);
+        return;
+      }
+      this.resetUnitBonusScore();
+    });
   },
 };
 </script>
