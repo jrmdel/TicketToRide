@@ -42,7 +42,7 @@
         />
         <bonus-united-kingdom
           ref="unitedKingdomBonus"
-          :isActive="true"
+          :isActive="hasUnitedKingdomBonus"
           :version="version"
           :completedRoutes="completedRoutes"
           @update-bonus="updateUnitedKingdomBonus($event)"
@@ -98,6 +98,13 @@ export default {
     versionHasMandalaBonus: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    hasUnitedKingdomBonus: {
+      get() {
+        return Boolean(this.version?.hasUnitedKingdomBonus);
+      },
     },
   },
   methods: {
