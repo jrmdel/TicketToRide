@@ -578,7 +578,7 @@ import BaseIndicators from './currentgame/BaseIndicators';
 import TwoButtons from './currentgame/TwoButtons';
 import HarborsBlock from './currentgame/harbors/HarborsBlock.vue';
 import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
-import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
+import StockSharesBlock from './currentgame/stock-shares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
