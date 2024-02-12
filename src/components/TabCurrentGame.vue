@@ -250,125 +250,12 @@
         </v-card>
       </v-col>
       <v-col cols="12" v-show="computedVersionHasHarbors">
-        <!--Your harbors-->
-        <v-card color="background">
-          <v-toolbar flat color="primary" dark>
-            <v-toolbar-title>{{ $t('current.harbors.title') }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-icon large>mdi-anchor</v-icon>
-          </v-toolbar>
-          <v-card-subtitle>
-            <BaseIndicators
-              :leftText="$t('current.harbors.indicators.left')"
-              :leftIndicator="computedTopCities.length"
-              :centerText="$t('current.harbors.indicators.center')"
-              :centerIndicator="harbors.length"
-              :rightText="$t('current.harbors.indicators.right')"
-              :rightIndicator="computedHarborsScore"
-            />
-          </v-card-subtitle>
-          <v-card-text>
-            <v-container fluid>
-              <TwoButtons
-                :leftDisabledCondition="harbors.length > 2"
-                leftColor="primary"
-                leftIcon="mdi-ship-wheel"
-                :leftText="$t('main.btn.add-harbor')"
-                @clickLeft="openAddHarbor"
-                rightColor="accent"
-                rightIcon="mdi-restore"
-                :rightText="$t('main.btn.reset')"
-                @clickRight="openReset('harbors')"
-              />
-              <v-row>
-                <v-col cols="12">
-                  <v-row>
-                    <span class="text-h6 tertiary--text">{{
-                      $t('current.harbors.subtitle')
-                    }}</span>
-                  </v-row>
-                  <v-row>
-                    <v-col v-for="i in 3" :key="i" cols="12" md="4">
-                      <v-card outlined :disabled="harbors.length < i">
-                        <v-card-title>
-                          <span>{{
-                            $t('current.harbors.card.title', { id: i })
-                          }}</span>
-                          <v-spacer></v-spacer>
-                          <v-icon
-                            v-if="!(harbors.length < i)"
-                            large
-                            color="red"
-                            @click="deleteHarbor(i)"
-                            >mdi-close</v-icon
-                          >
-                        </v-card-title>
-                        <v-card-text class="my-n3">
-                          <v-container fluid>
-                            <v-row class="text-body-1" align="center">
-                              <v-col cols="12">
-                                <v-icon
-                                  :color="
-                                    harbors.length < i ? undefined : 'primary'
-                                  "
-                                  class="mx-4"
-                                  >mdi-city-variant</v-icon
-                                >
-                                <span v-if="harbors.length > i - 1">{{
-                                  harbors[i - 1]
-                                }}</span>
-                                <span v-else>{{
-                                  $t('current.harbors.card.no-city')
-                                }}</span>
-                              </v-col>
-                            </v-row>
-                            <v-row class="text-body-1" align="center">
-                              <v-col cols="12">
-                                <v-icon
-                                  :color="
-                                    harbors.length < i ? undefined : 'accent'
-                                  "
-                                  class="mx-4"
-                                  >mdi-medal-outline</v-icon
-                                >
-                                <span v-if="harbors.length > i - 1">{{
-                                  getHarborScore(harbors[i - 1])
-                                }}</span>
-                                <span v-else>{{
-                                  selectVersion
-                                    ? selectVersion.pointsPerUnsetHarbor
-                                    : 0
-                                }}</span>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <SimpleTable
-                    :data="computedTopCities"
-                    :title="$t('current.harbors.tables.potential.title')"
-                    :leftColumn="$t('current.harbors.tables.column-1')"
-                    :rightColumn="$t('current.harbors.tables.column-2')"
-                    :emptyText="$t('current.harbors.tables.potential.no-data')"
-                  />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <SimpleTable
-                    :data="computedTopSuccessfulCities"
-                    :title="$t('current.harbors.tables.successful.title')"
-                    :leftColumn="$t('current.harbors.tables.column-1')"
-                    :rightColumn="$t('current.harbors.tables.column-2')"
-                    :emptyText="$t('current.harbors.tables.successful.no-data')"
-                  />
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
+        <harbors-block
+          ref="harbors"
+          :routes="routes"
+          :version="selectVersion"
+          @update-score="updateHarborScore($event)"
+        />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasTrainStations">
         <!--Your train stations-->
@@ -480,7 +367,7 @@
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasStockShares">
-        <!--Your bonuses-->
+        <!--Your stock shares-->
         <StockSharesBlock
           :stockSharesList="computedVersionStockSharesList"
           @updateStockShareScore="updateStockShareScore($event)"
@@ -610,65 +497,6 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog
-      v-model="dialogHarbor"
-      max-width="660"
-      @click:outside="closeAddHarbor"
-    >
-      <v-card color="background">
-        <v-toolbar flat color="quaternary" dark>
-          <v-toolbar-title>{{
-            $t('current.dialog.add-harbor.title')
-          }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon @click="closeAddHarbor">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text>
-          <v-form v-model="harborForm" ref="harborForm">
-            <v-container fluid>
-              <v-row align="center">
-                <v-col cols="12">
-                  <span class="text-h6 tertiary--text">{{
-                    $t('current.dialog.add-harbor.subtitle')
-                  }}</span>
-                </v-col>
-                <v-col cols="12">
-                  <v-select
-                    v-model="newHarbor"
-                    :items="computedAnchorCities"
-                    :rules="simpleRule"
-                    solo
-                    :label="$t('current.dialog.add-harbor.label')"
-                    :error-messages="
-                      harbors.includes(newHarbor)
-                        ? $t('current.dialog.add-harbor.error')
-                        : ''
-                    "
-                  ></v-select>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn large text color="accent" @click="closeAddHarbor">{{
-            $t('main.btn.close')
-          }}</v-btn>
-          <v-btn
-            large
-            :disabled="!harborForm || harbors.includes(newHarbor)"
-            text
-            color="secondary"
-            @click="addHarbor"
-            >{{ $t('main.btn.add-harbor') }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
     <v-dialog v-model="dialogReset" max-width="400">
       <v-card color="background">
         <v-card-title
@@ -747,8 +575,8 @@
 <script>
 import { Types } from '../util/types';
 import BaseIndicators from './currentgame/BaseIndicators';
-import SimpleTable from './currentgame/SimpleTable';
 import TwoButtons from './currentgame/TwoButtons';
+import HarborsBlock from './currentgame/harbors/HarborsBlock.vue';
 import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
 import StockSharesBlock from './currentgame/stockShares/StockSharesBlock.vue';
 import { db } from '../main';
@@ -758,21 +586,18 @@ import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
 export default {
   components: {
     BaseIndicators,
-    SimpleTable,
     TwoButtons,
     UnitsBlock,
     BonusesBlock,
     StockSharesBlock,
+    HarborsBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
     dialogTicket: false,
-    dialogHarbor: false,
     dialogReset: false,
     dialogSaveGame: false,
     newTicketForm: false,
-    harborForm: false,
-    simpleRule: [(v) => !!v || 'A city is required'],
     fromTicket: null,
     toCities: [],
     toTicket: null,
@@ -794,8 +619,7 @@ export default {
     unitedKingdomBonus: structuredClone(DEFAULT_UK_BONUS),
     stockSharesScore: 0,
     scoresForAllStockShares: [],
-    harbors: [],
-    newHarbor: null,
+    harborScore: 0,
     resetType: '',
     gameId: '',
     loadingOpenSaveGame: false,
@@ -924,23 +748,6 @@ export default {
           : [];
       },
     },
-    computedAnchorCities: {
-      get() {
-        return this.selectVersion && this.selectVersion.hasHarbors
-          ? [
-              ...new Set(
-                this.selectVersion.tickets
-                  .map((ticket) =>
-                    ticket.cities
-                      .filter((city) => city.anchor)
-                      .map((city) => city.name)
-                  )
-                  .flat()
-              ),
-            ].sort()
-          : [];
-      },
-    },
     computedCompletion: {
       get() {
         return this.routes.filter((route) => route.status == 'Done').length;
@@ -962,69 +769,6 @@ export default {
         return this.routes.length > 0
           ? this.routes.map(computeScore).reduce((a, b) => a + b, 0)
           : 0;
-      },
-    },
-    computedTopCities: {
-      get() {
-        const r = this.routes;
-        const counts = {};
-        for (let i = 0, l = r.length; i < l; i++) {
-          const c = r[i].cities
-            .filter((city) => city.anchor)
-            .map((city) => city.name);
-          for (let j = 0; j < c.length; j++) {
-            counts[c[j]] = (counts[c[j]] || 0) + 1;
-          }
-        }
-        return Object.entries(counts)
-          .map((x) => {
-            return { city: x[0], num: x[1] };
-          })
-          .sort((a, b) => b.num - a.num);
-      },
-    },
-    computedTopSuccessfulCities: {
-      get() {
-        const r = this.routes;
-        const counts = {};
-        for (let i = 0, l = r.length; i < l; i++) {
-          if (r[i].status != 'Fail') {
-            const c = r[i].cities
-              .filter((city) => city.anchor)
-              .map((city) => city.name);
-            for (let j = 0; j < c.length; j++) {
-              counts[c[j]] = (counts[c[j]] || 0) + 1;
-            }
-          }
-        }
-        return Object.entries(counts)
-          .map((x) => {
-            return { city: x[0], num: x[1] };
-          })
-          .sort((a, b) => b.num - a.num);
-      },
-    },
-    computedHarborsScore: {
-      get() {
-        if (this.computedVersionHasHarbors) {
-          let res = 0;
-          for (let i = 0; i < this.harbors.length; i++) {
-            const found = this.computedTopSuccessfulCities.find(
-              (x) => x.city == this.harbors[i]
-            );
-            if (found && found.num > 0) {
-              res += this.selectVersion.harborRule[Math.min(found.num, 3) - 1];
-            }
-          }
-          return (
-            res +
-            this.selectVersion.pointsPerUnsetHarbor *
-              (this.selectVersion.numberOfHarborsPerPlayer -
-                this.harbors.length)
-          );
-        } else {
-          return 0;
-        }
       },
     },
     computedTrainStationsScore: {
@@ -1121,7 +865,7 @@ export default {
           return parseInt(
             this.computedTicketScore +
               this.unitScore +
-              this.computedHarborsScore +
+              this.harborScore +
               this.computedTrainStationsScore +
               this.computedBonusScore +
               this.stockSharesScore
@@ -1364,9 +1108,7 @@ export default {
         units,
       };
       if (this.computedVersionHasHarbors) {
-        update['harbors'] = this.harbors.map((x) => {
-          return { city: x, score: this.getHarborScore(x) };
-        });
+        update['harbors'] = this.$refs.harbors.getScoreByCity();
       }
       if (this.computedVersionHasExchanges) {
         update['exchanges'] = this.$refs.units.getExchanges();
@@ -1446,41 +1188,8 @@ export default {
       this.toTicket = null;
       this.fromTicket = null;
     },
-    openAddHarbor() {
-      this.dialogHarbor = true;
-    },
-    addHarbor() {
-      this.harbors.push(this.newHarbor);
-      localStorage.setItem('harbors', JSON.stringify(this.harbors));
-      if (this.harbors.length == 3) {
-        this.closeAddHarbor();
-      } else {
-        this.newHarbor = null;
-        this.$refs.harborForm.resetValidation();
-      }
-    },
-    deleteHarbor(num) {
-      this.harbors.splice(num - 1, 1);
-    },
-    closeAddHarbor() {
-      this.dialogHarbor = false;
-      this.newHarbor = null;
-      setTimeout(() => {
-        this.$refs.harborForm.resetValidation();
-      }, 50);
-    },
-    harborHasCity(city) {
-      return this.harbors.includes(city);
-    },
-    getHarborScore(city) {
-      const found = this.computedTopSuccessfulCities.find(
-        (x) => x.city == city
-      );
-      if (found && found.num > 0) {
-        return this.selectVersion.harborRule[Math.min(found.num, 3) - 1];
-      } else {
-        return 0;
-      }
+    updateHarborScore({ score }) {
+      this.harborScore = score;
     },
     updateStockShareScore(event) {
       this.scoresForAllStockShares = event.scoresForAllStockShares;
@@ -1533,10 +1242,7 @@ export default {
       this.$refs.units.resetUnits();
     },
     resetHarbors() {
-      this.harbors = [];
-      if (localStorage.getItem('harbors')) {
-        localStorage.removeItem('harbors');
-      }
+      this.$refs.harbors.reset();
     },
     resetTrainStations() {
       this.trainStations = 0;
@@ -1624,13 +1330,6 @@ export default {
           this.trainStations = parseInt(localStorage.getItem('trainStations'));
         } catch (error) {
           localStorage.removeItem('trainStations');
-        }
-      }
-      if (localStorage.getItem('harbors')) {
-        try {
-          this.harbors = JSON.parse(localStorage.getItem('harbors'));
-        } catch (error) {
-          localStorage.removeItem('harbors');
         }
       }
       if (localStorage.getItem('routes')) {

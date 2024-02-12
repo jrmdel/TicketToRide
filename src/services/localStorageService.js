@@ -3,11 +3,13 @@ const ENUM_ITEMS = {
   mandala: 'mandalaBonus',
   longest: 'longestBonus',
   globeTrotter: 'globeTrotterBonus',
+  harbors: 'harbors',
 };
 
 class LocalStorageService {
   constructor() {}
 
+  /* UNITS */
   setUnits(units) {
     if (!units) {
       localStorage.removeItem(ENUM_ITEMS.units);
@@ -24,6 +26,7 @@ class LocalStorageService {
     return JSON.parse(unitsFromStorage);
   }
 
+  /* MANDALA BONUS */
   setMandala(bonus) {
     if (!bonus) {
       localStorage.removeItem(ENUM_ITEMS.mandala);
@@ -40,6 +43,7 @@ class LocalStorageService {
     return mandalaBonus;
   }
 
+  /* LONGEST BONUS */
   setLongest(bonus) {
     if (!bonus) {
       localStorage.removeItem(ENUM_ITEMS.longest);
@@ -56,6 +60,7 @@ class LocalStorageService {
     return longestBonus;
   }
 
+  /* GLOBE TROTTER BONUS */
   setGlobeTrotter(bonus) {
     if (!bonus) {
       localStorage.removeItem(ENUM_ITEMS.globeTrotter);
@@ -72,6 +77,23 @@ class LocalStorageService {
       return 0;
     }
     return globeTrotterBonus;
+  }
+
+  /* HARBORS */
+  setHarbors(harbors) {
+    if (!harbors || harbors?.length === 0) {
+      localStorage.removeItem(ENUM_ITEMS.harbors);
+      return;
+    }
+    localStorage.setItem(ENUM_ITEMS.harbors, JSON.stringify(harbors));
+  }
+
+  getHarbors() {
+    const harborsFromStorage = localStorage.getItem(ENUM_ITEMS.harbors);
+    if (!harborsFromStorage) {
+      return [];
+    }
+    return JSON.parse(harborsFromStorage);
   }
 }
 

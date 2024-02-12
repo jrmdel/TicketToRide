@@ -21,7 +21,7 @@
               <tbody v-show="data.length > 0">
                 <tr v-for="item in data" :key="item.city">
                   <td>{{ item.city }}</td>
-                  <td>{{ item.num }}</td>
+                  <td>{{ item.count }}</td>
                 </tr>
               </tbody>
               <tbody v-show="data.length == 0">

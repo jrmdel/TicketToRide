@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-frag>
     <v-row justify="center" :justify-sm="leftActive ? 'space-between' : 'end'">
       <v-col cols="auto" v-if="leftActive">
         <v-btn
