@@ -4,6 +4,7 @@ const ENUM_ITEMS = {
   longest: 'longestBonus',
   globeTrotter: 'globeTrotterBonus',
   harbors: 'harbors',
+  trainStations: 'trainStations',
 };
 
 class LocalStorageService {
@@ -94,6 +95,25 @@ class LocalStorageService {
       return [];
     }
     return JSON.parse(harborsFromStorage);
+  }
+
+  /* TRAIN STATIONS */
+  setTrainStations(count) {
+    if (!count) {
+      localStorage.removeItem(ENUM_ITEMS.trainStations);
+      return;
+    }
+    localStorage.setItem(ENUM_ITEMS.trainStations, count);
+  }
+
+  getTrainStations() {
+    const trainStations = parseInt(
+      localStorage.getItem(ENUM_ITEMS.trainStations)
+    );
+    if (isNaN(trainStations)) {
+      return 0;
+    }
+    return trainStations;
   }
 }
 

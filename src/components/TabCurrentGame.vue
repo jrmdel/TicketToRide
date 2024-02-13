@@ -258,96 +258,11 @@
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasTrainStations">
-        <!--Your train stations-->
-        <v-card color="background">
-          <v-toolbar flat color="primary" dark>
-            <v-toolbar-title>{{
-              $t('current.stations.title')
-            }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-icon large>mdi-railroad-light</v-icon>
-          </v-toolbar>
-          <v-card-subtitle>
-            <BaseIndicators
-              :leftText="$t('current.stations.indicators.left')"
-              :leftIndicator="trainStations"
-              :centerCondition="false"
-              :rightText="$t('current.stations.indicators.right')"
-              :rightIndicator="computedTrainStationsScore"
-            />
-          </v-card-subtitle>
-          <v-card-text>
-            <v-container fluid>
-              <TwoButtons
-                :leftActive="false"
-                rightColor="accent"
-                rightIcon="mdi-restore"
-                :rightText="$t('main.btn.reset')"
-                @clickRight="openReset('train stations')"
-              />
-              <v-row>
-                <v-col cols="12">
-                  <v-row>
-                    <span class="text-h6 tertiary--text">{{
-                      $t('current.stations.subtitle')
-                    }}</span>
-                  </v-row>
-                  <v-row>
-                    <v-col v-for="i in 3" :key="i" cols="12" md="4">
-                      <v-card outlined>
-                        <v-card-title>
-                          <span>{{
-                            $t('current.stations.card.title', { id: i })
-                          }}</span>
-                          <v-spacer></v-spacer>
-                          <v-icon
-                            v-if="!(trainStations < i)"
-                            large
-                            color="red"
-                            @click="trainStations--"
-                            >mdi-close</v-icon
-                          >
-                          <v-icon
-                            v-else
-                            large
-                            color="green"
-                            @click="trainStations++"
-                            >mdi-plus</v-icon
-                          >
-                        </v-card-title>
-                        <v-card-text class="my-n3">
-                          <v-container fluid>
-                            <v-row class="text-body-1" align="center">
-                              <v-col cols="12">
-                                <v-icon
-                                  :color="
-                                    trainStations < i ? undefined : 'accent'
-                                  "
-                                  class="mx-4"
-                                  >mdi-medal-outline</v-icon
-                                >
-                                <span v-if="trainStations > i - 1">{{
-                                  selectVersion
-                                    ? selectVersion.trainStationRule
-                                    : 0
-                                }}</span>
-                                <span v-else>{{
-                                  selectVersion
-                                    ? selectVersion.pointsPerUnsetTrainStation
-                                    : 0
-                                }}</span>
-                              </v-col>
-                            </v-row>
-                          </v-container>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
+        <train-stations-block
+          ref="trainStations"
+          :version="selectVersion"
+          @update-score="updateTrainStationScore($event)"
+        ></train-stations-block>
       </v-col>
       <v-col cols="12" v-show="computedVersionHasBonuses">
         <!--Your bonuses-->
@@ -582,6 +497,7 @@ import StockSharesBlock from './currentgame/stock-shares/StockSharesBlock.vue';
 import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
+import TrainStationsBlock from './currentgame/train-stations/TrainStationsBlock.vue';
 
 export default {
   components: {
@@ -591,6 +507,7 @@ export default {
     BonusesBlock,
     StockSharesBlock,
     HarborsBlock,
+    TrainStationsBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
@@ -612,7 +529,7 @@ export default {
     selectPlayer: [],
     selectedPlayer: null,
     lockSelect: true,
-    trainStations: 0,
+    trainStationsScore: 0,
     longestBonus: 0,
     globeTrotterBonus: 0,
     mandalaBonus: { count: 0, score: 0 },
@@ -771,20 +688,6 @@ export default {
           : 0;
       },
     },
-    computedTrainStationsScore: {
-      get() {
-        if (this.computedVersionHasTrainStations) {
-          return (
-            this.selectVersion.pointsPerUnsetTrainStation *
-              (this.selectVersion.numberOfTrainStationsPerPlayer -
-                this.trainStations) +
-            this.trainStations * this.selectVersion.trainStationRule
-          );
-        } else {
-          return 0;
-        }
-      },
-    },
     computedNumberOfBonuses: {
       get() {
         if (!this.computedVersionHasBonuses) {
@@ -866,7 +769,7 @@ export default {
             this.computedTicketScore +
               this.unitScore +
               this.harborScore +
-              this.computedTrainStationsScore +
+              this.trainStationsScore +
               this.computedBonusScore +
               this.stockSharesScore
           );
@@ -1008,13 +911,6 @@ export default {
         }
       },
     },
-    trainStations: {
-      handler(value) {
-        if (value != null) {
-          localStorage.setItem('trainStations', value);
-        }
-      },
-    },
     appLoaded: {
       immediate: true,
       handler(value) {
@@ -1114,7 +1010,7 @@ export default {
         update['exchanges'] = this.$refs.units.getExchanges();
       }
       if (this.computedVersionHasTrainStations) {
-        update['trainStations'] = this.computedTrainStationsScore;
+        update['trainStations'] = this.trainStationsScore;
       }
       if (this.computedVersionHasLongest) {
         update['longestBonus'] = this.computedLongestBonus;
@@ -1188,6 +1084,9 @@ export default {
       this.toTicket = null;
       this.fromTicket = null;
     },
+    updateTrainStationScore({ score }) {
+      this.trainStationsScore = score;
+    },
     updateHarborScore({ score }) {
       this.harborScore = score;
     },
@@ -1245,10 +1144,7 @@ export default {
       this.$refs.harbors.reset();
     },
     resetTrainStations() {
-      this.trainStations = 0;
-      if (localStorage.getItem('trainStations')) {
-        localStorage.removeItem('trainStations');
-      }
+      this.$refs.trainStations.reset();
     },
     handleBonusEvent(event) {
       const { name, ...rest } = event;
@@ -1323,13 +1219,6 @@ export default {
           this.gameId = localStorage.getItem('id');
         } catch (error) {
           localStorage.removeItem('id');
-        }
-      }
-      if (localStorage.getItem('trainStations')) {
-        try {
-          this.trainStations = parseInt(localStorage.getItem('trainStations'));
-        } catch (error) {
-          localStorage.removeItem('trainStations');
         }
       }
       if (localStorage.getItem('routes')) {
