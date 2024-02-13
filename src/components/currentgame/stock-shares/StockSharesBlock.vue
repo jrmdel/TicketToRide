@@ -1,57 +1,80 @@
 <template>
-  <v-card color="background">
-    <v-toolbar flat color="primary" dark>
-      <v-toolbar-title>{{ $t('current.stock-shares.title') }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-icon large>mdi-label-percent</v-icon>
-    </v-toolbar>
-    <v-card-subtitle>
-      <BaseIndicators
+  <card-layout logo="mdi-label-percent" title="current.stock-shares.title">
+    <template v-slot:header>
+      <base-indicators
         :leftText="$t('current.stock-shares.indicators.left')"
-        :leftIndicator="computedNbOfStockShares"
+        :leftIndicator="nbOfStockShares"
         :centerCondition="false"
         :rightText="$t('current.stock-shares.indicators.right')"
-        :rightIndicator="computedTotalScore"
+        :rightIndicator="score"
       />
-    </v-card-subtitle>
-    <v-card-text>
-      <v-container fluid>
-        <two-buttons
-          :leftActive="false"
-          rightColor="accent"
-          rightIcon="mdi-restore"
-          :rightText="$t('main.btn.reset')"
-          @clickRight="reset()"
-        />
-        <StockShare
-          v-for="(item, index) in stockSharesList"
-          ref="stockShare"
-          :key="index"
-          :name="item.name"
-          :scores="item.scores"
-          @updateStockShareScore="updateStockShareScore($event)"
-        />
-      </v-container>
-    </v-card-text>
-  </v-card>
+    </template>
+    <template v-slot:content>
+      <two-buttons
+        :leftActive="false"
+        rightColor="accent"
+        rightIcon="mdi-restore"
+        :rightText="$t('main.btn.reset')"
+        @clickRight="reset()"
+      />
+      <stock-share-item
+        v-for="(item, index) in stockSharesList"
+        ref="stockShare"
+        :key="index"
+        :name="item.name"
+        :scores="item.scores"
+        @update-score="updateStockShareScore($event)"
+      />
+    </template>
+  </card-layout>
 </template>
 
 <script>
 import BaseIndicators from '../BaseIndicators.vue';
+import CardLayout from '../CardLayout.vue';
 import TwoButtons from '../TwoButtons.vue';
-import StockShare from './StockShare.vue';
+import StockShareItem from './StockShareItem.vue';
 
 export default {
   name: 'StockSharesBlock',
   components: {
     BaseIndicators,
-    StockShare,
+    StockShareItem,
     TwoButtons,
+    CardLayout,
   },
   props: {
+    version: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  computed: {
     stockSharesList: {
-      type: Array,
-      default: () => [],
+      get() {
+        return this.version?.stockSharesList;
+      },
+    },
+    score: {
+      get() {
+        const totalScore = this.scoresForAllStockShares?.reduce(
+          (acc, stock) => acc + stock.score,
+          0
+        );
+        this.$emit('updateStockShareScore', {
+          scoresForAllStockShares: this.scoresForAllStockShares,
+          totalScore,
+        });
+        return totalScore;
+      },
+    },
+    nbOfStockShares: {
+      get() {
+        const earnedStockShares = this.scoresForAllStockShares?.filter(
+          (stock) => stock.score > 0
+        );
+        return earnedStockShares.length;
+      },
     },
   },
   watch: {
@@ -73,29 +96,6 @@ export default {
   data: () => ({
     scoresForAllStockShares: [],
   }),
-  computed: {
-    computedTotalScore: {
-      get() {
-        let total = 0;
-        this.scoresForAllStockShares?.forEach(
-          (stock) => (total += stock.score)
-        );
-        this.$emit('updateStockShareScore', {
-          scoresForAllStockShares: this.scoresForAllStockShares,
-          totalScore: total,
-        });
-        return total;
-      },
-    },
-    computedNbOfStockShares: {
-      get() {
-        const earnedStockShares = this.scoresForAllStockShares?.filter(
-          (stock) => stock.score > 0
-        );
-        return earnedStockShares.length;
-      },
-    },
-  },
   methods: {
     reset() {
       this.$refs.stockShare?.forEach((ref) => ref.reset());

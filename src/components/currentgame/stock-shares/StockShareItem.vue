@@ -42,18 +42,18 @@ export default {
   watch: {
     stockShareScore: {
       handler(value) {
-        this.updateStockShareScore(value);
+        this.updateScore(value);
       },
     },
   },
   methods: {
     reset() {
-      this.updateStockShareScore(0);
+      this.updateScore(0);
     },
-    updateStockShareScore(newScore) {
+    updateScore(newScore) {
       const event = { name: this.name, value: newScore };
       this.stockShareScore = newScore ?? 0;
-      this.$emit('updateStockShareScore', event);
+      this.$emit('update-score', event);
     },
   },
 };

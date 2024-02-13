@@ -266,25 +266,19 @@
       </v-col>
       <v-col cols="12" v-show="computedVersionHasBonuses">
         <!--Your bonuses-->
-        <BonusesBlock
+        <bonuses-block
           ref="bonusesBlock"
           :numberOfBonuses="computedNumberOfBonuses"
           :bonusScore="computedBonusScore"
           :version="selectVersion"
           :completedRoutes="computedCompletion"
-          :versionHasLongest="computedVersionHasLongest"
-          :versionHasGlobeTrotterBonus="computedVersionHasGlobeTrotterBonus"
-          :versionHasMandalaBonus="computedVersionHasMandalaBonus"
-          @updateLongestBonus="handleBonusEvent($event)"
-          @updateGlobeTrotterBonus="handleBonusEvent($event)"
-          @updateMandalaBonus="handleBonusEvent($event)"
-          @updateUnitedKingdomBonus="handleBonusEvent($event)"
+          @update-bonus="handleBonusEvent($event)"
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasStockShares">
         <!--Your stock shares-->
-        <StockSharesBlock
-          :stockSharesList="computedVersionStockSharesList"
+        <stock-shares-block
+          :version="selectVersion"
           @updateStockShareScore="updateStockShareScore($event)"
         />
       </v-col>
@@ -834,11 +828,6 @@ export default {
     computedVersionHasStockShares: {
       get() {
         return this.selectVersion ? this.selectVersion.hasStockShares : false;
-      },
-    },
-    computedVersionStockSharesList: {
-      get() {
-        return this.selectVersion ? this.selectVersion.stockSharesList : null;
       },
     },
   },
