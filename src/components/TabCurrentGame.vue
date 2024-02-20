@@ -131,125 +131,16 @@
         </v-card>
       </v-col>
       <v-col cols="12" v-show="selectVersion != null">
-        <!--Your tickets-->
-        <v-card color="background">
-          <v-toolbar flat color="primary" dark>
-            <v-toolbar-title>{{ $t('current.tickets.title') }}</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-icon large>mdi-ticket-confirmation-outline</v-icon>
-          </v-toolbar>
-          <v-card-subtitle>
-            <BaseIndicators
-              :leftText="$t('current.tickets.indicators.left')"
-              :leftIndicator="routes.length"
-              :centerText="$t('current.tickets.indicators.center')"
-              :centerIndicator="computedCompletion"
-              :rightText="$t('current.tickets.indicators.right')"
-              :rightIndicator="computedTicketScore"
-            />
-          </v-card-subtitle>
-          <v-card-text>
-            <v-container fluid>
-              <TwoButtons
-                leftColor="primary"
-                leftIcon="mdi-card-plus-outline"
-                :leftText="$t('main.btn.add-ticket')"
-                @clickLeft="openAddTicket"
-                rightColor="accent"
-                rightIcon="mdi-restore"
-                :rightText="$t('main.btn.reset')"
-                @clickRight="openReset('tickets')"
-              />
-              <v-row>
-                <v-col cols="12">
-                  <v-card outlined flat color="primaryLight">
-                    <v-card-title class="text-h4 font-weight-light">
-                      <span class="darkenBlack--text">{{
-                        $t('current.tickets.routes.title')
-                      }}</span>
-                      <v-spacer></v-spacer>
-                      <v-text-field
-                        v-model="searchRoutes"
-                        append-icon="mdi-magnify"
-                        :label="$t('main.tables.search')"
-                        single-line
-                        clearable
-                        hide-details
-                        light
-                      ></v-text-field>
-                    </v-card-title>
-                    <v-data-table
-                      class="py-6"
-                      :headers="headersRoutes"
-                      :items="computedRoutesForHeaders"
-                      item-key="id"
-                      :search="searchRoutes"
-                      multi-sort
-                      :footer-props="{ 'items-per-page-options': [-1] }"
-                    >
-                      <template v-slot:[`item.delete`]="{ item }">
-                        <v-icon large @click="deleteItem(item)"
-                          >mdi-delete-forever</v-icon
-                        >
-                      </template>
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <div v-if="isTour(item.type)">
-                          <v-icon
-                            class="mx-1"
-                            large
-                            v-show="item.status != 'Done'"
-                            color="green"
-                            @click="toggleTo(item, 'Done')"
-                            >mdi-check</v-icon
-                          >
-                          <v-icon
-                            class="mx-1"
-                            large
-                            v-show="item.status != 'Fail'"
-                            color="red"
-                            @click="toggleTo(item, 'Fail')"
-                            >mdi-close</v-icon
-                          >
-                          <v-icon
-                            class="mx-1"
-                            large
-                            v-show="item.status != 'Unordered'"
-                            color="amber"
-                            @click="toggleTo(item, 'Unordered')"
-                            >mdi-compass-off-outline</v-icon
-                          >
-                        </div>
-                        <div v-else>
-                          <v-icon
-                            large
-                            v-show="item.status != 'Done'"
-                            color="green"
-                            @click="toggleTo(item, 'Done')"
-                            >mdi-check</v-icon
-                          >
-                          <v-icon
-                            large
-                            v-show="item.status != 'Fail'"
-                            color="red"
-                            @click="toggleTo(item, 'Fail')"
-                            >mdi-close</v-icon
-                          >
-                        </div>
-                      </template>
-                      <template v-slot:[`item.status`]="{ item }">
-                        <v-chip :color="getStatusColor(item.status)" dark>{{
-                          getStatusText(item.status)
-                        }}</v-chip>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card-text>
-        </v-card>
+        <!-- Your tickets -->
+        <tickets-block
+          ref="tickets"
+          :version="selectVersion"
+          :completionCount="computedCompletion"
+          @update-routes="updateRoutes($event)"
+        />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasHarbors">
+        <!-- Your harbors -->
         <harbors-block
           ref="harbors"
           :routes="routes"
@@ -258,6 +149,7 @@
         />
       </v-col>
       <v-col cols="12" v-show="computedVersionHasTrainStations">
+        <!-- Your train stations -->
         <train-stations-block
           ref="trainStations"
           :version="selectVersion"
@@ -296,115 +188,6 @@
         />
       </v-col>
     </v-row>
-
-    <v-dialog
-      v-model="dialogTicket"
-      max-width="660"
-      @click:outside="closeAddTicket"
-    >
-      <v-card color="background">
-        <v-toolbar flat color="quaternary" dark>
-          <v-toolbar-title>{{
-            $t('current.dialog.add-ticket.title')
-          }}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon @click="closeAddTicket">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card-text>
-          <v-container fluid>
-            <v-row align="center">
-              <v-col cols="12">
-                <span class="text-h6 tertiary--text">{{
-                  $t('current.dialog.add-ticket.subtitle')
-                }}</span>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-select
-                  v-model="fromTicket"
-                  solo
-                  clearable
-                  color="secondary"
-                  :label="$t('current.dialog.add-ticket.label.from')"
-                  :items="computedFromCities"
-                ></v-select>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-select
-                  v-model="toTicket"
-                  :disabled="!fromTicket"
-                  :error-messages="
-                    selectedTicket.length == 1
-                      ? routes
-                          .map((route) => route.id)
-                          .includes(selectedTicket[0].id)
-                        ? $t('current.dialog.add-ticket.error')
-                        : ''
-                      : ''
-                  "
-                  :messages="
-                    foundTickets.length == 0
-                      ? null
-                      : $tc(
-                          'current.dialog.add-ticket.message',
-                          foundTickets.length
-                        )
-                  "
-                  solo
-                  clearable
-                  color="secondary"
-                  :label="$t('current.dialog.add-ticket.label.to')"
-                  :items="toCities"
-                >
-                </v-select>
-              </v-col>
-              <v-col cols="12" v-if="foundTickets.length > 1">
-                <span>{{
-                  $t('current.dialog.add-ticket.selection.title')
-                }}</span>
-                <v-card flat outlined>
-                  <v-data-table
-                    v-model="selectedTicket"
-                    class="py-6"
-                    :headers="headersAddTicket"
-                    :items="foundTickets"
-                    item-key="id"
-                    hide-default-footer
-                    single-select
-                    show-select
-                  >
-                    <template v-slot:[`item.to`]="{ item }">
-                      {{ item.cities.slice(-1)[0].name }}
-                    </template>
-                    <template v-slot:[`item.from`]="{ item }">
-                      {{ item.cities[0].name }}
-                    </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn large text color="accent" @click="closeAddTicket">{{
-            $t('main.btn.close')
-          }}</v-btn>
-          <v-btn
-            large
-            :disabled="
-              selectedTicket.length == 0 ||
-              routes.map((route) => route.id).includes(selectedTicket[0].id)
-            "
-            text
-            color="secondary"
-            @click="addTicket"
-            >{{ $t('main.btn.add-ticket') }}</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
     <v-dialog v-model="dialogReset" max-width="400">
       <v-card color="background">
@@ -482,9 +265,6 @@
 </template>
 
 <script>
-import { Types } from '../util/types';
-import BaseIndicators from './currentgame/BaseIndicators';
-import TwoButtons from './currentgame/TwoButtons';
 import HarborsBlock from './currentgame/harbors/HarborsBlock.vue';
 import BonusesBlock from './currentgame/bonuses/BonusesBlock.vue';
 import StockSharesBlock from './currentgame/stock-shares/StockSharesBlock.vue';
@@ -492,37 +272,33 @@ import { db } from '../main';
 import UnitsBlock from './currentgame/units/UnitsBlock.vue';
 import { DEFAULT_UK_BONUS } from '@/util/constants/game.constants.js';
 import TrainStationsBlock from './currentgame/train-stations/TrainStationsBlock.vue';
+import TicketsBlock from './currentgame/tickets/TicketsBlock.vue';
 
 export default {
   components: {
-    BaseIndicators,
-    TwoButtons,
     UnitsBlock,
     BonusesBlock,
     StockSharesBlock,
     HarborsBlock,
     TrainStationsBlock,
+    TicketsBlock,
   },
   name: 'TabCurrentGame',
   data: () => ({
-    dialogTicket: false,
     dialogReset: false,
     dialogSaveGame: false,
-    newTicketForm: false,
-    fromTicket: null,
-    toCities: [],
-    toTicket: null,
-    foundTickets: [],
-    selectedTicket: [],
-    //headersAddTicket:,
-    tickets: [],
-    //headersRoutes:,
-    searchRoutes: '',
-    routes: [],
     selectVersion: null,
     selectPlayer: [],
     selectedPlayer: null,
-    lockSelect: true,
+    resetType: '',
+    gameId: '',
+    loadingOpenSaveGame: false,
+    saveGameSelectErrorMessage: null,
+    loadingSave: false,
+
+    routes: [],
+    routesScore: 0,
+    harborScore: 0,
     trainStationsScore: 0,
     longestBonus: 0,
     globeTrotterBonus: 0,
@@ -530,14 +306,6 @@ export default {
     unitedKingdomBonus: structuredClone(DEFAULT_UK_BONUS),
     stockSharesScore: 0,
     scoresForAllStockShares: [],
-    harborScore: 0,
-    resetType: '',
-    gameId: '',
-    loadingOpenSaveGame: false,
-    saveGameSelectErrorMessage: null,
-    loadingSave: false,
-
-    // Units
     units: {},
     unitScore: 0,
   }),
@@ -563,123 +331,9 @@ export default {
     },
   },
   computed: {
-    headersRoutes: {
-      get() {
-        return [
-          {
-            text: this.$t('main.tables.headers.from'),
-            align: 'start',
-            value: 'from',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.to'),
-            align: 'start',
-            value: 'to',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.points'),
-            align: 'start',
-            value: 'points',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.status'),
-            align: 'start',
-            value: 'status',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.actions'),
-            align: 'center',
-            value: 'actions',
-            sortable: false,
-          },
-          {
-            text: this.$t('main.tables.headers.delete'),
-            align: 'center',
-            value: 'delete',
-            sortable: true,
-          },
-        ];
-      },
-    },
-    headersAddTicket: {
-      get() {
-        return [
-          {
-            text: this.$t('main.tables.headers.from'),
-            align: 'start',
-            value: 'from',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.to'),
-            align: 'start',
-            value: 'to',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.steps'),
-            align: 'start',
-            value: 'cities.length',
-            sortable: true,
-          },
-          {
-            text: this.$t('main.tables.headers.points'),
-            align: 'start',
-            value: 'points',
-            sortable: true,
-          },
-        ];
-      },
-    },
-    computedRoutesForHeaders: {
-      get() {
-        return this.routes.map((route) => {
-          return {
-            ...route,
-            from: route.cities[0].name,
-            to: route.cities.slice(-1)[0].name,
-          };
-        });
-      },
-    },
-    computedFromCities: {
-      get() {
-        return this.selectVersion
-          ? [
-              ...new Set(
-                this.selectVersion.tickets
-                  .map((ticket) => ticket.cities.map((city) => city.name))
-                  .flat()
-              ),
-            ].sort()
-          : [];
-      },
-    },
     computedCompletion: {
       get() {
-        return this.routes.filter((route) => route.status == 'Done').length;
-      },
-    },
-    computedTicketScore: {
-      get() {
-        function computeScore(item) {
-          if (item.type == Types.TOUR) {
-            return item.status == 'Fail'
-              ? item.points_failed
-              : item.status == 'Done'
-                ? item.points
-                : item.points_unorderded;
-          } else {
-            return item.status == 'Done' ? item.points : -1 * item.points;
-          }
-        }
-        return this.routes.length > 0
-          ? this.routes.map(computeScore).reduce((a, b) => a + b, 0)
-          : 0;
+        return this.routes.filter((route) => route.status !== 'Fail').length;
       },
     },
     computedNumberOfBonuses: {
@@ -758,18 +412,17 @@ export default {
     },
     computedTotalScore: {
       get() {
-        if (this.selectVersion) {
-          return parseInt(
-            this.computedTicketScore +
-              this.unitScore +
-              this.harborScore +
-              this.trainStationsScore +
-              this.computedBonusScore +
-              this.stockSharesScore
-          );
-        } else {
+        if (!this.selectVersion) {
           return 0;
         }
+        return parseInt(
+          this.routesScore +
+            this.unitScore +
+            this.harborScore +
+            this.trainStationsScore +
+            this.computedBonusScore +
+            this.stockSharesScore
+        );
       },
     },
     computedVersionHasHarbors: {
@@ -832,46 +485,6 @@ export default {
     },
   },
   watch: {
-    fromTicket: {
-      handler(value) {
-        this.toCities = [];
-        this.toTicket = null;
-        if (value) {
-          const a = this.selectVersion.tickets
-            .filter((ticket) =>
-              ticket.cities.map((city) => city.name).includes(value)
-            )
-            .map((ticket) => ticket.cities.map((city) => city.name))
-            .flat()
-            .sort();
-          this.toCities = [...new Set(a)].filter((city) => city != value);
-        }
-      },
-    },
-    toTicket: {
-      handler(val) {
-        this.foundTickets = [];
-        if (val != null) {
-          this.foundTickets = this.selectVersion.tickets
-            .filter((ticket) =>
-              ticket.cities.map((city) => city.name).includes(val)
-            )
-            .filter((ticket) =>
-              ticket.cities.map((city) => city.name).includes(this.fromTicket)
-            );
-        }
-      },
-    },
-    foundTickets: {
-      handler(value) {
-        this.selectedTicket = [];
-        if (value) {
-          if (value.length == 1) {
-            this.selectedTicket = value;
-          }
-        }
-      },
-    },
     selectVersion: {
       handler(value) {
         if (value && value.name) {
@@ -910,32 +523,6 @@ export default {
     },
   },
   methods: {
-    deleteItem(item) {
-      const id = this.routes.findIndex((route) => route.id == item.id);
-      if (id < 0) {
-        this.notifySnack(this.$t('main.snackbar.error.delete'), 'error');
-      } else {
-        this.routes.splice(id, 1);
-      }
-    },
-    getStatusColor(status) {
-      if (status == 'Fail') {
-        return 'red';
-      } else if (status == 'Done') {
-        return 'green';
-      } else {
-        return 'amber';
-      }
-    },
-    getStatusText(status) {
-      if (status == 'Fail') {
-        return this.$t('main.status.fail');
-      } else if (status == 'Done') {
-        return this.$t('main.status.done');
-      } else {
-        return this.$t('main.status.unordered');
-      }
-    },
     async openSaveGame() {
       this.dialogSaveGame = true;
       this.loadingOpenSaveGame = true;
@@ -1053,25 +640,9 @@ export default {
         this.loadingShare = false;
       }
     },
-    openAddTicket() {
-      this.dialogTicket = true;
-    },
-    isTour(type) {
-      return type == Types.TOUR;
-    },
-    addTicket() {
-      const ticket =
-        this.foundTickets.length == 1
-          ? this.foundTickets[0]
-          : this.selectedTicket[0];
-      this.routes.push({ ...ticket, status: 'Fail' });
-      localStorage.setItem('routes', JSON.stringify(this.routes));
-      this.fromTicket = null;
-    },
-    closeAddTicket() {
-      this.dialogTicket = false;
-      this.toTicket = null;
-      this.fromTicket = null;
+    updateRoutes({ routes, score }) {
+      this.routes = [...routes];
+      this.routesScore = score;
     },
     updateTrainStationScore({ score }) {
       this.trainStationsScore = score;
@@ -1121,10 +692,7 @@ export default {
       this.resetType = '';
     },
     resetTickets() {
-      this.routes = [];
-      if (localStorage.getItem('routes')) {
-        localStorage.removeItem('routes');
-      }
+      this.$refs.tickets.reset();
     },
     resetTrainsAndBoats() {
       this.$refs.units.resetUnits();
@@ -1164,9 +732,6 @@ export default {
     },
     getRoutes() {
       return this.routes;
-    },
-    toggleLockSelect() {
-      this.lockSelect = !this.lockSelect;
     },
     findVersion(version) {
       const myEvent = { version: version };
@@ -1208,13 +773,6 @@ export default {
           this.gameId = localStorage.getItem('id');
         } catch (error) {
           localStorage.removeItem('id');
-        }
-      }
-      if (localStorage.getItem('routes')) {
-        try {
-          this.routes = JSON.parse(localStorage.getItem('routes'));
-        } catch (error) {
-          localStorage.removeItem('routes');
         }
       }
     },

@@ -83,6 +83,7 @@ import BaseIndicators from '../BaseIndicators.vue';
 import TwoButtons from '../TwoButtons.vue';
 import UnitCounter from '../UnitCounter.vue';
 import { DEFAULT_UNITS } from '@/util/constants/game.constants';
+import { sumReducer } from '@/util/tools/tools.js';
 import UnitsBonusSelector from './UnitsBonusSelector.vue';
 
 export default {
@@ -160,17 +161,15 @@ export default {
         }
         this.score = Object.keys(this.units)
           .map((unit) => (value[unit] ?? 0) * this.units[unit])
-          .reduce((acc, val) => acc + val, 0);
+          .reduce(sumReducer, 0);
         this.numberOfUnits = Object.keys(this.units)
           .map((unit) => unit * this.units[unit])
-          .reduce((acc, val) => acc + val, 0);
+          .reduce(sumReducer, 0);
       },
     },
   },
   methods: {
     openReset() {
-      // For now, update locally.
-      // this.$emit('openReset');
       this.resetUnits();
       this.resetBonus();
     },

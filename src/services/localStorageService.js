@@ -5,6 +5,7 @@ const ENUM_ITEMS = {
   globeTrotter: 'globeTrotterBonus',
   harbors: 'harbors',
   trainStations: 'trainStations',
+  routes: 'routes',
 };
 
 class LocalStorageService {
@@ -114,6 +115,23 @@ class LocalStorageService {
       return 0;
     }
     return trainStations;
+  }
+
+  /* ROUTES */
+  setRoutes(routes) {
+    if (!routes || routes?.length === 0) {
+      localStorage.removeItem(ENUM_ITEMS.routes);
+      return;
+    }
+    localStorage.setItem(ENUM_ITEMS.routes, JSON.stringify(routes));
+  }
+
+  getRoutes() {
+    const routesFromStorage = localStorage.getItem(ENUM_ITEMS.routes);
+    if (!routesFromStorage) {
+      return [];
+    }
+    return JSON.parse(routesFromStorage);
   }
 }
 
