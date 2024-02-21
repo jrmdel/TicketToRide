@@ -1,23 +1,25 @@
 <template>
   <v-container fluid>
-    <v-row align="center" align-content="center">
-      <v-col>
-        <span class="text-h6 tertiary--text">{{ name }}</span>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <span class="text-subtitle-1 tertiary--text">{{ name }}</span>
       </v-col>
       <v-col>
-        <v-select
+        <v-chip-group
           v-model="stockShareScore"
-          solo
-          color="secondary"
-          chips
-          :label="$t('current.stock-shares.select-label')"
-          :items="scores"
-          clearable
-          :hide-details="true"
-        ></v-select>
-      </v-col>
-      <v-col>
-        <span class="text-h6 tertiary--text">{{ stockShareScore }}</span>
+          active-class="success success--text"
+        >
+          <v-chip
+            class="drop-focus-on-click"
+            v-for="score in scores"
+            :key="score"
+            :value="score"
+            outlined
+            filter
+          >
+            {{ score }}
+          </v-chip>
+        </v-chip-group>
       </v-col>
     </v-row>
   </v-container>
@@ -58,3 +60,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.drop-focus-on-click:focus::before {
+  opacity: 0 !important;
+}
+</style>
