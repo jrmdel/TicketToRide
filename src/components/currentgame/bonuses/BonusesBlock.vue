@@ -1,55 +1,45 @@
 <template>
-  <v-card color="background">
-    <v-toolbar flat color="primary" dark>
-      <v-toolbar-title>{{ $t('current.bonuses.title') }}</v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-icon large>mdi-trophy-award</v-icon>
-    </v-toolbar>
-    <v-card-subtitle>
-      <BaseIndicators
+  <card-layout logo="mdi-trophy-award" title="current.bonuses.title">
+    <template v-slot:header>
+      <base-indicators
         :leftText="$t('current.bonuses.indicators.left')"
         :leftIndicator="numberOfBonuses"
         :centerCondition="false"
         :rightText="$t('current.bonuses.indicators.right')"
         :rightIndicator="bonusScore"
       />
-    </v-card-subtitle>
-    <v-card-text>
-      <v-container fluid>
-        <TwoButtons
-          :leftActive="false"
-          rightColor="accent"
-          rightIcon="mdi-restore"
-          :rightText="$t('main.btn.reset')"
-          @clickRight="reset()"
-        />
-        <BonusLongest
-          ref="longestBonus"
-          :isActive="versionHasLongest"
-          :version="version"
-          @update-bonus="updateLongestBonus($event)"
-        />
-        <BonusGlobeTrotter
-          ref="globeTrotterBonus"
-          :isActive="versionHasGlobeTrotterBonus"
-          :version="version"
-          @update-bonus="updateGlobeTrotterBonus($event)"
-        />
-        <BonusMandala
-          ref="mandalaBonus"
-          :isActive="versionHasMandalaBonus"
-          @update-bonus="updateMandalaBonus($event)"
-        />
-        <bonus-united-kingdom
-          ref="unitedKingdomBonus"
-          :isActive="hasUnitedKingdomBonus"
-          :version="version"
-          :completedRoutes="completedRoutes"
-          @update-bonus="updateUnitedKingdomBonus($event)"
-        />
-      </v-container>
-    </v-card-text>
-  </v-card>
+    </template>
+    <template v-slot:content>
+      <two-buttons
+        :leftActive="false"
+        rightColor="accent"
+        rightIcon="mdi-restore"
+        :rightText="$t('main.btn.reset')"
+        @clickRight="reset()"
+      />
+      <bonus-longest
+        ref="longestBonus"
+        :version="version"
+        @update-bonus="updateBonus($event)"
+      />
+      <bonus-globe-trotter
+        ref="globeTrotterBonus"
+        :version="version"
+        @update-bonus="updateBonus($event)"
+      />
+      <bonus-mandala
+        ref="mandalaBonus"
+        :version="version"
+        @update-bonus="updateBonus($event)"
+      />
+      <bonus-united-kingdom
+        ref="unitedKingdomBonus"
+        :version="version"
+        :completedRoutes="completedRoutes"
+        @update-bonus="updateBonus($event)"
+      />
+    </template>
+  </card-layout>
 </template>
 
 <script>
@@ -59,6 +49,7 @@ import BaseIndicators from '../BaseIndicators.vue';
 import BonusLongest from './BonusLongest.vue';
 import BonusGlobeTrotter from './BonusGlobeTrotter.vue';
 import BonusUnitedKingdom from './BonusUnitedKingdom.vue';
+import CardLayout from '../CardLayout.vue';
 
 export default {
   name: 'BonusesBlock',
@@ -69,6 +60,7 @@ export default {
     TwoButtons,
     BaseIndicators,
     BonusUnitedKingdom,
+    CardLayout,
   },
   props: {
     numberOfBonuses: {
@@ -87,25 +79,6 @@ export default {
       type: Number,
       default: 0,
     },
-    versionHasLongest: {
-      type: Boolean,
-      default: false,
-    },
-    versionHasGlobeTrotterBonus: {
-      type: Boolean,
-      default: false,
-    },
-    versionHasMandalaBonus: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  computed: {
-    hasUnitedKingdomBonus: {
-      get() {
-        return Boolean(this.version?.hasUnitedKingdomBonus);
-      },
-    },
   },
   methods: {
     reset() {
@@ -114,17 +87,8 @@ export default {
       this.$refs.globeTrotterBonus.resetBonus();
       this.$refs.unitedKingdomBonus.resetBonus();
     },
-    updateLongestBonus(event) {
-      this.$emit('updateLongestBonus', event);
-    },
-    updateGlobeTrotterBonus(event) {
-      this.$emit('updateGlobeTrotterBonus', event);
-    },
-    updateMandalaBonus(event) {
-      this.$emit('updateMandalaBonus', event);
-    },
-    updateUnitedKingdomBonus(event) {
-      this.$emit('updateUnitedKingdomBonus', event);
+    updateBonus(event) {
+      this.$emit('update-bonus', event);
     },
   },
 };

@@ -17,12 +17,16 @@ export default {
   name: 'BonusLongest',
   inject: ['localStorageService'],
   props: {
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
     version: {
       type: Object,
+      default: () => {},
+    },
+  },
+  computed: {
+    isActive: {
+      get() {
+        return Boolean(this.version?.hasLongest);
+      },
     },
   },
   methods: {

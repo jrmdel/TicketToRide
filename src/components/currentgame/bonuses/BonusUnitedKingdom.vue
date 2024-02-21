@@ -58,10 +58,6 @@ export default {
   name: 'BonusUnitedKingdom',
   inject: ['bonusService'],
   props: {
-    isActive: {
-      type: Boolean,
-      default: false,
-    },
     version: {
       type: Object,
       default: () => {},
@@ -93,6 +89,11 @@ export default {
           result.push(ENUM_UNIT_BONUS.PLUS_TWO);
         }
         return result;
+      },
+    },
+    isActive: {
+      get() {
+        return Boolean(this.version?.hasUnitedKingdomBonus);
       },
     },
   },

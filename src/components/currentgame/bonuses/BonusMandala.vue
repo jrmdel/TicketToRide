@@ -18,9 +18,16 @@ export default {
   name: 'BonusMandala',
   inject: ['localStorageService'],
   props: {
+    version: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  computed: {
     isActive: {
-      type: Boolean,
-      default: false,
+      get() {
+        return Boolean(this.version?.hasBonusMandala);
+      },
     },
   },
   methods: {

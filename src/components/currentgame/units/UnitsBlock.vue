@@ -44,35 +44,11 @@
           :availableUnits="availableUnits"
           @update-value="updateUnitCount($event)"
         />
-        <v-container v-show="hasExchanges">
-          <v-row>
-            <v-col cols="12">
-              <span class="text-h6 tertiary--text">{{
-                $t('current.units.subtitle-2')
-              }}</span>
-            </v-col>
-          </v-row>
-          <v-row
-            class="ml-sm-4"
-            align="center"
-            justify="center"
-            justify-sm="start"
-          >
-            <v-btn
-              large
-              icon
-              :disabled="exchanges === 0"
-              @click="updateExchanges(-1)"
-            >
-              <v-icon color="red">mdi-minus</v-icon>
-            </v-btn>
-            <span class="text-h6">{{ exchanges }}</span>
-            <v-btn large icon @click="updateExchanges(1)">
-              <v-icon color="green">mdi-plus</v-icon>
-            </v-btn>
-            <v-icon class="ml-4">mdi-autorenew</v-icon>
-          </v-row>
-        </v-container>
+        <exchange-section
+          :isActive="hasExchanges"
+          :exchanges="exchanges"
+          @update-value="updateExchanges($event)"
+        />
       </v-container>
     </v-card-text>
   </v-card>
@@ -81,13 +57,21 @@
 <script>
 import BaseIndicators from '../BaseIndicators.vue';
 import TwoButtons from '../TwoButtons.vue';
-import UnitCounter from '../UnitCounter.vue';
+import UnitCounter from './UnitCounter.vue';
 import { DEFAULT_UNITS } from '@/util/constants/game.constants';
+import { sumReducer } from '@/util/tools/tools.js';
 import UnitsBonusSelector from './UnitsBonusSelector.vue';
+import ExchangeSection from './ExchangeSection.vue';
 
 export default {
   name: 'UnitsBlock',
-  components: { BaseIndicators, UnitCounter, TwoButtons, UnitsBonusSelector },
+  components: {
+    BaseIndicators,
+    UnitCounter,
+    TwoButtons,
+    UnitsBonusSelector,
+    ExchangeSection,
+  },
   inject: ['localStorageService', 'bonusService'],
   props: {
     unitRules: {
@@ -160,17 +144,15 @@ export default {
         }
         this.score = Object.keys(this.units)
           .map((unit) => (value[unit] ?? 0) * this.units[unit])
-          .reduce((acc, val) => acc + val, 0);
+          .reduce(sumReducer, 0);
         this.numberOfUnits = Object.keys(this.units)
           .map((unit) => unit * this.units[unit])
-          .reduce((acc, val) => acc + val, 0);
+          .reduce(sumReducer, 0);
       },
     },
   },
   methods: {
     openReset() {
-      // For now, update locally.
-      // this.$emit('openReset');
       this.resetUnits();
       this.resetBonus();
     },
@@ -195,9 +177,9 @@ export default {
         this.sendBonusUpdate(update);
       }
     },
-    updateExchanges(change) {
-      this.exchanges += change;
-      this.score -= change;
+    updateExchanges({ update }) {
+      this.exchanges += update;
+      this.score -= update;
     },
     updateActiveBonuses(event) {
       this.activeUnitBonuses = event?.value ?? [];

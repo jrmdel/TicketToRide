@@ -421,7 +421,7 @@ const world = [
       WorldCities.PETROPAVLOVSK,
     ],
     points: 30,
-    points_unorderded: 20,
+    points_unordered: 20,
     points_failed: -36,
   },
   {
@@ -436,7 +436,7 @@ const world = [
       WorldCities.TIKSI,
     ],
     points: 34,
-    points_unorderded: 23,
+    points_unordered: 23,
     points_failed: -40,
   },
   {
@@ -450,7 +450,7 @@ const world = [
       WorldCities.DARWIN,
     ],
     points: 13,
-    points_unorderded: 9,
+    points_unordered: 9,
     points_failed: -19,
   },
   {
@@ -464,7 +464,7 @@ const world = [
       WorldCities.CAMBRIDGE_BAY,
     ],
     points: 18,
-    points_unorderded: 12,
+    points_unordered: 12,
     points_failed: -24,
   },
   {
@@ -478,7 +478,7 @@ const world = [
       WorldCities.BANGKOK,
     ],
     points: 13,
-    points_unorderded: 9,
+    points_unordered: 9,
     points_failed: -19,
   },
   {
@@ -487,7 +487,7 @@ const world = [
     type: Types.TOUR,
     cities: [WorldCities.CASABLANCA, WorldCities.AL_QAHIRA, WorldCities.TEHRAN],
     points: 9,
-    points_unorderded: 6,
+    points_unordered: 6,
     points_failed: -15,
   },
   {
@@ -501,7 +501,7 @@ const world = [
       WorldCities.DJIBOUTI,
     ],
     points: 9,
-    points_unorderded: 6,
+    points_unordered: 6,
     points_failed: -15,
   },
   {
@@ -515,7 +515,7 @@ const world = [
       WorldCities.VALPARAISO,
     ],
     points: 15,
-    points_unorderded: 10,
+    points_unordered: 10,
     points_failed: -21,
   },
 ];
