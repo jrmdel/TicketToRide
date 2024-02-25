@@ -133,7 +133,7 @@
                             }}</span>
                           </v-col>
                           <v-col cols="12">
-                            <indicators
+                            <base-indicators
                               :leftText="
                                 $t(
                                   'scoreboard.insights.player.data.indicators.left'
@@ -227,7 +227,7 @@
                           </v-col>
                           <template v-if="insightsPlayerAdditional">
                             <v-col cols="12">
-                              <indicators
+                              <base-indicators
                                 :leftText="
                                   $t(
                                     'scoreboard.insights.player.additional.indicators.left'
@@ -898,10 +898,12 @@
 
 <script>
 import { db } from '@/main';
+import BaseIndicators from './currentgame/BaseIndicators.vue';
 //import jsonGames from '../util/savedGames04-21.json'
 
 export default {
   name: 'TabScoreboard',
+  components: { BaseIndicators },
   data() {
     return {
       //headers: ,
