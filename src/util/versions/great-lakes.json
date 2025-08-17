@@ -1,0 +1,47 @@
+{
+  "name": "Great lakes",
+  "players": [2, 3, 4, 5],
+  "start": {
+    "units": {
+      "trains": 33,
+      "boats": 32,
+      "hasToChooseFromInitialAmount": true,
+      "countAfterChoice": 50
+    },
+    "objectives": {
+      "standard": 5,
+      "hard": 0,
+      "minimum": 3,
+      "areDiscarded": false
+    },
+    "cards": {
+      "trains": 2,
+      "boats": 2,
+      "jokers": 0
+    }
+  },
+  "round": {
+    "objectives": {
+      "standard": 4,
+      "minimum": 1
+    },
+    "routes": {
+      "doublesAllowed": [4, 5]
+    },
+    "canExchangeUnits": true
+  },
+  "end": {
+    "threshold": {
+      "lessThan": 6,
+      "remainingRounds": 2
+    },
+    "bonuses": {
+      "longestRoute": false,
+      "globeTrotter": false,
+      "mandala": false
+    },
+    "harbors": {
+      "unsetHarbors": -4
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "name": "Old West",
+  "players": [2, 3, 4, 5, 6],
+  "start": {
+    "units": {
+      "trains": 40,
+      "boats": 0,
+      "hasToChooseFromInitialAmount": false
+    },
+    "objectives": {
+      "standard": 5,
+      "hard": 0,
+      "minimum": 3,
+      "areDiscarded": false
+    },
+    "cards": {
+      "trains": 4,
+      "boats": 0,
+      "jokers": 0
+    },
+    "city": {
+      "hasToChooseStartingCity": true,
+      "order": "reverse"
+    }
+  },
+  "round": {
+    "objectives": {
+      "standard": 4,
+      "minimum": 1
+    },
+    "routes": {
+      "doublesAllowed": [4, 5, 6],
+      "mustBeConnected": true
+    }
+  },
+  "end": {
+    "threshold": {
+      "lessThan": 2,
+      "remainingRounds": 1
+    },
+    "bonuses": {
+      "longestRoute": true,
+      "globeTrotter": true,
+      "mandala": false
+    }
+  }
+}

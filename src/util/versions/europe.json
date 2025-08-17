@@ -1,0 +1,52 @@
+{
+  "name": "Europe",
+  "players": [2, 3, 4, 5],
+  "start": {
+    "units": {
+      "trains": 45,
+      "boats": 0,
+      "hasToChooseFromInitialAmount": false
+    },
+    "objectives": {
+      "standard": 3,
+      "hard": 1,
+      "minimum": 2,
+      "areDiscarded": true
+    },
+    "cards": {
+      "trains": 4,
+      "boats": 0,
+      "jokers": 0
+    }
+  },
+  "round": {
+    "objectives": {
+      "standard": 3,
+      "minimum": 1
+    },
+    "routes": {
+      "doublesAllowed": [4, 5]
+    },
+    "stations": {
+      "cost": {
+        "1": 1,
+        "2": 2,
+        "3": 3
+      }
+    }
+  },
+  "end": {
+    "threshold": {
+      "lessThan": 2,
+      "remainingRounds": 1
+    },
+    "bonuses": {
+      "longestRoute": true,
+      "globeTrotter": false,
+      "mandala": false
+    },
+    "stations": {
+      "unsetTrainStations": 4
+    }
+  }
+}

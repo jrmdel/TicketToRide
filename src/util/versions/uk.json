@@ -1,0 +1,46 @@
+{
+  "name": "United Kingdom",
+  "players": [2, 3, 4],
+  "start": {
+    "units": {
+      "trains": 35,
+      "boats": 0,
+      "hasToChooseFromInitialAmount": false
+    },
+    "objectives": {
+      "standard": 5,
+      "hard": 0,
+      "minimum": 3,
+      "areDiscarded": false
+    },
+    "cards": {
+      "trains": 4,
+      "boats": 0,
+      "jokers": 1
+    }
+  },
+  "round": {
+    "objectives": {
+      "standard": 4,
+      "minimum": 1
+    },
+    "routes": {
+      "doublesAllowed": [3, 4]
+    },
+    "jokers": {
+      "cardsToReplaceOneJoker": 4,
+      "replaceCardsAfterThirdJokerRevealed": false
+    }
+  },
+  "end": {
+    "threshold": {
+      "lessThan": 2,
+      "remainingRounds": 1
+    },
+    "bonuses": {
+      "longestRoute": false,
+      "globeTrotter": false,
+      "mandala": false
+    }
+  }
+}

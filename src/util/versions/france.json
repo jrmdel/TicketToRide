@@ -1,0 +1,42 @@
+{
+  "name": "France",
+  "players": [2, 3, 4, 5],
+  "start": {
+    "units": {
+      "trains": 40,
+      "boats": 0,
+      "hasToChooseFromInitialAmount": false
+    },
+    "objectives": {
+      "standard": 5,
+      "hard": 0,
+      "minimum": 3,
+      "areDiscarded": false
+    },
+    "cards": {
+      "trains": 8,
+      "boats": 0,
+      "jokers": 0
+    }
+  },
+  "round": {
+    "objectives": {
+      "standard": 4,
+      "minimum": 1
+    },
+    "routes": {
+      "doublesAllowed": [4, 5]
+    }
+  },
+  "end": {
+    "threshold": {
+      "lessThan": 2,
+      "remainingRounds": 1
+    },
+    "bonuses": {
+      "longestRoute": true,
+      "globeTrotter": true,
+      "mandala": false
+    }
+  }
+}
